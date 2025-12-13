@@ -1,1 +1,1282 @@
-<h1>hello world</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paidia Consulting | AI Strategy, Architecture & Transformation</title>
+    <meta name="description" content="We build AI systems that work. From UK Government's first public LLM to FTSE 100 transformations. Strategy, architecture, and hands-on delivery.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6a6a7a;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --accent-subtle: rgba(0, 212, 170, 0.1);
+            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #00a388 100%);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section {
+            padding: 120px 0;
+        }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-cta {
+            background: var(--gradient-accent);
+            color: var(--bg-primary) !important;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            opacity: 0.9;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            margin: 6px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 100%;
+            background: radial-gradient(ellipse at center top, var(--accent-subtle) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-subtle);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--accent);
+            margin-bottom: 32px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 900px;
+        }
+
+        .hero h1 .highlight {
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            margin-top: 80px;
+            padding-top: 48px;
+            border-top: 1px solid var(--border-subtle);
+            max-width: 700px;
+        }
+
+        .stat {
+            text-align: left;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+        }
+
+        /* Services Section */
+        #services {
+            background: var(--bg-secondary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 64px;
+        }
+
+        .service-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-subtle);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Case Studies / Impact Section */
+        #impact {
+            background: var(--bg-primary);
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 64px;
+        }
+
+        .impact-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .impact-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+        }
+
+        .impact-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .impact-icon {
+            font-size: 1.5rem;
+        }
+
+        .impact-client {
+            font-size: 0.875rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .impact-metric {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 16px;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .impact-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .impact-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .impact-tag {
+            background: var(--accent-subtle);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        /* Clients Section */
+        #clients {
+            background: var(--bg-secondary);
+        }
+
+        .clients-intro {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .clients-intro .section-title {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .clients-intro .section-subtitle {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .clients-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .client-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .client-card:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+        }
+
+        .client-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        .client-logo {
+            height: 48px;
+            max-width: 180px;
+            object-fit: contain;
+            margin-bottom: 16px;
+            filter: brightness(1.1);
+        }
+
+        .client-name {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .client-type {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Awards Section */
+        #awards {
+            background: var(--bg-primary);
+        }
+
+        .awards-content {
+            max-width: 800px;
+        }
+
+        .awards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .award-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .award-item:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+        }
+
+        .award-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-subtle);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.25rem;
+        }
+
+        .award-details h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .award-details p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .awards-image {
+            position: relative;
+        }
+
+        .awards-image img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            filter: drop-shadow(0 20px 50px rgba(0, 212, 170, 0.2));
+            border-radius: 24px;
+            background: var(--bg-primary);
+            padding: 20px;
+        }
+
+        /* About Section */
+        #about {
+            background: var(--bg-secondary);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .about-image {
+            position: relative;
+        }
+
+        .about-image-placeholder {
+            aspect-ratio: 4/5;
+            background: var(--bg-tertiary);
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-image-placeholder img {
+            width: 60%;
+            opacity: 0.5;
+        }
+
+        .about-text h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .about-role {
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .about-bio {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+
+        .about-bio p {
+            margin-bottom: 16px;
+        }
+
+        .credentials {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .credential {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Contact Section */
+        #contact {
+            background: var(--bg-primary);
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .contact-content .section-title {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-cta {
+            margin-top: 48px;
+        }
+
+        .contact-email {
+            font-family: var(--font-display);
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            color: var(--accent);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 32px;
+            transition: opacity 0.2s ease;
+        }
+
+        .contact-email:hover {
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: 48px 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo img {
+            height: 32px;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .impact-card.featured {
+                grid-column: span 1;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 80px 0;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .stat {
+                text-align: center;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia Consulting">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#services">Services</a></li>
+                <li><a href="#impact">Impact</a></li>
+                <li><a href="#clients">Clients</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+            </ul>
+            <button class="mobile-menu-btn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <a href="#fcdo-impact" class="hero-badge" style="text-decoration: none;">
+                    Digital Leaders AI Excellence Award Winner 2025
+                </a>
+                <h1>
+                    We build <span class="highlight">AI systems</span> that actually work.
+                </h1>
+                <p class="hero-description">
+                    Deep AI expertise, from architecture to deployment. Whether you need strategy, coaching, or production code - we turn your ambition into real results.
+                </p>
+                <div class="hero-ctas">
+                    <a href="#contact" class="btn btn-primary">
+                        Start a conversation
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#impact" class="btn btn-secondary">
+                        See our work
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">70M+</div>
+                        <div class="stat-label">Users served annually</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">95%</div>
+                        <div class="stat-label">Accuracy in production</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">20+</div>
+                        <div class="stat-label">Years shipping products</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-label">What We Do</div>
+            <h2 class="section-title">AI that moves from slides to production</h2>
+            <p class="section-subtitle">
+                Most AI projects stall. We build systems that ship - and keep working.
+            </p>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3>AI Strategy & Advisory</h3>
+                    <p>Board-level guidance on where AI creates real value. We identify the 20% of use cases that drive 80% of impact - and help you ignore the noise.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🏗️</div>
+                    <h3>Architecture & Engineering</h3>
+                    <p>Production-grade AI systems built for accuracy, security, and scale. From RAG pipelines to agentic workflows, we design systems that don't hallucinate when it matters.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Rapid Prototyping</h3>
+                    <p>Working demos in days, not quarters. We build fast to prove value, then hand off to your teams or help scale to production.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔄</div>
+                    <h3>Transformation & Training</h3>
+                    <p>Sustainable AI capability from boardroom to frontline. We've achieved 70% workforce adoption in 12 weeks - changing how entire organisations think about AI.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🛡️</div>
+                    <h3>AI Governance</h3>
+                    <p>Frameworks that enable rather than block. Risk tiers, approval processes, and transparency standards aligned with UK Government best practice.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🧠</div>
+                    <h3>Coaching & Mentoring</h3>
+                    <p>Individual and team coaching that reshapes mental models. We help your people understand AI's "jagged frontier" - where it excels and where it fails.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section id="impact" class="section">
+        <div class="container">
+            <div class="section-label">Proven Impact</div>
+            <h2 class="section-title">Numbers that matter</h2>
+            <p class="section-subtitle">
+                Real results from real deployments. Not pilots - production systems serving millions.
+            </p>
+            <div class="impact-grid">
+                <div class="impact-card featured" id="fcdo-impact">
+                    <div class="impact-header">
+                        <span class="impact-icon">🏛️</span>
+                        <div class="impact-client">Foreign, Commonwealth & Development Office</div>
+                    </div>
+                    <div class="impact-metric">UK Government's First Public LLM</div>
+                    <p class="impact-description">
+                        Live on every British Embassy website. Transformed 10-day email queues into 5-second responses.
+                        95% accuracy in production - exceeding human agent baseline. Saving £3.6M over 5 years while serving 500,000+ citizens annually.
+                    </p>
+                    <p class="impact-description" style="margin-top: 16px;">
+                        <strong style="color: var(--accent);">Winner: Digital Leaders AI Excellence Award 2025</strong>
+                        (with <a href="https://www.linkedin.com/posts/caution-your-blast_digileaders-impactawards-activity-7306241842101051392-hPeq/" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: underline;">CYB</a>)
+                    </p>
+                    <div class="impact-tags">
+                        <span class="impact-tag">LLM Architecture</span>
+                        <span class="impact-tag">Hallucination-Safe Design</span>
+                        <span class="impact-tag">Production Deployment</span>
+                        <span class="impact-tag">Featured on AI.gov.uk</span>
+                    </div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-header">
+                        <span class="impact-icon">💛</span>
+                        <div class="impact-client">GOSH Charity</div>
+                    </div>
+                    <div class="impact-metric">70% Adoption in 12 Weeks</div>
+                    <p class="impact-description">
+                        Possibly the fastest charity AI transformation in the UK. From strategy to coaching - creating sustainable capability across the entire organisation.
+                    </p>
+                    <div class="impact-tags">
+                        <span class="impact-tag">AI Transformation</span>
+                        <span class="impact-tag">Training</span>
+                    </div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-header">
+                        <span class="impact-icon">🏥</span>
+                        <div class="impact-client">NHS England</div>
+                    </div>
+                    <div class="impact-metric">90,000 Appointments</div>
+                    <p class="impact-description">
+                        Discovery across 11 ICBs identifying pathway to 90,000 extra appointments annually. Secured £500k funding with first prototype live in 6 weeks.
+                    </p>
+                    <div class="impact-tags">
+                        <span class="impact-tag">Discovery</span>
+                        <span class="impact-tag">Business Case</span>
+                    </div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-header">
+                        <span class="impact-icon">🌐</span>
+                        <div class="impact-client">Awin</div>
+                    </div>
+                    <div class="impact-metric">10 Days → 2 Hours</div>
+                    <p class="impact-description">
+                        Built publisher matching system processing 1,500 vendors in 2 hours - down from 10 days. Cut RFP response time by 50%.
+                    </p>
+                    <div class="impact-tags">
+                        <span class="impact-tag">Rapid Prototyping</span>
+                        <span class="impact-tag">Automation</span>
+                    </div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-header">
+                        <span class="impact-icon">📚</span>
+                        <div class="impact-client">Pearson</div>
+                    </div>
+                    <div class="impact-metric">4x Growth Platform</div>
+                    <p class="impact-description">
+                        Architecting unified AI platform for FTSE 100 education provider connecting all legacy systems. Single front door, cross-platform analytics, personalised learning pathways.
+                    </p>
+                    <div class="impact-tags">
+                        <span class="impact-tag">Platform Architecture</span>
+                        <span class="impact-tag">MCP Framework</span>
+                    </div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-header">
+                        <span class="impact-icon">📊</span>
+                        <div class="impact-client">Rimes</div>
+                    </div>
+                    <div class="impact-metric">500+ Hours/Month Saved</div>
+                    <p class="impact-description">
+                        AI transformation roadmap for firm processing millions of daily transactions. Upskilled 40+ developers who shipped AI features during the engagement.
+                    </p>
+                    <div class="impact-tags">
+                        <span class="impact-tag">Roadmap</span>
+                        <span class="impact-tag">Developer Enablement</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Section -->
+    <section id="clients" class="section">
+        <div class="container">
+            <div class="clients-intro">
+                <div class="section-label">Our Clients</div>
+                <h2 class="section-title">Trusted across sectors</h2>
+                <p class="section-subtitle">
+                    From central government to global enterprises, we work with organisations ready to move beyond AI experimentation.
+                </p>
+            </div>
+            <div class="clients-grid">
+                <div class="client-card">
+                    <img src="assets/images/clients/fcdo-dark.png" alt="FCDO" class="client-logo">
+                    <div class="client-name">Foreign, Commonwealth & Development Office</div>
+                    <div class="client-type">UK Government</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/nhs.png" alt="NHS England" class="client-logo">
+                    <div class="client-name">NHS England</div>
+                    <div class="client-type">Healthcare</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/gosh.png" alt="GOSH Charity" class="client-logo">
+                    <div class="client-name">GOSH Charity</div>
+                    <div class="client-type">Charity</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/homes-england-dark.png" alt="Homes England" class="client-logo">
+                    <div class="client-name">Homes England</div>
+                    <div class="client-type">Public Sector</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/awin.png" alt="Awin" class="client-logo">
+                    <div class="client-name">Awin</div>
+                    <div class="client-type">Global Tech (1,400+ employees)</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/rimes-dark.png" alt="Rimes" class="client-logo">
+                    <div class="client-name">Rimes</div>
+                    <div class="client-type">Financial Data</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/pearson.png" alt="Pearson" class="client-logo">
+                    <div class="client-name">Pearson</div>
+                    <div class="client-type">FTSE 100 Education</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/merton_dgf.png" alt="London Borough of Merton" class="client-logo">
+                    <div class="client-name">London Borough of Merton</div>
+                    <div class="client-type">Local Government</div>
+                </div>
+                <div class="client-card">
+                    <img src="assets/images/clients/greenwich.png" alt="University of Greenwich" class="client-logo">
+                    <div class="client-name">University of Greenwich</div>
+                    <div class="client-type">Higher Education</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Awards Section -->
+    <section id="awards" class="section">
+        <div class="container">
+            <div class="awards-content">
+                <div>
+                    <div class="section-label">Recognition</div>
+                    <h2 class="section-title">Award-winning work</h2>
+                    <p class="section-subtitle" style="margin-bottom: 40px;">
+                        Our recent work with the FCDO and CYB has been recognised across government and industry.
+                    </p>
+                    <div class="awards-list">
+                        <div class="award-item">
+                            <div class="award-icon">🏆</div>
+                            <div class="award-details">
+                                <h4>Digital Leaders AI Excellence Award</h4>
+                                <p>Winner 2025  - Privacy & Security</p>
+                            </div>
+                        </div>
+                        <div class="award-item">
+                            <div class="award-icon">🎖️</div>
+                            <div class="award-details">
+                                <h4>Computing Digital Technology Leaders</h4>
+                                <p>Nominated 2025  - Best AI Project</p>
+                            </div>
+                        </div>
+                        <div class="award-item">
+                            <div class="award-icon">🏛️</div>
+                            <div class="award-details">
+                                <h4>Government Innovator Award</h4>
+                                <p>Nominated 2025  - Civil Service Awards</p>
+                            </div>
+                        </div>
+                        <div class="award-item">
+                            <div class="award-icon">📚</div>
+                            <div class="award-details">
+                                <h4>Featured in "AI Demystified"</h4>
+                                <p>Pearson FT  - Amazon Bestseller</p>
+                            </div>
+                        </div>
+                        <div class="award-item">
+                            <div class="award-icon">🇬🇧</div>
+                            <div class="award-details">
+                                <h4>Featured Case Study</h4>
+                                <p>AI.gov.uk  - UK Government AI Use Case Library</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <div class="about-image-placeholder">
+                        <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia">
+                    </div>
+                </div>
+                <div class="about-text">
+                    <div class="section-label">About</div>
+                    <h3>David Gérouville-Farrell, PhD</h3>
+                    <p class="about-role">Founder & Principal Consultant</p>
+                    <div class="about-bio">
+                        <p>
+                            I built the UK Government's first public LLM-powered service. It's live on every British Embassy
+                            website, transforming 10-day email queues into 5-second responses while saving £3.6M.
+                        </p>
+                        <p>
+                            I work across the full AI stack - from technical architecture to board-level strategy to individual
+                            coaching. Before consulting, I spent 12 years as a university lecturer and research lead, securing
+                            £2.5M+ in funding and publishing 30+ peer-reviewed papers.
+                        </p>
+                        <p>
+                            I don't believe in AI hype. I believe in AI that ships, works, and creates measurable value.
+                            That's what Paidia delivers.
+                        </p>
+                    </div>
+                    <div class="credentials">
+                        <span class="credential">PhD Computer Science</span>
+                        <span class="credential">20 Years Shipping Products</span>
+                        <span class="credential">30+ Publications</span>
+                        <span class="credential">£2.5M+ Research Funding</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="contact-content">
+                <div class="section-label">Get Started</div>
+                <h2 class="section-title">Let's build something that works</h2>
+                <p class="section-subtitle" style="margin-left: auto; margin-right: auto;">
+                    Whether you're exploring AI strategy, need hands-on architecture help, or want to
+                    transform how your organisation uses AI - let's talk.
+                </p>
+                <div class="contact-cta">
+                    <a href="mailto:david@paidiaconsulting.com" class="contact-email">david@paidiaconsulting.com</a>
+                    <br>
+                    <a href="mailto:david@paidiaconsulting.com" class="btn btn-primary">
+                        Start a conversation
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia Consulting">
+                </div>
+                <div class="footer-text">
+                    © 2025 Paidia Consulting. London, UK.
+                </div>
+                <div class="footer-links">
+                    <a href="https://www.linkedin.com/in/davidfarrell81" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="mailto:david@paidiaconsulting.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar background on scroll
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 15, 0.95)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 15, 0.8)';
+            }
+        });
+
+        // Simple intersection observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards and sections
+        document.querySelectorAll('.service-card, .impact-card, .client-card, .award-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
