@@ -856,7 +856,7 @@
                     Digital Leaders AI Excellence Award Winner 2025
                 </a>
                 <h1>
-                    We build <span class="highlight">AI systems</span> that actually work.
+                    AI that <em>actually</em> works - from <span class="highlight">boardroom</span> to <span class="highlight">codebase</span> to <span class="highlight">culture</span>.
                 </h1>
                 <p class="hero-description">
                     Deep AI expertise, from architecture to deployment. Whether you need strategy, coaching, or production code - we turn your ambition into real results.
@@ -1231,18 +1231,34 @@
     </footer>
 
     <script>
-        // Smooth scroll for anchor links
+        // Smooth scroll for anchor links (preserves browser history)
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const href = this.getAttribute('href');
+                const target = document.querySelector(href);
                 if (target) {
+                    e.preventDefault();
                     target.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
+                    // Update URL hash after scroll starts (preserves back button)
+                    history.pushState(null, '', href);
                 }
             });
+        });
+
+        // Handle back/forward button
+        window.addEventListener('popstate', function() {
+            const hash = window.location.hash;
+            if (hash) {
+                const target = document.querySelector(hash);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
 
         // Navbar background on scroll
