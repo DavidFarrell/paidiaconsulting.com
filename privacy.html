@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Paidia Consulting</title>
+    <meta name="description" content="Privacy Policy for Paidia Consulting Ltd - how we handle your data.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6a6a7a;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.3);
+            --accent-subtle: rgba(0, 212, 170, 0.1);
+            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #00a388 100%);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 0;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-cta {
+            background: var(--gradient-accent);
+            color: var(--bg-primary) !important;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            opacity: 0.9;
+        }
+
+        /* Content */
+        .policy-content {
+            padding: 140px 0 80px;
+        }
+
+        .policy-header {
+            margin-bottom: 48px;
+        }
+
+        .policy-header h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .policy-meta {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
+        .policy-section {
+            margin-bottom: 48px;
+        }
+
+        .policy-section h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .policy-section h3 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .policy-section p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+
+        .policy-section ul {
+            color: var(--text-secondary);
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        .policy-section li {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .policy-section a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .policy-section a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .contact-box p {
+            margin-bottom: 8px;
+        }
+
+        .contact-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: 48px 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        footer .container {
+            max-width: 1200px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo img {
+            height: 32px;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia Consulting">
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#impact">Impact</a></li>
+                <li><a href="index.html#clients">Clients</a></li>
+                <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Policy Content -->
+    <main class="policy-content">
+        <div class="container">
+            <header class="policy-header">
+                <h1>Privacy Policy</h1>
+                <p class="policy-meta">Last updated: 28 January 2026</p>
+            </header>
+
+            <section class="policy-section">
+                <h2>1. Who We Are</h2>
+                <p>Paidia Consulting Ltd ("we", "us", "our") is a company registered in England and Wales.</p>
+                <div class="contact-box">
+                    <p><strong>Company Name:</strong> Paidia Consulting Ltd</p>
+                    <p><strong>Company Number:</strong> 13226541</p>
+                    <p><strong>ICO Registration:</strong> ZB407470</p>
+                    <p><strong>Registered Address:</strong> 64 Southwark Bridge Road, London, SE1 0AS</p>
+                    <p><strong>Email:</strong> <a href="mailto:david@paidiaconsulting.com">david@paidiaconsulting.com</a></p>
+                </div>
+                <p>We are committed to protecting your privacy and handling your personal data in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>2. What Data We Collect</h2>
+
+                <h3>2.1 Website Visitors</h3>
+                <p>Our main website (paidiaconsulting.com) does not use cookies, analytics, or tracking technologies. We do not collect any personal data from casual website visitors.</p>
+
+                <h3>2.2 Business Enquiries</h3>
+                <p>When you contact us via email, we collect:</p>
+                <ul>
+                    <li>Your name and email address</li>
+                    <li>Your organisation (if provided)</li>
+                    <li>The content of your message</li>
+                </ul>
+                <p>This information is used solely to respond to your enquiry and, where appropriate, to discuss potential work together.</p>
+
+                <h3>2.3 Clients and Suppliers</h3>
+                <p>When we work with you as a client or supplier, we collect:</p>
+                <ul>
+                    <li>Contact details (name, email, phone number)</li>
+                    <li>Company information (name, address, VAT number)</li>
+                    <li>Payment and invoicing details</li>
+                    <li>Project-related communications and documents</li>
+                </ul>
+
+                <h3>2.4 Research Projects and Games</h3>
+                <p>Paidia Consulting develops interactive games and digital platforms, sometimes as part of research projects conducted in collaboration with academic institutions or research organisations.</p>
+                <p>When acting as a <strong>data processor</strong> on behalf of research institutions (the data controllers), we may process data collected through these platforms. The specific data collected, its purposes, and retention periods are defined by the research institution's ethics approval and participant information sheets.</p>
+                <p>Typical data collected in research contexts may include:</p>
+                <ul>
+                    <li>Demographic information (e.g., age, sex at birth, partial postcode, ethnicity)</li>
+                    <li>Game performance data and scores</li>
+                    <li>Research-specific measurements</li>
+                    <li>Timestamps and session identifiers</li>
+                </ul>
+                <p>For any research project you participate in, please refer to the participant information sheet provided by the lead research institution for full details about data handling specific to that study.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>3. Legal Basis for Processing</h2>
+                <p>We process personal data under the following legal bases:</p>
+                <ul>
+                    <li><strong>Contract:</strong> To fulfil our contractual obligations with clients and suppliers</li>
+                    <li><strong>Legitimate interests:</strong> To respond to business enquiries and manage our business operations</li>
+                    <li><strong>Consent:</strong> Where you have given explicit consent (e.g., for research participation)</li>
+                    <li><strong>Legal obligation:</strong> To comply with legal and regulatory requirements (e.g., tax records)</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <h2>4. How We Use Your Data</h2>
+                <p>We use your personal data to:</p>
+                <ul>
+                    <li>Respond to your enquiries and provide information about our services</li>
+                    <li>Deliver contracted services and manage our client relationships</li>
+                    <li>Process payments and maintain financial records</li>
+                    <li>Comply with legal and regulatory obligations</li>
+                    <li>Process research data on behalf of research institutions (as a data processor)</li>
+                </ul>
+                <p>We do not sell your personal data to third parties, nor do we use it for automated decision-making or profiling.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>5. Data Sharing</h2>
+                <p>We may share your personal data with:</p>
+                <ul>
+                    <li><strong>Service providers:</strong> Cloud hosting providers, email services, and accounting software (all UK/EU based or with appropriate safeguards)</li>
+                    <li><strong>Research partners:</strong> When acting as a data processor, data is shared with the lead research institution as specified in the research agreement</li>
+                    <li><strong>Professional advisers:</strong> Accountants and legal advisers as required</li>
+                    <li><strong>Regulatory authorities:</strong> Where required by law (e.g., HMRC)</li>
+                </ul>
+                <p>We require all third parties to respect the security of your personal data and treat it in accordance with the law.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>6. Data Security</h2>
+                <p>We implement appropriate technical and organisational measures to protect your personal data, including:</p>
+                <ul>
+                    <li>Encryption of data in transit and at rest</li>
+                    <li>Access controls and authentication</li>
+                    <li>Regular security reviews</li>
+                    <li>Use of reputable, secure cloud service providers</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <h2>7. Data Retention</h2>
+                <p>We retain personal data only for as long as necessary for the purposes for which it was collected:</p>
+                <ul>
+                    <li><strong>Business enquiries:</strong> 2 years from last contact (unless a business relationship develops)</li>
+                    <li><strong>Client and supplier records:</strong> 7 years after the end of the business relationship (for legal and tax purposes)</li>
+                    <li><strong>Research data:</strong> As specified by the research institution's ethics approval and data management plan</li>
+                </ul>
+            </section>
+
+            <section class="policy-section">
+                <h2>8. Your Rights</h2>
+                <p>Under UK GDPR, you have the following rights:</p>
+                <ul>
+                    <li><strong>Right of access:</strong> Request a copy of the personal data we hold about you</li>
+                    <li><strong>Right to rectification:</strong> Request correction of inaccurate or incomplete data</li>
+                    <li><strong>Right to erasure:</strong> Request deletion of your personal data (subject to legal obligations)</li>
+                    <li><strong>Right to restrict processing:</strong> Request that we limit how we use your data</li>
+                    <li><strong>Right to data portability:</strong> Request a copy of your data in a machine-readable format</li>
+                    <li><strong>Right to object:</strong> Object to processing based on legitimate interests</li>
+                    <li><strong>Right to withdraw consent:</strong> Where processing is based on consent, withdraw it at any time</li>
+                </ul>
+                <p>To exercise any of these rights, please contact us at <a href="mailto:david@paidiaconsulting.com">david@paidiaconsulting.com</a>.</p>
+                <p>For research projects where we act as a data processor, please contact the lead research institution (the data controller) to exercise your rights.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>9. International Transfers</h2>
+                <p>We primarily store and process data within the UK and European Economic Area. Where data is transferred outside the UK/EEA (e.g., to cloud service providers), we ensure appropriate safeguards are in place, such as Standard Contractual Clauses or adequacy decisions.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>10. Complaints</h2>
+                <p>If you have concerns about how we handle your personal data, please contact us first at <a href="mailto:david@paidiaconsulting.com">david@paidiaconsulting.com</a>.</p>
+                <p>You also have the right to lodge a complaint with the Information Commissioner's Office (ICO):</p>
+                <div class="contact-box">
+                    <p><strong>Information Commissioner's Office</strong></p>
+                    <p>Website: <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a></p>
+                    <p>Telephone: 0303 123 1113</p>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2>11. Changes to This Policy</h2>
+                <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date.</p>
+            </section>
+
+            <section class="policy-section">
+                <h2>12. Contact Us</h2>
+                <p>For any questions about this privacy policy or our data practices, please contact:</p>
+                <div class="contact-box">
+                    <p><strong>Data Controller:</strong> Paidia Consulting Ltd</p>
+                    <p><strong>Contact:</strong> Dr David Farrell</p>
+                    <p><strong>Email:</strong> <a href="mailto:david@paidiaconsulting.com">david@paidiaconsulting.com</a></p>
+                    <p><strong>Address:</strong> 64 Southwark Bridge Road, London, SE1 0AS</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia Consulting">
+                </div>
+                <div class="footer-text">
+                    &copy; 2026 Paidia Consulting Ltd. London, UK.
+                </div>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="mailto:david@paidiaconsulting.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar background on scroll
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 15, 0.95)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 15, 0.8)';
+            }
+        });
+    </script>
+</body>
+</html>
