@@ -212,6 +212,15 @@
   .quote-ph-label { font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rz-paper-50); }
   .quote-ph-note { color: var(--rz-paper-50); margin: var(--rz-sp-4) 0 auto; }
   .quote-more { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rz-paper-50); margin-top: var(--rz-sp-8); }
+  /* Small testimonial cards: a ruled footer with the client's logo above the
+     attribution, echoing the featured ZINC card's logo treatment. */
+  .quote-row .quote-card { display: flex; flex-direction: column; }
+  .quote-foot { margin-top: auto; padding-top: var(--rz-sp-4); border-top: 1.5px solid color-mix(in srgb, var(--rz-ink) 16%, transparent); }
+  .quote-foot .quote-attrib { margin-top: var(--rz-sp-3); }
+  .card-logo { display: block; color: var(--rz-ink); }
+  .card-logo img { height: 32px; width: auto; display: block; }
+  .card-logo svg { height: 30px; width: auto; display: block; }
+  .card-logo--psc { font-family: var(--rz-display); font-size: 1.25rem; letter-spacing: -0.01em; line-height: 1; color: var(--rz-ink); }
 
   /* Clients logo wall --------------------------------------------------- */
   .clients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-12); }
@@ -568,10 +577,13 @@
           hackathons. We could feel the enthusiasm in the room and confidence
           and capability being built.&rdquo;
         </blockquote>
-        <p class="quote-attrib quote-attrib--ink">
-          <strong>Antonio Weiss</strong>, Senior Partner, The PSC<br>
-          author of &ldquo;AI Demystified&rdquo; (Financial Times Press)
-        </p>
+        <div class="quote-foot">
+          <span class="card-logo card-logo--psc">The PSC</span>
+          <p class="quote-attrib quote-attrib--ink">
+            <strong>Antonio Weiss</strong>, Senior Partner<br>
+            author of &ldquo;AI Demystified&rdquo; (Financial Times Press)
+          </p>
+        </div>
       </div>
 
       <!-- Numerical Partners - James Bentley. Approved by email 9 Jun 2026
@@ -587,9 +599,10 @@
           are now in real use, driving measurable value. I'd recommend them
           without hesitation.&rdquo;
         </blockquote>
-        <p class="quote-attrib quote-attrib--ink">
-          <strong>James Bentley</strong>, Founder, Numerical Partners
-        </p>
+        <div class="quote-foot">
+          <span class="card-logo"><svg class="logo-mark" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numerical Partners"><path d="M8 7 L20 7 M17.5 5 L20 7 L17.5 9" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="3" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">(</text><text x="9" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-style="italic" fill="currentColor">n</text><text x="18" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">)</text></svg></span>
+          <p class="quote-attrib quote-attrib--ink"><strong>James Bentley</strong>, Founder, Numerical Partners</p>
+        </div>
       </div>
 
       <!-- GOSH - Richard Grove. Approved; names David by name (the company is not
@@ -603,9 +616,10 @@
           IQ, giving people the confidence to try things and feel comfortable with
           AI, so the whole organisation gets the best from it.&rdquo;
         </blockquote>
-        <p class="quote-attrib quote-attrib--ink">
-          <strong>Richard Grove</strong>, CTO, GOSH Charity
-        </p>
+        <div class="quote-foot">
+          <span class="card-logo"><img src="assets/images/clients/gosh-ink.png" alt="GOSH Charity" data-no-zoom></span>
+          <p class="quote-attrib quote-attrib--ink"><strong>Richard Grove</strong>, CTO, GOSH Charity</p>
+        </div>
       </div>
     </div>
 
