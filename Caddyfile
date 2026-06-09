@@ -7,12 +7,14 @@
 	root * /app
 	encode zstd gzip
 
-	# Long-lived caching for fingerprinted/static assets. These filenames are
-	# stable, so a year + immutable is safe; bump a filename to bust the cache.
+	# Assets aren't content-hashed, so avoid "immutable" (it would pin an
+	# overwritten file for a year). Cache an hour for speed, then serve-stale
+	# while revalidating - so an in-place asset edit propagates within ~a day
+	# on its own, and a query bump (?v=N) forces it immediately.
 	@static {
 		path *.css *.js *.woff2 *.woff *.png *.webp *.svg *.ico *.jpg *.jpeg
 	}
-	header @static Cache-Control "public, max-age=31536000, immutable"
+	header @static Cache-Control "public, max-age=3600, stale-while-revalidate=86400"
 
 	# HTML revalidates quickly so content edits go live without a hard refresh.
 	@html {
