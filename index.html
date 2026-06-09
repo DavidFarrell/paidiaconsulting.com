@@ -31,7 +31,6 @@
      vendored system, so a future restore is a single block deletion.
      ---------------------------------------------------------------------- */
   :root {
-    --reveal: 0.55s;
     --rz-rot-xs: -0.3deg;
     --rz-rot-sm: -0.6deg;
     --rz-rot-sm-cw: 0.7deg;
@@ -300,28 +299,16 @@
      pink bullets; pink-number cards keep the default yellow. */
   .svc-list--pink li::before { background: var(--rz-pink); }
 
-  /* "What we do" vertical-reveal grid: cards collapse to title + chip; on
-     hover/focus/tap the drawer opens downward, the + rotates to a yellow x,
-     and the border lightens. Row siblings stay collapsed (align-items:start)
-     so the opened card pushes the row below it down. */
-  .vg { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); align-items: start; margin-top: var(--rz-sp-8); }
-  @media (max-width: 860px) { .vg { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .vg { grid-template-columns: 1fr; } }
-  .vcard { background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong); border-radius: var(--rz-radius); padding: clamp(1.4rem, 2.2vw, 2rem); cursor: pointer; transition: border-color var(--reveal) var(--rz-ease); }
-  .vcard:hover, .vcard:focus-within, .vcard.is-open { border-color: var(--rz-paper-50); }
-  .vcard:focus-visible { outline: 3px solid var(--rz-yellow); outline-offset: 3px; }
-  .vcard__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
-  .vcard__more { font-family: var(--rz-mono); font-size: 1.5rem; line-height: 1; color: var(--rz-paper-50); transition: transform var(--reveal) var(--rz-ease), color var(--rz-dur-base) var(--rz-ease); }
-  .vcard:hover .vcard__more, .vcard:focus-within .vcard__more, .vcard.is-open .vcard__more { transform: rotate(45deg); color: var(--rz-yellow); }
-  /* Cross matches the card's number chip: pink-chip cards get a pink cross. */
-  .vcard:has(.rz-chip--pink):hover .vcard__more, .vcard:has(.rz-chip--pink):focus-within .vcard__more, .vcard:has(.rz-chip--pink).is-open .vcard__more { color: var(--rz-pink); }
-  .vcard__title { font-family: var(--rz-display); font-size: clamp(1.35rem, 1.9vw, 1.65rem); line-height: 1.05; letter-spacing: var(--rz-track-tight); margin: 0; }
-  .vcard__reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--reveal) var(--rz-ease); }
-  .vcard:hover .vcard__reveal, .vcard:focus-within .vcard__reveal, .vcard.is-open .vcard__reveal { grid-template-rows: 1fr; }
-  .vcard__inner { overflow: hidden; } /* required for the 0fr->1fr trick */
-  .vcard__inner .svc-list { margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1.5px solid var(--rz-rule); opacity: 0; transition: opacity calc(var(--reveal) * .8) var(--rz-ease); }
-  .vcard:hover .vcard__inner .svc-list, .vcard:focus-within .vcard__inner .svc-list, .vcard.is-open .vcard__inner .svc-list { opacity: 1; }
-  @media (prefers-reduced-motion: reduce) { .vcard, .vcard__reveal, .vcard__more, .vcard__inner .svc-list { transition: none; } }
+  /* "What we do": six static cards, all the same width and height.
+     grid-auto-rows: 1fr equalises the two row heights; stretch equalises within
+     a row, so every box matches the tallest. */
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-8); }
+  @media (max-width: 860px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .svc-grid { grid-template-columns: 1fr; } }
+  .svc-card { background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong); border-radius: var(--rz-radius); padding: clamp(1.4rem, 2.2vw, 2rem); display: flex; flex-direction: column; }
+  .svc-card .rz-chip { align-self: flex-start; }
+  .svc-card__title { font-family: var(--rz-display); font-size: clamp(1.35rem, 1.9vw, 1.65rem); line-height: 1.05; letter-spacing: var(--rz-track-tight); margin: 1.1rem 0 1.1rem; }
+  .svc-card .svc-list { padding-top: 1.1rem; border-top: 1.5px solid var(--rz-rule); }
 
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
@@ -426,84 +413,54 @@
 
     <p class="services-label rz-eyebrow rz-eyebrow--yellow">What we do</p>
 
-    <div class="vg">
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--yel">01</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">AI strategy &amp; advisory</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list svc-list--pink">
-            <li>Board-level guidance on where AI creates real value</li>
-            <li>Focus on the few use cases that drive most of the impact</li>
-          </ul>
-        </div></div>
+    <div class="svc-grid">
+      <article class="svc-card">
+        <span class="rz-chip rz-chip--yel">01</span>
+        <h3 class="svc-card__title">AI strategy &amp; advisory</h3>
+        <ul class="svc-list svc-list--pink">
+          <li>Board-level guidance on where AI creates real value</li>
+          <li>Focus on the few use cases that drive most of the impact</li>
+        </ul>
       </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--pink">02</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Coaching &amp; mentoring</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list">
-            <li>Individual and team coaching that reshapes mental models</li>
-            <li>Understand AI's jagged frontier - where it excels and where it fails</li>
-          </ul>
-        </div></div>
+      <article class="svc-card">
+        <span class="rz-chip rz-chip--pink">02</span>
+        <h3 class="svc-card__title">Coaching &amp; mentoring</h3>
+        <ul class="svc-list">
+          <li>Individual and team coaching that reshapes mental models</li>
+          <li>Understand AI's jagged frontier - where it excels and where it fails</li>
+        </ul>
       </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--yel">03</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Transformation &amp; training</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list svc-list--pink">
-            <li>Sustainable AI capability from boardroom to frontline</li>
-            <li>A workforce taken from zero use to 70% adoption in 12 weeks</li>
-          </ul>
-        </div></div>
+      <article class="svc-card">
+        <span class="rz-chip rz-chip--yel">03</span>
+        <h3 class="svc-card__title">Transformation &amp; training</h3>
+        <ul class="svc-list svc-list--pink">
+          <li>Sustainable AI capability from boardroom to frontline</li>
+          <li>A workforce taken from zero use to 70% adoption in 12 weeks</li>
+        </ul>
       </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--pink">04</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Architecture &amp; engineering</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list">
-            <li>Production-grade systems built for accuracy, security and scale</li>
-            <li>Retrieval pipelines to agentic workflows, designed not to hallucinate when it matters</li>
-          </ul>
-        </div></div>
+      <article class="svc-card">
+        <span class="rz-chip rz-chip--pink">04</span>
+        <h3 class="svc-card__title">Architecture &amp; engineering</h3>
+        <ul class="svc-list">
+          <li>Production-grade systems built for accuracy, security and scale</li>
+          <li>Retrieval pipelines to agentic workflows, designed not to hallucinate when it matters</li>
+        </ul>
       </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--yel">05</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Rapid prototyping</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list svc-list--pink">
-            <li>Working demos in days, not quarters</li>
-            <li>Build fast to prove value, then hand off or scale to production</li>
-          </ul>
-        </div></div>
+      <article class="svc-card">
+        <span class="rz-chip rz-chip--yel">05</span>
+        <h3 class="svc-card__title">Rapid prototyping</h3>
+        <ul class="svc-list svc-list--pink">
+          <li>Working demos in days, not quarters</li>
+          <li>Build fast to prove value, then hand off or scale to production</li>
+        </ul>
       </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--pink">06</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">AI governance</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list">
-            <li>Frameworks that enable rather than block</li>
-            <li>Risk tiers, approvals and transparency aligned with UK Government best practice</li>
-          </ul>
-        </div></div>
+      <article class="svc-card">
+        <span class="rz-chip rz-chip--pink">06</span>
+        <h3 class="svc-card__title">AI governance</h3>
+        <ul class="svc-list">
+          <li>Frameworks that enable rather than block</li>
+          <li>Risk tiers, approvals and transparency aligned with UK Government best practice</li>
+        </ul>
       </article>
     </div>
   </div>
@@ -549,7 +506,7 @@
           <li>Strategy through to coaching, building sustainable capability across the whole organisation</li>
           <li>One-to-one coaching with the C-suite and senior leaders</li>
           <li>Architecture and engineering on priority workflows</li>
-          <li>Weekly AI Lab sessions co-designing GPTs with teams across the charity</li>
+          <li>Weekly AI Lab sessions co-designing GPTs and agentic workflows with teams across the charity</li>
         </ul>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">AI transformation</span>
@@ -930,11 +887,6 @@
       });
     }
   })();
-
-  // "What we do" cards: tap-to-open on touch (desktop is pure-CSS hover/focus).
-  document.querySelectorAll('.vcard').forEach(function (card) {
-    card.addEventListener('click', function () { card.classList.toggle('is-open'); });
-  });
 </script>
 
 <!-- Click-to-zoom image lightbox (system default). Load LAST. -->
