@@ -205,10 +205,14 @@
   .award-row h3 { font-family: var(--rz-display); font-size: var(--rz-fs-h4); line-height: 1.1; letter-spacing: var(--rz-track-tight); margin: 0; }
   .award-row p { margin: var(--rz-sp-2) 0 0; color: var(--rz-paper-70); font-size: var(--rz-fs-sm); }
 
-  /* Brand logomark in the header (paper-recoloured Paidia mark). */
-  .rz-header__brand--logo { display: inline-flex; align-items: center; padding: var(--rz-sp-2) 0; }
-  .rz-header__brand--logo img { height: 46px; width: auto; display: block; }
-  @media (max-width: 600px) { .rz-header__brand--logo img { height: 38px; } }
+  /* Brand lockup in the header: fennec-fox emblem + PAIDIA wordmark. */
+  .rz-header__brand--logo { display: inline-flex; align-items: center; gap: var(--rz-sp-4); padding: var(--rz-sp-2) 0; }
+  .rz-header__brand--logo img { height: 90px; width: auto; display: block; }
+  .rz-header__brand--wordmark { font-family: var(--rz-display); font-size: 2.1rem; letter-spacing: var(--rz-track-tight); color: var(--rz-paper); line-height: 1; }
+  @media (max-width: 600px) {
+    .rz-header__brand--logo img { height: 56px; }
+    .rz-header__brand--wordmark { font-size: 1.5rem; }
+  }
 
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
@@ -232,7 +236,8 @@
 <header class="rz-header">
   <div class="rz-container rz-header__inner">
     <a class="rz-header__brand rz-header__brand--logo" href="#top" aria-label="Paidia Consulting - home">
-      <img src="assets/images/paidia-logo-paper.png" alt="Paidia Consulting" data-no-zoom />
+      <img src="assets/images/paidia-logo-paper.png" alt="" data-no-zoom />
+      <span class="rz-header__brand--wordmark">PAIDIA</span>
     </a>
     <button class="rz-nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
       <span></span><span></span><span></span>
