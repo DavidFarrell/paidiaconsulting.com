@@ -215,7 +215,10 @@
   /* Small testimonial cards: a ruled footer with the client's logo above the
      attribution, echoing the featured ZINC card's logo treatment. */
   .quote-row .quote-card { display: flex; flex-direction: column; }
-  .quote-foot { margin-top: auto; padding-top: var(--rz-sp-4); border-top: 1.5px solid color-mix(in srgb, var(--rz-ink) 16%, transparent); }
+  /* Fixed-height footer so the rule sits at the same level on every card:
+     logo pinned just under the rule, attribution pinned to the card base. */
+  .quote-foot { margin-top: auto; padding-top: var(--rz-sp-4); border-top: 1.5px solid color-mix(in srgb, var(--rz-ink) 16%, transparent); display: flex; flex-direction: column; min-height: 8.5rem; }
+  .quote-foot .card-logo { margin-bottom: auto; }
   .quote-foot .quote-attrib { margin-top: var(--rz-sp-3); }
   .card-logo { display: block; color: var(--rz-ink); }
   .card-logo img { height: 32px; width: auto; display: block; }
