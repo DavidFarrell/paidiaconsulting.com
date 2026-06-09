@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Paidia · Riso Zine Funky — Semantic aliases over tokens.css
+   --------------------------------------------------------------------------
+   Generic fg/bg/accent names so a page can be built without learning the
+   --rz-* token set, plus sensible element defaults. Import this LAST.
+
+   ⚠️ WEBSITE ONLY. Do NOT load this into a deck. It sets global element
+   defaults (html/body/h1-h6/p/a) that would fight the deck's own scale and
+   the deck-stage runtime. Decks load:  fonts.css → tokens.css → deck.css.
+   Web pages load: fonts.css → tokens.css → components.css → THIS file.
+   deck.css and components.css are MUTUALLY EXCLUSIVE — never both on one page
+   (they define some of the same class names, e.g. .rz-display/.rz-list).
+   ========================================================================== */
+
+@import url("./src/tokens.css");
+
+:root {
+  /* Surfaces */
+  --bg1:     var(--rz-purple);        /* default page plate            */
+  --bg2:     var(--rz-purple-deep);   /* alternating / deeper plate    */
+  --bg-spot1: var(--rz-yellow);       /* fluoro plate #1               */
+  --bg-spot2: var(--rz-pink);         /* fluoro plate #2               */
+  --bg-paper: var(--rz-paper);        /* light plate (figures, cards)  */
+
+  /* Ink */
+  --fg1:     var(--rz-paper);         /* default text (on purple)      */
+  --fg-mute: var(--rz-paper-70);      /* captions, footers             */
+  --fg-on-spot: var(--rz-ink);        /* text dropped onto a spot plate*/
+
+  /* Brand voice — two spot inks, no single "accent" */
+  --accent:   var(--rz-yellow);       /* primary spot                  */
+  --accent-2: var(--rz-pink);         /* secondary spot                */
+
+  /* Type */
+  --font-display: var(--rz-display);
+  --font-body:    var(--rz-sans);
+  --font-mono:    var(--rz-mono);
+
+  --h1: var(--rz-fs-h1);
+  --h2: var(--rz-fs-h2);
+  --h3: var(--rz-fs-h3);
+  --h4: var(--rz-fs-h4);
+  --body: var(--rz-fs-body);
+}
+
+/* ---- Element defaults --------------------------------------------------- */
+html, body {
+  margin: 0;
+  background: var(--bg1);
+  color: var(--fg1);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--rz-lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;            /* Archivo Black is already heavy */
+  letter-spacing: var(--rz-track-heading);
+  line-height: 0.96;
+  color: var(--fg1);
+}
+h1 { font-size: var(--h1); line-height: var(--rz-lh-h1); }
+h2 { font-size: var(--h2); line-height: var(--rz-lh-h2); }
+h3 { font-size: var(--h3); line-height: var(--rz-lh-h3); }
+h4 { font-size: var(--h4); line-height: var(--rz-lh-h4); }
+
+p {
+  margin: 0 0 1.25rem;
+  max-width: var(--rz-prose-max);
+  font-size: var(--rz-fs-body);
+  line-height: var(--rz-lh-body);
+  color: var(--fg1);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+  transition: color var(--rz-dur-fast) var(--rz-ease);
+}
+a:hover { color: var(--accent-2); }
+
+strong { font-weight: 700; }
+
+code, pre, kbd { font-family: var(--font-mono); }
+
+hr { border: 0; border-top: 1px solid var(--rz-rule); margin: var(--rz-sp-12) 0; }
+
+::selection { background: var(--rz-yellow); color: var(--rz-ink); }
