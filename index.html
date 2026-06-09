@@ -64,6 +64,10 @@
      (3.5rem) is wider than the content box, so allow them to break rather
      than overflow the viewport. Purely a wrapping rule - no new colour/shadow. */
   .rz-display, h1.rz-display, h2 { overflow-wrap: break-word; }
+  /* Hero headline runs very tight (lh 0.86); the "g" descender in
+     "organisations" was clipping into the yellow "use" highlight box below.
+     A touch more leading lets descenders clear the mark. */
+  .rz-hero .rz-display { line-height: 0.96; }
   @media (max-width: 520px) {
     /* Tighten the display floor so the poster headline fits a small screen
        without clipping, while staying as large as the column allows. */
