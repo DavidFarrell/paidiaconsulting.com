@@ -244,11 +244,8 @@
   .rz-link { color: var(--rz-paper); text-decoration: underline; text-decoration-color: var(--rz-pink); text-underline-offset: 3px; text-decoration-thickness: 2px; transition: color var(--rz-dur-fast) var(--rz-ease), text-decoration-color var(--rz-dur-fast) var(--rz-ease); }
   .rz-link:hover { color: var(--rz-yellow); text-decoration-color: var(--rz-yellow); }
 
-  /* Scroll cue nudging the eye down to the six service cards. Uses the allowed
-     chevron glyph (not a down-arrow), gentle motion, reduced-motion aware. */
-  .services-cue { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rz-yellow); margin: var(--rz-sp-8) 0 0; display: inline-block; animation: cuePulse 2.4s var(--rz-ease) infinite; }
-  @keyframes cuePulse { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(3px); } }
-  @media (prefers-reduced-motion: reduce) { .services-cue { animation: none; opacity: 1; } }
+  /* Static lead-in label pointing to the six service cards (no animation). */
+  .services-cue { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rz-yellow); margin: var(--rz-sp-8) 0 0; display: inline-block; }
 
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
