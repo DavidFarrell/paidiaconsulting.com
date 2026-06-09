@@ -12,7 +12,7 @@
    (they define some of the same class names, e.g. .rz-display/.rz-list).
    ========================================================================== */
 
-@import url("./src/tokens.css");
+@import url("./tokens.css");
 
 :root {
   /* Surfaces */
