@@ -171,25 +171,38 @@
 
   /* Testimonials -------------------------------------------------------- */
   /* One featured real quote (ZINC), then a row of real + pending slots. */
-  .quote-card--feature { max-width: 60rem; margin-top: var(--rz-sp-12); }
+  .quote-card--feature { max-width: 56rem; margin-top: var(--rz-sp-12); }
+  .quote-card--feature .rz-chip { margin-bottom: var(--rz-sp-6); }
+  /* Display blockquote now carries only a SHORT pull-quote, so it earns the
+     poster voice instead of running a whole paragraph through display type. */
   .quote-card blockquote {
     margin: 0;
     font-family: var(--rz-display);
-    font-size: var(--rz-fs-h3); line-height: var(--rz-lh-h3);
+    font-size: clamp(2rem, 4vw, var(--rz-fs-h3)); line-height: 0.98;
     letter-spacing: var(--rz-track-tight);
     color: var(--rz-ink);   /* deep purple ink on the paper plate */
+    max-width: 20ch;
   }
-  .quote-card blockquote.quote-sm { font-size: var(--rz-fs-h4); }
-  .quote-card .quote-body { color: var(--rz-ink); margin-top: var(--rz-sp-4); }
+  .quote-card blockquote.quote-sm { font-size: var(--rz-fs-h4); line-height: 1.05; max-width: none; }
+  /* The full quote reads as proper, comfortable body copy. */
+  .quote-card .quote-body { color: var(--rz-ink); margin: var(--rz-sp-6) 0 0; max-width: 58ch; font-size: 1.08rem; line-height: 1.62; }
   .quote-attrib { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rz-paper-70); margin-top: var(--rz-sp-6); line-height: 1.5; }
   .quote-attrib strong { color: var(--rz-paper); }
   .quote-attrib--ink { color: var(--rz-ink); opacity: 0.78; }
   .quote-attrib--ink strong { color: var(--rz-ink); opacity: 1; }
+  /* Featured attribution as a ruled footer: logo left, person right. */
+  .quote-attrib--source { display: flex; align-items: center; justify-content: space-between; gap: var(--rz-sp-6); margin-top: var(--rz-sp-8); padding-top: var(--rz-sp-4); width: 100%; max-width: none; border-top: 1.5px solid color-mix(in srgb, var(--rz-ink) 16%, transparent); }
+  .quote-attrib__text { text-align: right; }
   /* ZINC RE letterform logo (inline SVG, recoloured via currentColor). */
-  .zinc-logo { display: inline-block; line-height: 0; }
+  .zinc-logo { display: inline-block; line-height: 0; flex: 0 0 auto; }
   .zinc-logo svg { display: block; width: 100%; height: auto; }
   .zinc-logo--wall { color: var(--rz-paper); width: 116px; margin-bottom: var(--rz-sp-4); }
-  .zinc-logo--quote { color: var(--rz-ink); width: 92px; margin-bottom: var(--rz-sp-3); }
+  .zinc-logo--quote { color: var(--rz-ink); width: 118px; }
+  @media (max-width: 560px) {
+    .quote-attrib--source { align-items: flex-start; flex-direction: column; }
+    .quote-attrib__text { text-align: left; }
+    .zinc-logo--quote { width: 104px; }
+  }
   .quote-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
   @media (max-width: 900px) { .quote-row { grid-template-columns: 1fr; } }
   /* Pending testimonials shown as honest, visibly-empty slots - not faked. */
@@ -527,22 +540,20 @@
          TODO: add assets/images/clients/zinc.png and swap the wordmark for an img. -->
     <div class="rz-plate rz-plate--paper quote-card quote-card--feature">
       <span class="rz-chip rz-chip--pink">Real Estate Asset Management</span>
-      <blockquote>
+      <blockquote>&ldquo;We've asked him back.&rdquo;</blockquote>
+      <p class="quote-body">
         &ldquo;I brought David in to get my team - a small senior team at a real
         estate investment firm - genuinely capable with AI, not just curious
-        about it. Over four days he did exactly that.&rdquo;
-      </blockquote>
-      <p class="quote-body">
-        &ldquo;The training was practical, well-paced, and pitched perfectly for
-        people who needed to apply this to real work the next morning, not sit
-        through theory. The team came away noticeably more confident and we're
-        already using what he taught us. We've asked him back. If you want someone
-        who can take a team from cautious to capable quickly, I'd recommend him
-        without hesitation.&rdquo;
+        about it. Over four days he did exactly that. The training was practical,
+        well-paced, and pitched perfectly for people who needed to apply this to
+        real work the next morning, not sit through theory. The team came away
+        noticeably more confident and we're already using what he taught us.
+        We've asked him back. If you want someone who can take a team from
+        cautious to capable quickly, I'd recommend him without hesitation.&rdquo;
       </p>
-      <p class="quote-attrib quote-attrib--ink">
-        <span class="zinc-logo zinc-logo--quote"><svg fill="currentColor" role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" xml:space="preserve"><g class="letter" ><path id="Shape" class="st0" d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"></path></g><g class="letter" ><path id="Shape_1_" class="st0" d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_2_" class="st0" d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_3_" class="st0" d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"></path></g></svg></span><br>
-        <strong>Gary Roberts</strong>, CEO
+      <p class="quote-attrib quote-attrib--ink quote-attrib--source">
+        <span class="zinc-logo zinc-logo--quote"><svg fill="currentColor" role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" xml:space="preserve"><g class="letter" ><path id="Shape" class="st0" d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"></path></g><g class="letter" ><path id="Shape_1_" class="st0" d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_2_" class="st0" d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_3_" class="st0" d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"></path></g></svg></span>
+        <span class="quote-attrib__text"><strong>Gary Roberts</strong>, CEO</span>
       </p>
     </div>
 
