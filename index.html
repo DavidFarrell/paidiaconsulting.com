@@ -220,6 +220,17 @@
   .rz-nav a.rz-btn,
   .rz-nav a.rz-btn:hover { color: var(--rz-ink); }
 
+  /* Inline body links (e.g. named clients in the What We Do intro). Paper text,
+     pink underline, brightens to yellow on hover. */
+  .rz-link { color: var(--rz-paper); text-decoration: underline; text-decoration-color: var(--rz-pink); text-underline-offset: 3px; text-decoration-thickness: 2px; transition: color var(--rz-dur-fast) var(--rz-ease), text-decoration-color var(--rz-dur-fast) var(--rz-ease); }
+  .rz-link:hover { color: var(--rz-yellow); text-decoration-color: var(--rz-yellow); }
+
+  /* Scroll cue nudging the eye down to the six service cards. Uses the allowed
+     chevron glyph (not a down-arrow), gentle motion, reduced-motion aware. */
+  .services-cue { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rz-yellow); margin: var(--rz-sp-8) 0 0; display: inline-block; animation: cuePulse 2.4s var(--rz-ease) infinite; }
+  @keyframes cuePulse { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(3px); } }
+  @media (prefers-reduced-motion: reduce) { .services-cue { animation: none; opacity: 1; } }
+
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
   .rz-nav__toggle span { display: block; width: 24px; height: 2px; background: var(--rz-paper); margin: 5px 0; transition: all var(--rz-dur-base) var(--rz-ease); }
@@ -327,10 +338,17 @@
       </div>
       <div>
         <p>
-          Most AI projects stall in the pilot. We work across both halves of the
-          problem - the people and the systems - so capability lands and keeps
-          working after we leave.
+          We have architected apps for the
+          <a class="rz-link" href="https://www.nhs.uk" target="_blank" rel="noopener">NHS</a>.
+          We have engineered AI solutions for the
+          <a class="rz-link" href="https://www.gov.uk/government/organisations/foreign-commonwealth-development-office" target="_blank" rel="noopener">UK Foreign Office</a>.
+          And we have coached from C-suite to frontline at organisations from
+          large charities like
+          <a class="rz-link" href="https://www.gosh.org" target="_blank" rel="noopener">Great Ormond Street Hospital Charity</a>
+          to SMEs like
+          <a class="rz-link" href="https://zincre.com/" target="_blank" rel="noopener">ZINC RE</a>.
         </p>
+        <p class="services-cue">Six core services, end to end &rsaquo;</p>
       </div>
     </div>
 
