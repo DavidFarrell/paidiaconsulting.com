@@ -131,6 +131,16 @@
   }
   .impact-card--featured .impact-metric { font-size: var(--rz-fs-h1); line-height: var(--rz-lh-h1); }
   .impact-card .impact-desc { color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: var(--rz-lh-body); margin: 0 0 var(--rz-sp-6); max-width: 60ch; }
+  /* Impact cards as scannable bullets: yellow square for top level, pink dash
+     for the nested sub-points (Pearson). */
+  .impact-list { list-style: none; margin: 0 0 var(--rz-sp-6); padding: 0; display: grid; gap: var(--rz-sp-3); max-width: 60ch; }
+  .impact-list li { position: relative; padding-left: 1.1rem; color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: 1.45; }
+  .impact-list > li::before { content: ""; position: absolute; left: 0; top: 0.56em; width: 0.42rem; height: 0.42rem; background: var(--rz-yellow); }
+  .impact-list ul { list-style: none; margin: var(--rz-sp-3) 0 0; padding: 0; display: grid; gap: var(--rz-sp-2); }
+  .impact-list ul li { color: var(--rz-paper-70); font-size: 0.95em; }
+  .impact-list ul li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 0.5rem; height: 0; border-top: 1.5px solid var(--rz-pink); }
+  /* Quiet delivery-partner credit (NHS, Rimes via Hudson & Hayes). */
+  .impact-credit { font-family: var(--rz-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rz-paper-50); margin: 0 0 var(--rz-sp-6); }
   .impact-chips { display: flex; gap: var(--rz-sp-3); flex-wrap: wrap; margin-top: auto; }
 
   /* FCDO award line + the subtle, hover-revealed CYB credit. ------------- */
@@ -284,6 +294,9 @@
   .svc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--rz-sp-3); }
   .svc-list li { position: relative; padding-left: 1.1rem; color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: 1.45; }
   .svc-list li::before { content: ""; position: absolute; left: 0; top: 0.58em; width: 0.42rem; height: 0.42rem; background: var(--rz-yellow); }
+  /* Bullets contrast with the card's number chip: yellow-number cards get
+     pink bullets; pink-number cards keep the default yellow. */
+  .svc-list--pink li::before { background: var(--rz-pink); }
 
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
@@ -392,7 +405,7 @@
       <div class="rz-card">
         <span class="rz-chip rz-chip--yel">01</span>
         <h3>AI strategy &amp; advisory</h3>
-        <ul class="svc-list">
+        <ul class="svc-list svc-list--pink">
           <li>Board-level guidance on where AI creates real value</li>
           <li>Focus on the few use cases that drive most of the impact</li>
         </ul>
@@ -408,7 +421,7 @@
       <div class="rz-card">
         <span class="rz-chip rz-chip--yel">03</span>
         <h3>Transformation &amp; training</h3>
-        <ul class="svc-list">
+        <ul class="svc-list svc-list--pink">
           <li>Sustainable AI capability from boardroom to frontline</li>
           <li>A workforce taken from zero use to 70% adoption in 12 weeks</li>
         </ul>
@@ -424,7 +437,7 @@
       <div class="rz-card">
         <span class="rz-chip rz-chip--yel">05</span>
         <h3>Rapid prototyping</h3>
-        <ul class="svc-list">
+        <ul class="svc-list svc-list--pink">
           <li>Working demos in days, not quarters</li>
           <li>Build fast to prove value, then hand off or scale to production</li>
         </ul>
@@ -447,7 +460,7 @@
   <div class="rz-container">
     <div class="ui-stack-12">
       <span class="rz-eyebrow">Proven impact</span>
-      <h2 class="ui-mt-4">Numbers that <span class="rz-mark rz-tilt">matter</span>.</h2>
+      <h2 class="ui-mt-4">AI with real <span class="rz-mark rz-tilt">impact</span>.</h2>
     </div>
 
     <div class="impact-grid">
@@ -484,11 +497,10 @@
       <article class="rz-card impact-card">
         <img src="assets/images/clients/gosh.png" alt="GOSH Charity" class="impact-logo" data-no-zoom />
         <div class="impact-metric">70% adoption in 12 weeks</div>
-        <p class="impact-desc">
-          From zero usage to 70% adoption across the charity in 12 weeks. Strategy
-          through to coaching, building sustainable capability across the whole
-          organisation.
-        </p>
+        <ul class="impact-list">
+          <li>From zero usage to 70% adoption across the charity in 12 weeks</li>
+          <li>Strategy through to coaching, building sustainable capability across the whole organisation</li>
+        </ul>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">AI transformation</span>
           <span class="rz-chip rz-chip--ghost">Training</span>
@@ -500,28 +512,27 @@
       <article class="rz-card impact-card">
         <img src="assets/images/clients/nhs.png" alt="NHS" class="impact-logo" data-no-zoom />
         <div class="impact-metric">11 ICBs, one diagnostics discovery</div>
-        <p class="impact-desc">
-          AI and automation discovery across 11 Integrated Care Boards in the
-          NHS Midlands region. Workshops narrowed 41 opportunities to a
-          prioritised shortlist, modelling how a 1% cut in missed appointments
-          could release a pathway to roughly 90,000 diagnostic appointments a
-          year. The programme secured funding for pilot projects and reached a
-          working prototype within weeks. Delivered via Hudson &amp; Hayes.
-        </p>
+        <ul class="impact-list">
+          <li>AI and automation discovery across 11 Integrated Care Boards in the NHS Midlands region</li>
+          <li>Workshops narrowed 41 opportunities to a prioritised shortlist</li>
+          <li>Modelled how a 1% cut in missed appointments could free a pathway to roughly 90,000 diagnostic appointments a year</li>
+          <li>Secured funding for pilot projects and reached a working prototype within weeks</li>
+        </ul>
+        <p class="impact-credit">Delivered via Hudson &amp; Hayes</p>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--pink">Discovery</span>
           <span class="rz-chip rz-chip--ghost">Business case</span>
         </div>
       </article>
 
-      <!-- AWIN - PORTED VERBATIM, DO NOT CHANGE. Live client; no new stats. -->
+      <!-- AWIN - live client. Matcher metric + Magic Eye, per David 9 Jun 2026. -->
       <article class="rz-card impact-card">
         <img src="assets/images/clients/awin.png" alt="Awin" class="impact-logo" data-no-zoom />
         <div class="impact-metric">10 Days &rarr; 2 Hours</div>
-        <p class="impact-desc">
-          Built publisher matching system processing 1,500 vendors in 2 hours -
-          down from 10 days. Cut RFP response time by 50%.
-        </p>
+        <ul class="impact-list">
+          <li>Built a publisher matching system processing 1,500 vendors in 2 hours, down from 10 days</li>
+          <li>Automated workflows that verify ad placements, giving individual people back full days of work</li>
+        </ul>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">Rapid prototyping</span>
           <span class="rz-chip rz-chip--ghost">Automation</span>
@@ -533,16 +544,16 @@
       <article class="rz-card impact-card">
         <img src="assets/images/clients/pearson.png" alt="Pearson" class="impact-logo" data-no-zoom />
         <div class="impact-metric">A single front door</div>
-        <p class="impact-desc">
-          AI strategy and platform architecture for the FTSE 100 education
-          company. We designed a unified single-front-door platform concept - an
-          AI-agent and MCP-based architecture to connect fragmented
-          learning-delivery systems into one coherent learner experience,
-          including a working agentic prototype. The relationship has continued
-          into a broader programme supporting Pearson's early-careers ambitions,
-          including the national challenge of young people not in education,
-          employment or training (NEET).
-        </p>
+        <ul class="impact-list">
+          <li>AI strategy and platform architecture for the FTSE 100 education company
+            <ul>
+              <li>A unified single-front-door platform</li>
+              <li>AI-agent and MCP architecture to connect fragmented learning-delivery systems into one</li>
+              <li>A unified, coherent learner experience</li>
+            </ul>
+          </li>
+          <li>Working with Pearson to address their early-careers ambitions, including the national challenge of young people not in education, employment or training (NEET)</li>
+        </ul>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--pink">Platform architecture</span>
           <span class="rz-chip rz-chip--ghost">MCP framework</span>
@@ -554,13 +565,12 @@
       <article class="rz-card impact-card">
         <img src="assets/images/clients/rimes.png" alt="Rimes" class="impact-logo" data-no-zoom />
         <div class="impact-metric">A roadmap and the tooling to use it</div>
-        <p class="impact-desc">
-          AI transformation roadmap for a private-equity-backed financial-data
-          firm targeting 3x growth. We designed an MCP-based approach to make
-          legacy systems AI-accessible, and rolled out a developer-tooling
-          programme across a ~50-strong engineering team, with onboarding and
-          process-design workshops. Delivered via Hudson &amp; Hayes.
-        </p>
+        <ul class="impact-list">
+          <li>AI transformation roadmap for a private-equity-backed financial-data firm targeting 3x growth</li>
+          <li>An MCP-based approach to make legacy systems AI-accessible</li>
+          <li>Developer-tooling programme across a ~50-strong engineering team, with onboarding and process-design workshops</li>
+        </ul>
+        <p class="impact-credit">Delivered via Hudson &amp; Hayes</p>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">Roadmap</span>
           <span class="rz-chip rz-chip--ghost">Developer enablement</span>
