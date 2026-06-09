@@ -244,8 +244,9 @@
   .rz-link { color: var(--rz-paper); text-decoration: underline; text-decoration-color: var(--rz-pink); text-underline-offset: 3px; text-decoration-thickness: 2px; transition: color var(--rz-dur-fast) var(--rz-ease), text-decoration-color var(--rz-dur-fast) var(--rz-ease); }
   .rz-link:hover { color: var(--rz-yellow); text-decoration-color: var(--rz-yellow); }
 
-  /* Static lead-in label pointing to the six service cards (no animation). */
-  .services-cue { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rz-yellow); margin: var(--rz-sp-8) 0 0; display: inline-block; }
+  /* "What we do" lead-in sitting between the intro and the six service cards.
+     Lighter than a heading; closer to the boxes it introduces than to the prose. */
+  .services-label { display: block; margin: 0 0 var(--rz-sp-8); }
 
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
@@ -349,8 +350,7 @@
   <div class="rz-container">
     <div class="ui-lead-split ui-stack-12">
       <div>
-        <span class="rz-eyebrow rz-eyebrow--yellow">What we do</span>
-        <h2 class="ui-mt-4">From the boardroom to the <span class="rz-mark rz-tilt">codebase</span>.</h2>
+        <h2>From the boardroom to the <span class="rz-mark rz-tilt">codebase</span>.</h2>
       </div>
       <div>
         <p>
@@ -364,9 +364,10 @@
           to SMEs like
           <a class="rz-link" href="https://zincre.com/" target="_blank" rel="noopener">ZINC RE</a>.
         </p>
-        <p class="services-cue">Six core services, end to end &rsaquo;</p>
       </div>
     </div>
+
+    <p class="services-label rz-eyebrow rz-eyebrow--yellow">What we do</p>
 
     <div class="rz-grid" style="--rz-cols: 3; --rz-cols-mobile: 1;">
       <div class="rz-card">
