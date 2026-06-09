@@ -214,6 +214,16 @@
     .rz-header__brand--wordmark { font-size: 1.5rem; }
   }
 
+  /* The nav "Get in touch" is a yellow .rz-btn inside .rz-nav; the nav-link
+     colour (paper) was overriding the button's ink text, making it white on
+     yellow and unreadable. Restore deep-purple ink on the button. */
+  .rz-nav a.rz-btn,
+  .rz-nav a.rz-btn:hover { color: var(--rz-ink); }
+
+  /* Hero tagline strap ("From the boardroom to the codebase") - a small display
+     line sitting between the headline and the opening blurb. */
+  .hero-tagline { font-family: var(--rz-display); font-size: var(--rz-fs-h4); line-height: 1.1; letter-spacing: var(--rz-track-tight); color: var(--rz-paper); margin: 0; }
+
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
   .rz-nav__toggle span { display: block; width: 24px; height: 2px; background: var(--rz-paper); margin: 5px 0; transition: all var(--rz-dur-base) var(--rz-ease); }
@@ -260,7 +270,8 @@
   into the <h1>, keeping the <span class="rz-mark rz-tilt"> on the marked word.
 
   Option A (LIVE):
-    We help organisations [use] AI. From the boardroom to the codebase.
+    We help organisations [use] AI.
+    (with "From the boardroom to the codebase." as the tagline strap below)
 
   Option B:
     AI that reaches production - and people who can [run] it.
@@ -276,16 +287,18 @@
 <section class="rz-hero" id="top">
   <div class="rz-wash"></div>
   <div class="rz-container rz-hero__inner">
-    <span class="rz-eyebrow">AI enablement &middot; engineering &middot; from the boardroom to the codebase</span>
+    <span class="rz-eyebrow">AI enablement &middot; engineering &middot; coaching</span>
     <h1 class="rz-display ui-mt-4">
       We help organisations
       <span class="rz-mark rz-tilt">use</span>
-      AI. From the boardroom to the codebase.
+      AI.
     </h1>
-    <p class="rz-lead ui-mt-6">
-      Two sides of the same work: coaching people to use AI in the jobs they
-      already do, and building safe AI systems that reach production. Hands-on,
-      with the team - not a slide deck and a wave goodbye.
+    <p class="hero-tagline ui-mt-6">From the boardroom to the codebase.</p>
+    <p class="rz-lead ui-mt-4">
+      We are AI experts who love everything from coaching and embedded AI
+      enablement through to agentic app architecture and engineering. With a
+      proven track record from large government projects to SMEs, we'd love to
+      help you achieve your AI ambitions.
     </p>
     <div class="ui-actions">
       <a href="#contact" class="rz-btn">Start a conversation</a>
