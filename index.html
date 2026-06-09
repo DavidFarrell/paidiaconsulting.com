@@ -280,6 +280,10 @@
   /* "What we do" lead-in sitting between the intro and the six service cards.
      Lighter than a heading; closer to the boxes it introduces than to the prose. */
   .services-label { display: block; margin: 0 0 var(--rz-sp-8); }
+  /* Service cards: two scannable bullets instead of a prose blurb. */
+  .svc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--rz-sp-3); }
+  .svc-list li { position: relative; padding-left: 1.1rem; color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: 1.45; }
+  .svc-list li::before { content: ""; position: absolute; left: 0; top: 0.58em; width: 0.42rem; height: 0.42rem; background: var(--rz-yellow); }
 
   /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
   .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
@@ -388,32 +392,50 @@
       <div class="rz-card">
         <span class="rz-chip rz-chip--yel">01</span>
         <h3>AI strategy &amp; advisory</h3>
-        <p>Board-level guidance on where AI creates real value. We find the small number of use cases that drive most of the impact, and help you ignore the noise.</p>
+        <ul class="svc-list">
+          <li>Board-level guidance on where AI creates real value</li>
+          <li>Focus on the few use cases that drive most of the impact</li>
+        </ul>
       </div>
       <div class="rz-card">
         <span class="rz-chip rz-chip--pink">02</span>
         <h3>Coaching &amp; mentoring</h3>
-        <p>Individual and team coaching that reshapes mental models. We help people understand AI's jagged frontier - where it excels and where it fails.</p>
+        <ul class="svc-list">
+          <li>Individual and team coaching that reshapes mental models</li>
+          <li>Understand AI's jagged frontier - where it excels and where it fails</li>
+        </ul>
       </div>
       <div class="rz-card">
         <span class="rz-chip rz-chip--yel">03</span>
         <h3>Transformation &amp; training</h3>
-        <p>Sustainable AI capability from boardroom to frontline. We have taken a workforce from zero use to 70% adoption in 12 weeks.</p>
+        <ul class="svc-list">
+          <li>Sustainable AI capability from boardroom to frontline</li>
+          <li>A workforce taken from zero use to 70% adoption in 12 weeks</li>
+        </ul>
       </div>
       <div class="rz-card">
         <span class="rz-chip rz-chip--pink">04</span>
         <h3>Architecture &amp; engineering</h3>
-        <p>Production-grade AI systems built for accuracy, security and scale. From retrieval pipelines to agentic workflows, designed not to hallucinate when it matters.</p>
+        <ul class="svc-list">
+          <li>Production-grade systems built for accuracy, security and scale</li>
+          <li>Retrieval pipelines to agentic workflows, designed not to hallucinate when it matters</li>
+        </ul>
       </div>
       <div class="rz-card">
         <span class="rz-chip rz-chip--yel">05</span>
         <h3>Rapid prototyping</h3>
-        <p>Working demos in days, not quarters. We build fast to prove value, then hand off to your teams or help scale to production.</p>
+        <ul class="svc-list">
+          <li>Working demos in days, not quarters</li>
+          <li>Build fast to prove value, then hand off or scale to production</li>
+        </ul>
       </div>
       <div class="rz-card">
         <span class="rz-chip rz-chip--pink">06</span>
         <h3>AI governance</h3>
-        <p>Frameworks that enable rather than block. Risk tiers, approval processes and transparency standards aligned with UK Government best practice.</p>
+        <ul class="svc-list">
+          <li>Frameworks that enable rather than block</li>
+          <li>Risk tiers, approvals and transparency aligned with UK Government best practice</li>
+        </ul>
       </div>
     </div>
   </div>
