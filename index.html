@@ -183,7 +183,9 @@
     color: var(--rz-ink);   /* deep purple ink on the paper plate */
     max-width: 20ch;
   }
-  .quote-card blockquote.quote-sm { font-size: var(--rz-fs-h4); line-height: 1.05; max-width: none; }
+  /* Supporting-card quotes vary in length, so set them as readable body copy
+     (not display) to avoid slabs; the featured ZINC card keeps the display voice. */
+  .quote-card blockquote.quote-sm { font-family: var(--rz-sans); font-weight: 600; font-size: 1.05rem; line-height: 1.6; letter-spacing: 0; max-width: none; }
   /* The full quote reads as proper, comfortable body copy. */
   .quote-card .quote-body { color: var(--rz-ink); margin: var(--rz-sp-6) 0 0; max-width: 58ch; font-size: 1.08rem; line-height: 1.62; }
   .quote-attrib { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rz-paper-70); margin-top: var(--rz-sp-6); line-height: 1.5; }
@@ -572,18 +574,38 @@
         </p>
       </div>
 
-      <!-- GOSH - Rich Grove. Verbally offered; written quote being confirmed. -->
-      <div class="quote-card quote-card--placeholder">
-        <span class="quote-ph-label">Placeholder quote</span>
-        <p class="quote-ph-note">Quote being confirmed.</p>
-        <p class="quote-attrib"><strong>Rich Grove</strong>, CTO<br>GOSH Charity</p>
+      <!-- Numerical Partners - James Bentley. Approved by email 9 Jun 2026
+           (James: "write anything you like"). Credited as Founder, Numerical Partners. -->
+      <div class="rz-plate rz-plate--paper quote-card">
+        <span class="rz-chip rz-chip--pink">Enterprise AI</span>
+        <blockquote class="quote-sm">
+          &ldquo;I worked alongside Paidia Consulting for the best part of a
+          year embedding AI into a large enterprise. They were excellent
+          partners at taking real-world problems and quickly building working
+          prototypes that the team could actually try. Several of these
+          prototypes grew into full AI workflows, and the tools they delivered
+          are now in real use, driving measurable value. I'd recommend them
+          without hesitation.&rdquo;
+        </blockquote>
+        <p class="quote-attrib quote-attrib--ink">
+          <strong>James Bentley</strong>, Founder, Numerical Partners
+        </p>
       </div>
 
-      <!-- Merton - Roger Todd. Quote being confirmed. -->
-      <div class="quote-card quote-card--placeholder">
-        <span class="quote-ph-label">Placeholder quote</span>
-        <p class="quote-ph-note">Quote being confirmed.</p>
-        <p class="quote-attrib"><strong>Roger Todd</strong><br>London Borough of Merton</p>
+      <!-- GOSH - Richard Grove. Approved; names David by name (the company is not
+           a lecturer, so the personal credit is the point here). -->
+      <div class="rz-plate rz-plate--paper quote-card">
+        <span class="rz-chip rz-chip--pink">Children's hospital charity</span>
+        <blockquote class="quote-sm">
+          &ldquo;Paidia's coaching has been unique in helping us actually
+          understand and use AI. David's experience as both a lecturer and an AI
+          expert is the perfect blend - this isn't change management, it's EQ and
+          IQ, giving people the confidence to try things and feel comfortable with
+          AI, so the whole organisation gets the best from it.&rdquo;
+        </blockquote>
+        <p class="quote-attrib quote-attrib--ink">
+          <strong>Richard Grove</strong>, CTO, GOSH Charity
+        </p>
       </div>
     </div>
 
