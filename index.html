@@ -68,6 +68,19 @@
      "organisations" was clipping into the yellow "use" highlight box below.
      A touch more leading lets descenders clear the mark. */
   .rz-hero .rz-display { line-height: 1.02; }
+
+  /* Trim the hero's large top padding so the eyebrow sits closer under the header. */
+  .rz-hero { padding-top: clamp(2rem, 4vw, 3rem); }
+
+  /* The yellow "use" highlight box: Archivo Black leaves a lot of ascent space
+     above the caps, so the block reads too tall on top (and crowds the g above).
+     Use a bottom-anchored gradient fill to set the box height precisely - trims
+     the top, keeps the bottom margin below the letters. */
+  .rz-hero .rz-mark {
+    background: linear-gradient(var(--rz-yellow), var(--rz-yellow)) no-repeat left bottom;
+    background-size: 100% 0.92em;
+    padding: 0 0.3em 0.04em;
+  }
   @media (max-width: 520px) {
     /* Tighten the display floor so the poster headline fits a small screen
        without clipping, while staying as large as the column allows. */
