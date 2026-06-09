@@ -1,1365 +1,755 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-GB">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paidia Consulting | AI Strategy, Architecture & Transformation</title>
-    <meta name="description" content="We build AI systems that work. From UK Government's first public LLM to FTSE 100 transformations. Strategy, architecture, and hands-on delivery.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a25;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --text-muted: #6a6a7a;
-            --accent: #00d4aa;
-            --accent-glow: rgba(0, 212, 170, 0.3);
-            --accent-subtle: rgba(0, 212, 170, 0.1);
-            --gradient-accent: linear-gradient(135deg, #00d4aa 0%, #00a388 100%);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --font-display: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: var(--font-body);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Utility Classes */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .section {
-            padding: 120px 0;
-        }
-
-        .section-label {
-            font-family: var(--font-display);
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 16px;
-        }
-
-        .section-title {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 24px;
-        }
-
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 20px 0;
-            background: rgba(10, 10, 15, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-subtle);
-            transition: all 0.3s ease;
-        }
-
-        nav .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo img {
-            height: 50px;
-            width: auto;
-        }
-
-        .logo-text {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9375rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-
-        .nav-cta {
-            background: var(--gradient-accent);
-            color: var(--bg-primary) !important;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .nav-cta:hover {
-            opacity: 0.9;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        .mobile-menu-btn span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--text-primary);
-            margin: 6px 0;
-            transition: all 0.3s ease;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            padding-top: 80px;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150%;
-            height: 100%;
-            background: radial-gradient(ellipse at center top, var(--accent-subtle) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--accent-subtle);
-            border: 1px solid rgba(0, 212, 170, 0.2);
-            padding: 8px 16px;
-            border-radius: 100px;
-            font-size: 0.875rem;
-            color: var(--accent);
-            margin-bottom: 32px;
-        }
-
-        .hero-badge::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .hero h1 {
-            font-family: var(--font-display);
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            max-width: 900px;
-        }
-
-        .hero h1 .highlight {
-            background: var(--gradient-accent);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-description {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 640px;
-            margin-bottom: 40px;
-            line-height: 1.7;
-        }
-
-        .hero-ctas {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn-primary {
-            background: var(--gradient-accent);
-            color: var(--bg-primary);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px var(--accent-glow);
-        }
-
-        .btn-secondary {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-secondary);
-            border-color: var(--accent);
-        }
-
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 48px;
-            margin-top: 80px;
-            padding-top: 48px;
-            border-top: 1px solid var(--border-subtle);
-            max-width: 700px;
-        }
-
-        .stat {
-            text-align: left;
-        }
-
-        .stat-value {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .stat-label {
-            font-size: 0.9375rem;
-            color: var(--text-muted);
-        }
-
-        /* Services Section */
-        #services {
-            background: var(--bg-secondary);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 24px;
-            margin-top: 64px;
-        }
-
-        .service-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 40px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--gradient-accent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service-card:hover {
-            border-color: rgba(0, 212, 170, 0.3);
-            transform: translateY(-4px);
-        }
-
-        .service-card:hover::before {
-            opacity: 1;
-        }
-
-        .service-icon {
-            width: 56px;
-            height: 56px;
-            background: var(--accent-subtle);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 24px;
-            font-size: 1.5rem;
-        }
-
-        .service-card h3 {
-            font-family: var(--font-display);
-            font-size: 1.375rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .service-card p {
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        /* Case Studies / Impact Section */
-        #impact {
-            background: var(--bg-primary);
-        }
-
-        .impact-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            margin-top: 64px;
-        }
-
-        .impact-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            padding: 48px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .impact-card.featured {
-            grid-column: span 2;
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
-        }
-
-        .impact-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .impact-icon {
-            font-size: 1.5rem;
-        }
-
-        .impact-logo {
-            height: 40px;
-            max-width: 140px;
-            object-fit: contain;
-        }
-
-        .impact-client {
-            font-size: 0.875rem;
-            color: var(--accent);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .impact-metric {
-            font-family: var(--font-display);
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 16px;
-            background: var(--gradient-accent);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .impact-description {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            max-width: 500px;
-        }
-
-        .impact-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 24px;
-        }
-
-        .impact-tag {
-            background: var(--accent-subtle);
-            color: var(--accent);
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-size: 0.8125rem;
-            font-weight: 500;
-        }
-
-        /* Clients Section */
-        #clients {
-            background: var(--bg-secondary);
-        }
-
-        .clients-intro {
-            text-align: center;
-            margin-bottom: 64px;
-        }
-
-        .clients-intro .section-title {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .clients-intro .section-subtitle {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .clients-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        @media (max-width: 900px) {
-            .clients-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .clients-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .client-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .client-card:hover {
-            border-color: rgba(0, 212, 170, 0.3);
-        }
-
-        .client-icon {
-            font-size: 2rem;
-            margin-bottom: 16px;
-        }
-
-        .client-logo {
-            height: 48px;
-            max-width: 180px;
-            object-fit: contain;
-            margin-bottom: 16px;
-            filter: brightness(1.1);
-        }
-
-        .client-name {
-            font-family: var(--font-display);
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .client-type {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        /* Awards Section */
-        #awards {
-            background: var(--bg-primary);
-        }
-
-        .awards-content {
-            max-width: 800px;
-        }
-
-        .awards-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .award-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 20px;
-            padding: 24px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .award-item:hover {
-            border-color: rgba(0, 212, 170, 0.3);
-        }
-
-        .award-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--accent-subtle);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.25rem;
-        }
-
-        .award-details h4 {
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .award-details p {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        .awards-image {
-            position: relative;
-        }
-
-        .awards-image img {
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            filter: drop-shadow(0 20px 50px rgba(0, 212, 170, 0.2));
-            border-radius: 24px;
-            background: var(--bg-primary);
-            padding: 20px;
-        }
-
-        /* About Section */
-        #about {
-            background: var(--bg-secondary);
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 80px;
-            align-items: start;
-        }
-
-        .about-image {
-            position: relative;
-        }
-
-        .about-image-placeholder {
-            aspect-ratio: 4/5;
-            background: var(--bg-tertiary);
-            border-radius: 24px;
-            border: 1px solid var(--border-subtle);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .about-image-placeholder img {
-            width: 60%;
-            opacity: 0.5;
-        }
-
-        .about-text h3 {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .about-role {
-            color: var(--accent);
-            font-weight: 500;
-            margin-bottom: 24px;
-        }
-
-        .about-bio {
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 32px;
-        }
-
-        .about-bio p {
-            margin-bottom: 16px;
-        }
-
-        .credentials {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .credential {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-subtle);
-            padding: 10px 18px;
-            border-radius: 100px;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Contact Section */
-        #contact {
-            background: var(--bg-primary);
-            text-align: center;
-        }
-
-        .contact-content {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .contact-content .section-title {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .contact-cta {
-            margin-top: 48px;
-        }
-
-        .contact-email {
-            font-family: var(--font-display);
-            font-size: clamp(1.25rem, 3vw, 1.75rem);
-            color: var(--accent);
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 32px;
-            transition: opacity 0.2s ease;
-        }
-
-        .contact-email:hover {
-            opacity: 0.8;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--bg-secondary);
-            padding: 48px 0;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .footer-logo img {
-            height: 32px;
-        }
-
-        .footer-text {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 32px;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: color 0.2s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 48px;
-            }
-
-            .impact-card.featured {
-                grid-column: span 1;
-            }
-
-            .impact-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                padding: 20px 0 16px;
-            }
-
-            .hero {
-                padding-top: 100px;
-            }
-
-            .section {
-                padding: 80px 0;
-            }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(10, 10, 15, 0.98);
-                flex-direction: column;
-                padding: 24px;
-                gap: 20px;
-                border-bottom: 1px solid var(--border-subtle);
-            }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .mobile-menu-btn.active span:nth-child(1) {
-                transform: rotate(45deg) translate(6px, 6px);
-            }
-
-            .mobile-menu-btn.active span:nth-child(2) {
-                opacity: 0;
-            }
-
-            .mobile-menu-btn.active span:nth-child(3) {
-                transform: rotate(-45deg) translate(6px, -6px);
-            }
-
-            .hero-stats {
-                grid-template-columns: 1fr;
-                gap: 32px;
-            }
-
-            .stat {
-                text-align: center;
-            }
-
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-content {
-                flex-direction: column;
-                gap: 24px;
-                text-align: center;
-            }
-
-            .footer-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-in {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Paidia Consulting - AI enablement and engineering</title>
+<meta name="description" content="Paidia Consulting helps organisations use AI - coaching people in the work they already do, and building safe AI systems that reach production. From the boardroom to the codebase." />
+
+<link rel="stylesheet" href="rz/fonts.css" />
+<link rel="stylesheet" href="rz/tokens.css" />
+<link rel="stylesheet" href="rz/components.css" />
+<link rel="stylesheet" href="rz/colors_and_type.css" />
+
+<style>
+  /* ----------------------------------------------------------------------
+     Page-local layout helpers ONLY. No new colours, no hardcoded hexes -
+     everything visual comes from the .rz-* classes and the token set.
+     ---------------------------------------------------------------------- */
+  /* The rz stylesheets assume border-box but ship no reset, so .rz-container
+     (width:100% + padding-inline) overflows the viewport by its padding on
+     narrow screens. Restore the intended box model and guard against any
+     stray horizontal scroll. */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  /* ----------------------------------------------------------------------
+     FUNK, DIALLED DOWN. David's call: keep the riso character but read
+     "confident, not chaotic". Rotations roughly halved, halftone lightened,
+     offset blocks softened. Palette and type untouched. Override the funk
+     tokens here (after the linked tokens.css) rather than editing the
+     vendored system, so a future restore is a single block deletion.
+     ---------------------------------------------------------------------- */
+  :root {
+    --rz-rot-xs: -0.3deg;
+    --rz-rot-sm: -0.6deg;
+    --rz-rot-sm-cw: 0.7deg;
+    --rz-rot-md: -0.8deg;
+    --rz-rot-lg: -1deg;
+    --rz-rot-xl: -1.5deg;
+    --rz-rot-chip: -0.5deg;
+    --rz-rot-chip-cw: 0.5deg;
+    --rz-rot-fig-alt: 0.3deg;
+    --rz-rot-hover: -0.3deg;
+    --rz-skew: -5deg;
+    --rz-halftone-opacity: 0.10;
+    --rz-halftone-opacity-subtle: 0.05;
+    --rz-offset-pink: 5px 5px 0 0 var(--rz-pink);
+    --rz-offset-yellow: -5px 5px 0 0 var(--rz-yellow);
+    --rz-offset-sm-pink: 4px 4px 0 0 var(--rz-pink);
+    --rz-offset-sm-yellow: 4px 4px 0 0 var(--rz-yellow);
+  }
+  body { overflow-x: clip; }
+
+  .ui-actions { display: flex; gap: var(--rz-sp-4); flex-wrap: wrap; margin-top: var(--rz-sp-8); }
+  .ui-lead-split {
+    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: var(--rz-grid-gutter); align-items: end;
+  }
+  .ui-stack-12 { margin-bottom: var(--rz-sp-12); }
+  .ui-mt-4 { margin-top: var(--rz-sp-4); }
+
+  /* Big display headlines (Archivo Black) carry very long words like
+     "organisations" / "codebase". On narrow viewports the clamp floor
+     (3.5rem) is wider than the content box, so allow them to break rather
+     than overflow the viewport. Purely a wrapping rule - no new colour/shadow. */
+  .rz-display, h1.rz-display, h2 { overflow-wrap: break-word; }
+  @media (max-width: 520px) {
+    /* Tighten the display floor so the poster headline fits a small screen
+       without clipping, while staying as large as the column allows. */
+    .rz-hero .rz-display { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+  }
+  .ui-mt-6 { margin-top: var(--rz-sp-6); }
+  .ui-mt-8 { margin-top: var(--rz-sp-8); }
+  @media (max-width: 768px) {
+    .ui-lead-split { grid-template-columns: 1fr; align-items: start; }
+  }
+
+  /* Hero stats sit on a hairline-topped row under the hero copy. */
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: var(--rz-grid-gutter);
+    margin-top: var(--rz-sp-16);
+    padding-top: var(--rz-sp-8);
+    border-top: 1.5px solid var(--rz-rule-strong);
+    max-width: 46rem;
+  }
+  @media (max-width: 600px) {
+    .hero-stats { grid-template-columns: 1fr; gap: var(--rz-sp-8); }
+  }
+
+  /* Impact / case-study cards: a logo plate, a big riso metric, a description,
+     and chips. Built on .rz-card so it inherits the lift-and-tilt hover. */
+  .impact-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-12);
+  }
+  @media (max-width: 768px) { .impact-grid { grid-template-columns: 1fr; } }
+
+  .impact-card { display: flex; flex-direction: column; }
+  .impact-card--featured { grid-column: span 2; }
+  @media (max-width: 768px) { .impact-card--featured { grid-column: span 1; } }
+
+  .impact-logo {
+    height: 46px; max-width: 170px; width: auto; object-fit: contain;
+    object-position: left center; margin-bottom: var(--rz-sp-6);
+    /* logos are supplied light-on-transparent; keep them legible on purple */
+  }
+  .impact-metric {
+    font-family: var(--rz-display);
+    font-size: var(--rz-fs-h2); line-height: var(--rz-lh-h2);
+    letter-spacing: var(--rz-track-heading);
+    color: var(--rz-yellow);
+    margin: 0 0 var(--rz-sp-4);
+  }
+  .impact-card--featured .impact-metric { font-size: var(--rz-fs-h1); line-height: var(--rz-lh-h1); }
+  .impact-card .impact-desc { color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: var(--rz-lh-body); margin: 0 0 var(--rz-sp-6); max-width: 60ch; }
+  .impact-chips { display: flex; gap: var(--rz-sp-3); flex-wrap: wrap; margin-top: auto; }
+
+  /* FCDO award line + the subtle, hover-revealed CYB credit. ------------- */
+  .fcdo-award { font-family: var(--rz-mono); font-size: 0.875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rz-pink); margin: 0 0 var(--rz-sp-6); }
+
+  /* The credit is visually quiet by default (low-contrast, mono) and brightens
+     on hover/focus, with a tooltip that fully spells out the shared delivery. */
+  .cyb-credit {
+    position: relative; display: inline-block;
+    font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--rz-paper-50);
+    margin-top: var(--rz-sp-4);
+    border-bottom: 1px dotted var(--rz-rule-strong);
+    cursor: help; transition: color var(--rz-dur-base) var(--rz-ease);
+  }
+  .cyb-credit:hover, .cyb-credit:focus-visible { color: var(--rz-paper-85); outline: none; }
+  .cyb-credit__tip {
+    position: absolute; left: 0; bottom: calc(100% + 0.5rem);
+    width: max-content; max-width: 22rem;
+    background: var(--rz-purple-deep);
+    border: 1px solid var(--rz-rule-strong);
+    border-radius: var(--rz-radius);
+    padding: 0.6rem 0.8rem;
+    font-family: var(--rz-sans); font-size: 0.8125rem; letter-spacing: 0;
+    text-transform: none; line-height: 1.45; color: var(--rz-paper-85);
+    opacity: 0; visibility: hidden; transform: translateY(4px);
+    transition: opacity var(--rz-dur-base) var(--rz-ease), transform var(--rz-dur-base) var(--rz-ease), visibility var(--rz-dur-base);
+    z-index: 5;
+  }
+  .cyb-credit:hover .cyb-credit__tip,
+  .cyb-credit:focus-visible .cyb-credit__tip { opacity: 1; visibility: visible; transform: translateY(0); }
+  .cyb-credit a { color: var(--rz-yellow); }
+  /* Keep the revealed tooltip inside a small screen rather than poking past
+     the card's right edge. */
+  @media (max-width: 480px) {
+    .cyb-credit__tip { max-width: min(22rem, calc(100vw - 2 * var(--rz-container-pad))); }
+  }
+
+  /* Testimonials -------------------------------------------------------- */
+  /* One featured real quote (ZINC), then a row of real + pending slots. */
+  .quote-card--feature { max-width: 60rem; margin-top: var(--rz-sp-12); }
+  .quote-card blockquote {
+    margin: 0;
+    font-family: var(--rz-display);
+    font-size: var(--rz-fs-h3); line-height: var(--rz-lh-h3);
+    letter-spacing: var(--rz-track-tight);
+    color: var(--rz-ink);   /* deep purple ink on the paper plate */
+  }
+  .quote-card blockquote.quote-sm { font-size: var(--rz-fs-h4); }
+  .quote-card .quote-body { color: var(--rz-ink); margin-top: var(--rz-sp-4); }
+  .quote-attrib { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rz-paper-70); margin-top: var(--rz-sp-6); line-height: 1.5; }
+  .quote-attrib strong { color: var(--rz-paper); }
+  .quote-attrib--ink { color: var(--rz-ink); opacity: 0.78; }
+  .quote-attrib--ink strong { color: var(--rz-ink); opacity: 1; }
+  /* ZINC RE text wordmark (no logo file yet). */
+  .zinc-wordmark { font-family: var(--rz-display); font-size: 1.75rem; letter-spacing: 0.02em; color: var(--rz-purple-deep); }
+  .quote-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
+  @media (max-width: 900px) { .quote-row { grid-template-columns: 1fr; } }
+  /* Pending testimonials shown as honest, visibly-empty slots - not faked. */
+  .quote-card--placeholder { display: flex; flex-direction: column; border: 1.5px dashed var(--rz-rule-strong); border-radius: var(--rz-radius); padding: var(--rz-sp-8); }
+  .quote-ph-label { font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rz-paper-50); }
+  .quote-ph-note { color: var(--rz-paper-50); margin: var(--rz-sp-4) 0 auto; }
+  .quote-more { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rz-paper-50); margin-top: var(--rz-sp-8); }
+
+  /* Clients logo wall --------------------------------------------------- */
+  .clients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-12); }
+  @media (max-width: 900px) { .clients-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .clients-grid { grid-template-columns: 1fr; } }
+  .client-tile {
+    background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong);
+    border-radius: var(--rz-radius); padding: var(--rz-sp-8);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    transition: transform var(--rz-dur-base) var(--rz-ease);
+  }
+  .client-tile:hover { transform: translateY(-3px); }
+  .client-tile img { height: 44px; max-width: 150px; width: auto; object-fit: contain; margin-bottom: var(--rz-sp-4); }
+  .client-name { font-family: var(--rz-sans); font-weight: 700; font-size: 1rem; color: var(--rz-paper); }
+  .client-sector { font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rz-paper-50); margin-top: var(--rz-sp-2); }
+  .client-tile--text .zinc-tile-mark { font-family: var(--rz-display); font-size: 1.75rem; letter-spacing: 0.02em; color: var(--rz-yellow); margin-bottom: var(--rz-sp-4); }
+
+  /* Awards -------------------------------------------------------------- */
+  .awards-list { list-style: none; padding: 0; margin: var(--rz-sp-12) 0 0; display: grid; gap: var(--rz-sp-4); max-width: 56rem; }
+  .award-row {
+    display: grid; grid-template-columns: auto 1fr; gap: var(--rz-sp-6); align-items: baseline;
+    padding: var(--rz-sp-6) 0; border-top: 1.5px solid var(--rz-rule);
+  }
+  .award-row:first-child { border-top: none; }
+  .award-row .award-year { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; color: var(--rz-pink); white-space: nowrap; }
+  .award-row h3 { font-family: var(--rz-display); font-size: var(--rz-fs-h4); line-height: 1.1; letter-spacing: var(--rz-track-tight); margin: 0; }
+  .award-row p { margin: var(--rz-sp-2) 0 0; color: var(--rz-paper-70); font-size: var(--rz-fs-sm); }
+
+  /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
+  .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
+  .rz-nav__toggle span { display: block; width: 24px; height: 2px; background: var(--rz-paper); margin: 5px 0; transition: all var(--rz-dur-base) var(--rz-ease); }
+  @media (max-width: 768px) {
+    .rz-nav__toggle { display: block; }
+    .rz-nav {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; align-items: flex-start; gap: var(--rz-sp-6);
+      background: var(--rz-purple-deep); border-bottom: 1px solid var(--rz-rule);
+      padding: var(--rz-sp-8) var(--rz-container-pad);
+    }
+    .rz-nav.is-open { display: flex; }
+    .rz-header__inner { position: relative; }
+  }
+</style>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav>
-        <div class="container">
-            <a href="#" class="logo">
-                <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia Consulting">
-            </a>
-            <ul class="nav-links">
-                <li><a href="#services">Services</a></li>
-                <li><a href="#impact">Impact</a></li>
-                <li><a href="#clients">Clients</a></li>
-                <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
-            </ul>
-            <button class="mobile-menu-btn" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
+<body class="rz">
+
+<!-- HEADER --------------------------------------------------------------- -->
+<header class="rz-header">
+  <div class="rz-container rz-header__inner">
+    <a class="rz-header__brand" href="#top">PAIDIA</a>
+    <button class="rz-nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="rz-nav" id="primary-nav">
+      <a href="#services">Services</a>
+      <a href="#impact">Impact</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#clients">Clients</a>
+      <a href="#contact" class="rz-btn">Get in touch</a>
     </nav>
+  </div>
+</header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>
-                    AI that <em>actually</em> works - from <span class="highlight">boardroom</span> to <span class="highlight">codebase</span> to <span class="highlight">culture</span>.
-                </h1>
-                <p class="hero-description">
-                    Deep AI expertise, from architecture to deployment. Whether you need strategy, coaching, or production code - we turn your ambition into real results.
-                </p>
-                <div class="hero-ctas">
-                    <a href="#contact" class="btn btn-primary">
-                        Start a conversation
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                    <a href="#impact" class="btn btn-secondary">
-                        See our work
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-value">70M+</div>
-                        <div class="stat-label">Users served annually</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">95%</div>
-                        <div class="stat-label">Accuracy in production</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">20+</div>
-                        <div class="stat-label">Years shipping products</div>
-                    </div>
-                </div>
-            </div>
+<!-- HERO ----------------------------------------------------------------- -->
+<!--
+  HEADLINE OPTIONS - swap freely.
+  Flat, declarative, British, no "actually". Emphasis = ONE .rz-mark word.
+  Option A is LIVE in the <h1> below. To swap, lift the words from any option
+  into the <h1>, keeping the <span class="rz-mark rz-tilt"> on the marked word.
+
+  Option A (LIVE):
+    We help organisations [use] AI. From the boardroom to the codebase.
+
+  Option B:
+    AI that reaches production - and people who can [run] it.
+
+  Option C:
+    Strategy, people and working systems. By the same people who [build] them.
+
+  Option D:
+    From cautious to [capable]. AI enablement and engineering, end to end.
+
+  (Square brackets mark which word gets the spot-ink highlighter.)
+-->
+<section class="rz-hero" id="top">
+  <div class="rz-wash"></div>
+  <div class="rz-container rz-hero__inner">
+    <span class="rz-eyebrow">AI enablement &middot; engineering &middot; from the boardroom to the codebase</span>
+    <h1 class="rz-display ui-mt-4">
+      We help organisations
+      <span class="rz-mark rz-tilt">use</span>
+      AI. From the boardroom to the codebase.
+    </h1>
+    <p class="rz-lead ui-mt-6">
+      Two sides of the same work: coaching people to use AI in the jobs they
+      already do, and building safe AI systems that reach production. Hands-on,
+      with the team - not a slide deck and a wave goodbye.
+    </p>
+    <div class="ui-actions">
+      <a href="#contact" class="rz-btn">Start a conversation</a>
+      <a href="#impact" class="rz-btn rz-btn--ghost">See the work</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="rz-stat">
+        <div class="rz-stat__value rz-yel">70M+</div>
+        <div class="rz-stat__label">Users served annually</div>
+      </div>
+      <div class="rz-stat">
+        <div class="rz-stat__value rz-pink">95%</div>
+        <div class="rz-stat__label">Accuracy in production</div>
+      </div>
+      <div class="rz-stat">
+        <div class="rz-stat__value rz-yel">20+</div>
+        <div class="rz-stat__label">Years shipping products</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES ------------------------------------------------------------- -->
+<section class="rz-section rz-deep" id="services">
+  <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
+  <div class="rz-container">
+    <div class="ui-lead-split ui-stack-12">
+      <div>
+        <span class="rz-eyebrow rz-eyebrow--yellow">What we do</span>
+        <h2 class="ui-mt-4">AI that moves from slides to <span class="rz-mark rz-tilt">production</span>.</h2>
+      </div>
+      <div>
+        <p>
+          Most AI projects stall in the pilot. We work across both halves of the
+          problem - the people and the systems - so capability lands and keeps
+          working after we leave.
+        </p>
+      </div>
+    </div>
+
+    <div class="rz-grid" style="--rz-cols: 3; --rz-cols-mobile: 1;">
+      <div class="rz-card">
+        <span class="rz-chip rz-chip--yel">01</span>
+        <h3>AI strategy &amp; advisory</h3>
+        <p>Board-level guidance on where AI creates real value. We find the small number of use cases that drive most of the impact, and help you ignore the noise.</p>
+      </div>
+      <div class="rz-card">
+        <span class="rz-chip rz-chip--pink">02</span>
+        <h3>Coaching &amp; mentoring</h3>
+        <p>Individual and team coaching that reshapes mental models. We help people understand AI's jagged frontier - where it excels and where it fails.</p>
+      </div>
+      <div class="rz-card">
+        <span class="rz-chip rz-chip--yel">03</span>
+        <h3>Transformation &amp; training</h3>
+        <p>Sustainable AI capability from boardroom to frontline. We have taken a workforce from zero use to 70% adoption in 12 weeks.</p>
+      </div>
+      <div class="rz-card">
+        <span class="rz-chip rz-chip--pink">04</span>
+        <h3>Architecture &amp; engineering</h3>
+        <p>Production-grade AI systems built for accuracy, security and scale. From retrieval pipelines to agentic workflows, designed not to hallucinate when it matters.</p>
+      </div>
+      <div class="rz-card">
+        <span class="rz-chip rz-chip--yel">05</span>
+        <h3>Rapid prototyping</h3>
+        <p>Working demos in days, not quarters. We build fast to prove value, then hand off to your teams or help scale to production.</p>
+      </div>
+      <div class="rz-card">
+        <span class="rz-chip rz-chip--pink">06</span>
+        <h3>AI governance</h3>
+        <p>Frameworks that enable rather than block. Risk tiers, approval processes and transparency standards aligned with UK Government best practice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT --------------------------------------------------------------- -->
+<section class="rz-section" id="impact">
+  <div class="rz-wash rz-wash--subtle"></div>
+  <div class="rz-container">
+    <div class="ui-lead-split ui-stack-12">
+      <div>
+        <span class="rz-eyebrow">Proven impact</span>
+        <h2 class="ui-mt-4">Numbers that <span class="rz-mark rz-tilt">matter</span>.</h2>
+      </div>
+      <div>
+        <p>
+          Real results from real deployments - production systems serving
+          millions, and enablement programmes that change how teams work. Not
+          just pilots.
+        </p>
+      </div>
+    </div>
+
+    <div class="impact-grid">
+
+      <!-- FCDO (featured). Corrected wording: "first public-facing LLM-powered
+           service". Subtle, hover-revealed CYB credit at the foot of the card. -->
+      <article class="rz-card impact-card impact-card--featured" id="fcdo-impact">
+        <img src="assets/images/clients/fcdo.png" alt="FCDO" class="impact-logo" data-no-zoom />
+        <div class="impact-metric">The UK Government's first public-facing LLM-powered service</div>
+        <p class="impact-desc">
+          Live on GOV.UK and on every British Embassy website. Turned a 10-day
+          email queue into a 5-second response, at 95% accuracy in production -
+          exceeding the human agent baseline. Saving &pound;3.6M over 5 years
+          while serving 500,000+ citizens annually.
+        </p>
+        <p class="fcdo-award">Winner &middot; Digital Leaders AI Award 2025 &middot; Featured on AI.gov.uk</p>
+        <div class="impact-chips">
+          <span class="rz-chip rz-chip--yel">LLM architecture</span>
+          <span class="rz-chip rz-chip--pink">Hallucination-safe design</span>
+          <span class="rz-chip rz-chip--ghost">Production deployment</span>
         </div>
-    </section>
+        <!-- Subtle shared-credit: quiet by default, reveals on hover/focus. -->
+        <span class="cyb-credit" tabindex="0">
+          Delivered with CYB
+          <span class="cyb-credit__tip">
+            Delivered while freelancing through Caution Your Blast (CYB); the
+            Digital Leaders AI Award 2025 was won with the CYB team.
+            <a href="https://www.linkedin.com/posts/caution-your-blast_digileaders-impactawards-activity-7306241842101051392-hPeq/" target="_blank" rel="noopener">See the award</a>.
+          </span>
+        </span>
+      </article>
 
-    <!-- Services Section -->
-    <section id="services" class="section">
-        <div class="container">
-            <div class="section-label">What We Do</div>
-            <h2 class="section-title">AI that moves from slides to production</h2>
-            <p class="section-subtitle">
-                Most AI projects stall. We build systems that ship - and keep working.
-            </p>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="9" stroke="#D5F6CA" stroke-width="2"/>
-                            <path d="M12 3L12 6M12 18L12 21M21 12L18 12M6 12L3 12" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M12 8L15 12L12 16L9 12Z" stroke="#D5F6CA" stroke-width="2" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <h3>AI Strategy & Advisory</h3>
-                    <p>Board-level guidance on where AI creates real value. We identify the 20% of use cases that drive 80% of impact - and help you ignore the noise.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <circle cx="7" cy="8" r="3" stroke="#D5F6CA" stroke-width="2"/>
-                            <circle cx="17" cy="16" r="3" stroke="#D5F6CA" stroke-width="2"/>
-                            <path d="M9.5 10.5L14.5 13.5" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                    </div>
-                    <h3>Coaching & Mentoring</h3>
-                    <p>Individual and team coaching that reshapes mental models. We help your people understand AI's "jagged frontier" - where it excels and where it fails.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.5 12a9.5 9.5 0 1 1-3.4-7.3"/>
-                            <path d="M21.5 5v7h-7"/>
-                        </svg>
-                    </div>
-                    <h3>Transformation & Training</h3>
-                    <p>Sustainable AI capability from boardroom to frontline. We've achieved 70% workforce adoption in 12 weeks - changing how entire organisations think about AI.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M16 4L20 8L20 16L16 20" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M8 4L4 8L4 16L8 20" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <h3>Architecture & Engineering</h3>
-                    <p>Production-grade AI systems built for accuracy, security, and scale. From RAG pipelines to agentic workflows, we design systems that don't hallucinate when it matters.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
-                        </svg>
-                    </div>
-                    <h3>Rapid Prototyping</h3>
-                    <p>Working demos in days, not quarters. We build fast to prove value, then hand off to your teams or help scale to production.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 2L4 6V11C4 16.55 7.84 21.74 12 23C16.16 21.74 20 16.55 20 11V6L12 2Z" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 12L11 14L15 10" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <h3>AI Governance</h3>
-                    <p>Frameworks that enable rather than block. Risk tiers, approval processes, and transparency standards aligned with UK Government best practice.</p>
-                </div>
-            </div>
+      <!-- GOSH. 70% / 12 weeks kept (verified). -->
+      <article class="rz-card impact-card">
+        <img src="assets/images/clients/gosh.png" alt="GOSH Charity" class="impact-logo" data-no-zoom />
+        <div class="impact-metric">70% adoption in 12 weeks</div>
+        <p class="impact-desc">
+          From zero usage to 70% adoption across the charity in 12 weeks. Strategy
+          through to coaching, building sustainable capability across the whole
+          organisation.
+        </p>
+        <div class="impact-chips">
+          <span class="rz-chip rz-chip--yel">AI transformation</span>
+          <span class="rz-chip rz-chip--ghost">Training</span>
         </div>
-    </section>
+      </article>
 
-    <!-- Impact Section -->
-    <section id="impact" class="section">
-        <div class="container">
-            <div class="section-label">Proven Impact</div>
-            <h2 class="section-title">Numbers that matter</h2>
-            <p class="section-subtitle">
-                Real results from real deployments. Not just pilots - production systems serving millions.
-            </p>
-            <div class="impact-grid">
-                <div class="impact-card featured" id="fcdo-impact">
-                    <div class="impact-header">
-                        <img src="assets/images/clients/fcdo.png" alt="FCDO" class="impact-logo">
-                    </div>
-                    <div class="impact-metric">UK Government's First Public LLM</div>
-                    <p class="impact-description">
-                        Live on every British Embassy website. Transformed 10-day email queues into 5-second responses.
-                        95% accuracy in production - exceeding human agent baseline. Saving £3.6M over 5 years while serving 500,000+ citizens annually.
-                    </p>
-                    <p class="impact-description" style="margin-top: 16px;">
-                        <strong style="color: var(--accent);">Winner: Digital Leaders AI Excellence Award 2025</strong>
-                        (with <a href="https://www.linkedin.com/posts/caution-your-blast_digileaders-impactawards-activity-7306241842101051392-hPeq/" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: underline;">CYB</a>)
-                    </p>
-                    <div class="impact-tags">
-                        <span class="impact-tag">LLM Architecture</span>
-                        <span class="impact-tag">Hallucination-Safe Design</span>
-                        <span class="impact-tag">Production Deployment</span>
-                        <span class="impact-tag">Featured on AI.gov.uk</span>
-                    </div>
-                </div>
-                <div class="impact-card">
-                    <div class="impact-header">
-                        <img src="assets/images/clients/gosh.png" alt="GOSH Charity" class="impact-logo">
-                    </div>
-                    <div class="impact-metric">70% Adoption in 12 Weeks</div>
-                    <p class="impact-description">
-                        Possibly the fastest charity AI transformation in the UK. From strategy to coaching - creating sustainable capability across the entire organisation.
-                    </p>
-                    <div class="impact-tags">
-                        <span class="impact-tag">AI Transformation</span>
-                        <span class="impact-tag">Training</span>
-                    </div>
-                </div>
-                <div class="impact-card">
-                    <div class="impact-header">
-                        <img src="assets/images/clients/nhs.png" alt="NHS England" class="impact-logo">
-                    </div>
-                    <div class="impact-metric">90,000 Appointments</div>
-                    <p class="impact-description">
-                        Discovery across 11 ICBs identifying pathway to 90,000 extra appointments annually. Secured £500k funding with first prototype in live testing in 6 weeks.
-                    </p>
-                    <div class="impact-tags">
-                        <span class="impact-tag">Discovery</span>
-                        <span class="impact-tag">Business Case</span>
-                    </div>
-                </div>
-                <div class="impact-card">
-                    <div class="impact-header">
-                        <img src="assets/images/clients/awin.png" alt="Awin" class="impact-logo">
-                    </div>
-                    <div class="impact-metric">10 Days → 2 Hours</div>
-                    <p class="impact-description">
-                        Built publisher matching system processing 1,500 vendors in 2 hours - down from 10 days. Cut RFP response time by 50%.
-                    </p>
-                    <div class="impact-tags">
-                        <span class="impact-tag">Rapid Prototyping</span>
-                        <span class="impact-tag">Automation</span>
-                    </div>
-                </div>
-                <div class="impact-card">
-                    <div class="impact-header">
-                        <img src="assets/images/clients/pearson.png" alt="Pearson" class="impact-logo">
-                    </div>
-                    <div class="impact-metric">4x Growth Platform</div>
-                    <p class="impact-description">
-                        Architecting unified AI platform for FTSE 100 education provider connecting all legacy systems. Single front door, cross-platform analytics, personalised learning pathways.
-                    </p>
-                    <div class="impact-tags">
-                        <span class="impact-tag">Platform Architecture</span>
-                        <span class="impact-tag">MCP Framework</span>
-                    </div>
-                </div>
-                <div class="impact-card">
-                    <div class="impact-header">
-                        <img src="assets/images/clients/rimes.png" alt="Rimes" class="impact-logo">
-                    </div>
-                    <div class="impact-metric">500+ Hours/Month Saved</div>
-                    <p class="impact-description">
-                        AI transformation roadmap for firm processing millions of daily transactions. Upskilled 40+ developers who shipped AI features during the engagement.
-                    </p>
-                    <div class="impact-tags">
-                        <span class="impact-tag">Roadmap</span>
-                        <span class="impact-tag">Developer Enablement</span>
-                    </div>
-                </div>
-            </div>
+      <!-- NHS - delivered via Hudson & Hayes. 90,000 framed as an illustrative
+           "pathway to"; figures kept to publishable claims. -->
+      <article class="rz-card impact-card">
+        <img src="assets/images/clients/nhs.png" alt="NHS" class="impact-logo" data-no-zoom />
+        <div class="impact-metric">11 ICBs, one diagnostics discovery</div>
+        <p class="impact-desc">
+          AI and automation discovery across 11 Integrated Care Boards in the
+          NHS Midlands region. Workshops narrowed 41 opportunities to a
+          prioritised shortlist, modelling how a 1% cut in missed appointments
+          could release a pathway to roughly 90,000 diagnostic appointments a
+          year. The programme secured funding for pilot projects and reached a
+          working prototype within weeks. Delivered via Hudson &amp; Hayes.
+        </p>
+        <div class="impact-chips">
+          <span class="rz-chip rz-chip--pink">Discovery</span>
+          <span class="rz-chip rz-chip--ghost">Business case</span>
         </div>
-    </section>
+      </article>
 
-    <!-- Clients Section -->
-    <section id="clients" class="section">
-        <div class="container">
-            <div class="clients-intro">
-                <div class="section-label">Our Clients</div>
-                <h2 class="section-title">Trusted across sectors</h2>
-                <p class="section-subtitle">
-                    From central government to global enterprises, we work with organisations from experimentation to scaled deployment.
-                </p>
-            </div>
-            <div class="clients-grid">
-                <div class="client-card">
-                    <img src="assets/images/clients/fcdo.png" alt="FCDO" class="client-logo">
-                    <div class="client-name">Foreign, Commonwealth & Development Office</div>
-                    <div class="client-type">UK Government</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/nhs.png" alt="NHS England" class="client-logo">
-                    <div class="client-name">NHS England</div>
-                    <div class="client-type">Healthcare</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/gosh.png" alt="GOSH Charity" class="client-logo">
-                    <div class="client-name">GOSH Charity</div>
-                    <div class="client-type">Charity</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/homes-england.png" alt="Homes England" class="client-logo">
-                    <div class="client-name">Homes England</div>
-                    <div class="client-type">Public Sector</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/awin.png" alt="Awin" class="client-logo">
-                    <div class="client-name">Awin</div>
-                    <div class="client-type">Global Tech</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/rimes.png" alt="Rimes" class="client-logo">
-                    <div class="client-name">Rimes</div>
-                    <div class="client-type">Financial Data</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/pearson.png" alt="Pearson" class="client-logo">
-                    <div class="client-name">Pearson</div>
-                    <div class="client-type">FTSE 100 Education</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/merton.png" alt="London Borough of Merton" class="client-logo">
-                    <div class="client-name">London Borough of Merton</div>
-                    <div class="client-type">Local Government</div>
-                </div>
-                <div class="client-card">
-                    <img src="assets/images/clients/keele.png" alt="Keele University" class="client-logo">
-                    <div class="client-name">Keele University</div>
-                    <div class="client-type">Higher Education</div>
-                </div>
-            </div>
+      <!-- AWIN - PORTED VERBATIM, DO NOT CHANGE. Live client; no new stats. -->
+      <article class="rz-card impact-card">
+        <img src="assets/images/clients/awin.png" alt="Awin" class="impact-logo" data-no-zoom />
+        <div class="impact-metric">10 Days &rarr; 2 Hours</div>
+        <p class="impact-desc">
+          Built publisher matching system processing 1,500 vendors in 2 hours -
+          down from 10 days. Cut RFP response time by 50%.
+        </p>
+        <div class="impact-chips">
+          <span class="rz-chip rz-chip--yel">Rapid prototyping</span>
+          <span class="rz-chip rz-chip--ghost">Automation</span>
         </div>
-    </section>
+      </article>
 
-    <!-- Awards Section -->
-    <section id="awards" class="section">
-        <div class="container">
-            <div class="awards-content">
-                <div>
-                    <div class="section-label">Recognition</div>
-                    <h2 class="section-title">Award-winning work</h2>
-                    <p class="section-subtitle" style="margin-bottom: 40px;">
-                        Our recent work with the FCDO and CYB has been recognised across government and industry.
-                    </p>
-                    <div class="awards-list">
-                        <div class="award-item">
-                            <div class="award-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/>
-                                    <path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/>
-                                    <path d="M6 9a6 6 0 0 0 12 0"/>
-                                    <line x1="12" y1="15" x2="12" y2="19"/>
-                                    <line x1="8" y1="19" x2="16" y2="19"/>
-                                    <line x1="9" y1="22" x2="15" y2="22"/>
-                                </svg>
-                            </div>
-                            <div class="award-details">
-                                <h4>Digital Leaders AI Excellence Award</h4>
-                                <p>Winner 2025  - Privacy & Security</p>
-                            </div>
-                        </div>
-                        <div class="award-item">
-                            <div class="award-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="14" r="5"/>
-                                    <path d="M8.5 9L7 3l5 2 5-2-1.5 6"/>
-                                </svg>
-                            </div>
-                            <div class="award-details">
-                                <h4>Computing Digital Technology Leaders</h4>
-                                <p>Nominated 2025  - Best AI Project</p>
-                            </div>
-                        </div>
-                        <div class="award-item">
-                            <div class="award-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 21h18M4 21V10M8 21V10M12 21V10M16 21V10M20 21V10M2 10h20L12 3z"/>
-                                </svg>
-                            </div>
-                            <div class="award-details">
-                                <h4>Government Innovator Award</h4>
-                                <p>Nominated 2025  - Civil Service Awards</p>
-                            </div>
-                        </div>
-                        <div class="award-item">
-                            <div class="award-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                                </svg>
-                            </div>
-                            <div class="award-details">
-                                <h4>Featured in "AI Demystified"</h4>
-                                <p>Pearson FT  - Amazon Bestseller</p>
-                            </div>
-                        </div>
-                        <div class="award-item">
-                            <div class="award-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5F6CA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-                                    <line x1="4" y1="22" x2="4" y2="15"/>
-                                </svg>
-                            </div>
-                            <div class="award-details">
-                                <h4>Featured Case Study</h4>
-                                <p>AI.gov.uk  - UK Government AI Use Case Library</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- PEARSON. Earlier platform work + ongoing early-careers/NEET programme.
+           Framed high-level; confidential client and bid detail withheld. -->
+      <article class="rz-card impact-card">
+        <img src="assets/images/clients/pearson.png" alt="Pearson" class="impact-logo" data-no-zoom />
+        <div class="impact-metric">A single front door</div>
+        <p class="impact-desc">
+          AI strategy and platform architecture for the FTSE 100 education
+          company. We designed a unified single-front-door platform concept - an
+          AI-agent and MCP-based architecture to connect fragmented
+          learning-delivery systems into one coherent learner experience,
+          including a working agentic prototype. The relationship has continued
+          into a broader programme supporting Pearson's early-careers ambitions,
+          including the national challenge of young people not in education,
+          employment or training (NEET).
+        </p>
+        <div class="impact-chips">
+          <span class="rz-chip rz-chip--pink">Platform architecture</span>
+          <span class="rz-chip rz-chip--ghost">MCP framework</span>
         </div>
-    </section>
+      </article>
 
-
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-        <div class="container">
-            <div class="contact-content">
-                <div class="section-label">Get Started</div>
-                <h2 class="section-title">Let's build something that works</h2>
-                <p class="section-subtitle" style="margin-left: auto; margin-right: auto;">
-                    Whether you're exploring AI strategy, need hands-on architecture help, or want to
-                    transform how your organisation uses AI - let's talk.
-                </p>
-                <div class="contact-cta">
-                    <a href="mailto:info@paidiaconsulting.com" class="contact-email">info@paidiaconsulting.com</a>
-                    <br>
-                    <a href="mailto:info@paidiaconsulting.com" class="btn btn-primary">
-                        Start a conversation
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
+      <!-- RIMES - delivered via Hudson & Hayes. Roadmap + MCP approach + developer
+           tooling rollout; unevidenced figures withheld. -->
+      <article class="rz-card impact-card">
+        <img src="assets/images/clients/rimes.png" alt="Rimes" class="impact-logo" data-no-zoom />
+        <div class="impact-metric">A roadmap and the tooling to use it</div>
+        <p class="impact-desc">
+          AI transformation roadmap for a private-equity-backed financial-data
+          firm targeting 3x growth. We designed an MCP-based approach to make
+          legacy systems AI-accessible, and rolled out a developer-tooling
+          programme across a ~50-strong engineering team, with onboarding and
+          process-design workshops. Delivered via Hudson &amp; Hayes.
+        </p>
+        <div class="impact-chips">
+          <span class="rz-chip rz-chip--yel">Roadmap</span>
+          <span class="rz-chip rz-chip--ghost">Developer enablement</span>
         </div>
-    </section>
+      </article>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="assets/images/B&WPaidia_logos - ivnerted.png" alt="Paidia Consulting">
-                </div>
-                <div class="footer-text">
-                    &copy; 2026 Paidia Consulting Ltd. London, UK.
-                </div>
-                <div class="footer-links">
-                    <a href="privacy.html">Privacy Policy</a>
-                    <a href="mailto:info@paidiaconsulting.com">Email</a>
-                </div>
-            </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS (NEW) --------------------------------------------------- -->
+<section class="rz-section rz-deep" id="testimonials">
+  <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
+  <div class="rz-container">
+    <span class="rz-eyebrow rz-eyebrow--yellow">In their words</span>
+    <h2 class="ui-mt-4">From cautious to <span class="rz-mark rz-tilt">capable</span>.</h2>
+
+    <!-- ZINC RE - Gary Roberts. Fully approved, consented written testimonial.
+         TODO: add assets/images/clients/zinc.png and swap the wordmark for an img. -->
+    <div class="rz-plate rz-plate--paper quote-card quote-card--feature">
+      <span class="rz-chip rz-chip--pink">Real Estate Asset Management</span>
+      <blockquote>
+        &ldquo;If you want someone who can take a team from cautious to capable
+        quickly, I'd recommend him without hesitation.&rdquo;
+      </blockquote>
+      <p class="quote-body">
+        &ldquo;I brought David in to get my team - a small senior team at a real
+        estate investment firm - genuinely capable with AI, not just curious
+        about it. Over four days he did exactly that. The training was practical,
+        well-paced, and pitched perfectly for people who needed to apply this to
+        real work the next morning, not sit through theory. The team came away
+        noticeably more confident and we're already using what he taught us.
+        We've asked him back.&rdquo;
+      </p>
+      <p class="quote-attrib quote-attrib--ink">
+        <span class="zinc-wordmark">ZINC RE</span><br>
+        <strong>Gary Roberts</strong>, CEO
+      </p>
+    </div>
+
+    <div class="quote-row">
+      <!-- PSC - Antonio Weiss. Approved by email 8 Jun 2026 (David: "I love it"). -->
+      <div class="rz-plate rz-plate--paper quote-card">
+        <span class="rz-chip rz-chip--pink">Public-sector consultancy</span>
+        <blockquote class="quote-sm">
+          &ldquo;David and team run engaging, innovative and high-impact
+          hackathons. We could feel the enthusiasm in the room and confidence
+          and capability being built.&rdquo;
+        </blockquote>
+        <p class="quote-attrib quote-attrib--ink">
+          <strong>Antonio Weiss</strong>, Senior Partner, The PSC<br>
+          author of &ldquo;AI Demystified&rdquo; (Financial Times Press)
+        </p>
+      </div>
+
+      <!-- GOSH - Rich Grove. Verbally offered; written quote being confirmed. -->
+      <div class="quote-card quote-card--placeholder">
+        <span class="quote-ph-label">Placeholder quote</span>
+        <p class="quote-ph-note">Quote being confirmed.</p>
+        <p class="quote-attrib"><strong>Rich Grove</strong>, CTO<br>GOSH Charity</p>
+      </div>
+
+      <!-- Merton - Roger Todd. Quote being confirmed. -->
+      <div class="quote-card quote-card--placeholder">
+        <span class="quote-ph-label">Placeholder quote</span>
+        <p class="quote-ph-note">Quote being confirmed.</p>
+        <p class="quote-attrib"><strong>Roger Todd</strong><br>London Borough of Merton</p>
+      </div>
+    </div>
+
+    <p class="quote-more">More references available on request.</p>
+  </div>
+</section>
+
+<!-- CLIENTS -------------------------------------------------------------- -->
+<section class="rz-section" id="clients">
+  <div class="rz-wash rz-wash--subtle"></div>
+  <div class="rz-container">
+    <div class="ui-lead-split ui-stack-12">
+      <div>
+        <span class="rz-eyebrow">Our clients</span>
+        <h2 class="ui-mt-4">Trusted across <span class="rz-mark rz-tilt">sectors</span>.</h2>
+      </div>
+      <div>
+        <p>
+          From central government to global enterprises, we work with
+          organisations from first experiments through to scaled deployment.
+        </p>
+      </div>
+    </div>
+
+    <div class="clients-grid">
+      <div class="client-tile">
+        <img src="assets/images/clients/fcdo.png" alt="FCDO" data-no-zoom />
+        <div class="client-name">Foreign, Commonwealth &amp; Development Office</div>
+        <div class="client-sector">UK Government</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/nhs.png" alt="NHS" data-no-zoom />
+        <div class="client-name">NHS</div>
+        <div class="client-sector">Healthcare</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/gosh.png" alt="GOSH Charity" data-no-zoom />
+        <div class="client-name">GOSH Charity</div>
+        <div class="client-sector">Charity</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/homes-england.png" alt="Homes England" data-no-zoom />
+        <div class="client-name">Homes England</div>
+        <div class="client-sector">Public Sector</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/awin.png" alt="Awin" data-no-zoom />
+        <div class="client-name">Awin</div>
+        <div class="client-sector">Global Tech</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/rimes.png" alt="Rimes" data-no-zoom />
+        <div class="client-name">Rimes</div>
+        <div class="client-sector">Financial Data</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/pearson.png" alt="Pearson" data-no-zoom />
+        <div class="client-name">Pearson</div>
+        <div class="client-sector">FTSE 100 Education</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/merton.png" alt="London Borough of Merton" data-no-zoom />
+        <div class="client-name">London Borough of Merton</div>
+        <div class="client-sector">Local Government</div>
+      </div>
+      <div class="client-tile">
+        <img src="assets/images/clients/keele.png" alt="Keele University" data-no-zoom />
+        <div class="client-name">Keele University</div>
+        <div class="client-sector">Higher Education</div>
+      </div>
+      <!-- ZINC RE - no logo file yet. Text treatment; TODO: add
+           assets/images/clients/zinc.png and swap to an <img>. -->
+      <div class="client-tile client-tile--text">
+        <div class="zinc-tile-mark">ZINC RE</div>
+        <div class="client-name">ZINC RE</div>
+        <div class="client-sector">Real Estate Asset Management</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS --------------------------------------------------------------- -->
+<section class="rz-section rz-deep" id="awards">
+  <div class="rz-container">
+    <span class="rz-eyebrow rz-eyebrow--yellow">Recognition</span>
+    <h2 class="ui-mt-4">Award-winning <span class="rz-mark rz-tilt">work</span>.</h2>
+    <p class="rz-lead ui-mt-6">
+      Our recent work with the FCDO and CYB has been recognised across government
+      and industry.
+    </p>
+
+    <ul class="awards-list">
+      <li class="award-row">
+        <span class="award-year">Winner &middot; 2025</span>
+        <div>
+          <h3>Digital Leaders AI Excellence Award</h3>
+          <p>Privacy &amp; Security</p>
         </div>
-    </footer>
+      </li>
+      <li class="award-row">
+        <span class="award-year">Nominated &middot; 2025</span>
+        <div>
+          <h3>Computing Digital Technology Leaders</h3>
+          <p>Best AI Project</p>
+        </div>
+      </li>
+      <li class="award-row">
+        <span class="award-year">Nominated &middot; 2025</span>
+        <div>
+          <h3>Government Innovator Award</h3>
+          <p>Civil Service Awards</p>
+        </div>
+      </li>
+      <li class="award-row">
+        <span class="award-year">Featured</span>
+        <div>
+          <h3>Featured in "AI Demystified"</h3>
+          <p>Pearson FT &middot; Amazon Bestseller</p>
+        </div>
+      </li>
+      <li class="award-row">
+        <span class="award-year">Featured</span>
+        <div>
+          <h3>Featured case study</h3>
+          <p>AI.gov.uk &middot; UK Government AI Use Case Library</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
 
-    <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
+<!-- CONTACT -------------------------------------------------------------- -->
+<section class="rz-section" id="contact">
+  <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
+  <div class="rz-container">
+    <span class="rz-eyebrow">Get started</span>
+    <h2 class="ui-mt-4" style="max-width: 20ch;">
+      Let's build something that
+      <span class="rz-mark--pink rz-tilt">works</span>.
+    </h2>
+    <p class="rz-lead ui-mt-6">
+      Whether you're exploring AI strategy, need hands-on architecture help, or
+      want to change how your organisation uses AI - let's talk.
+    </p>
+    <div class="ui-actions">
+      <a href="mailto:info@paidiaconsulting.com" class="rz-btn">info@paidiaconsulting.com</a>
+      <a href="#top" class="rz-btn rz-btn--ghost">Back to top</a>
+    </div>
+  </div>
+</section>
 
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenuBtn.classList.toggle('active');
-            navLinks.classList.toggle('active');
+<!-- FOOTER --------------------------------------------------------------- -->
+<footer class="rz-footer">
+  <div class="rz-container rz-grid" style="--rz-cols: 12; --rz-cols-mobile: 1;">
+    <div style="grid-column: span 6;">
+      <a class="rz-header__brand" href="#top">PAIDIA</a>
+      <p class="ui-mt-4" style="color: var(--rz-paper-70); max-width: 38ch;">
+        AI enablement and engineering. We help organisations use AI - from the
+        boardroom to the codebase.
+      </p>
+    </div>
+    <div style="grid-column: span 3;">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#impact">Impact</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#clients">Clients</a></li>
+      </ul>
+    </div>
+    <div style="grid-column: span 3;">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:info@paidiaconsulting.com">Email</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div style="grid-column: span 12;" class="rz-footer__rule">
+      &copy; 2026 Paidia Consulting Ltd &middot; London, UK
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav disclosure.
+  (function () {
+    var toggle = document.querySelector('.rz-nav__toggle');
+    var nav = document.getElementById('primary-nav');
+    if (toggle && nav) {
+      toggle.addEventListener('click', function () {
+        var open = nav.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      nav.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          nav.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
         });
+      });
+    }
+  })();
+</script>
 
-        // Close mobile menu when a link is clicked
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenuBtn.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Smooth scroll for anchor links (preserves browser history)
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                const target = document.querySelector(href);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // Update URL hash after scroll starts (preserves back button)
-                    history.pushState(null, '', href);
-                }
-            });
-        });
-
-        // Handle back/forward button
-        window.addEventListener('popstate', function() {
-            const hash = window.location.hash;
-            if (hash) {
-                const target = document.querySelector(hash);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        });
-
-        // Navbar background on scroll
-        const nav = document.querySelector('nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                nav.style.background = 'rgba(10, 10, 15, 0.95)';
-            } else {
-                nav.style.background = 'rgba(10, 10, 15, 0.8)';
-            }
-        });
-
-        // Simple intersection observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all cards and sections
-        document.querySelectorAll('.service-card, .impact-card, .client-card, .award-item').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(el);
-        });
-    </script>
+<!-- Click-to-zoom image lightbox (system default). Load LAST. -->
+<script src="rz/lightbox.js"></script>
 </body>
 </html>
