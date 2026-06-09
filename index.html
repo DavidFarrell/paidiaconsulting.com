@@ -144,7 +144,8 @@
   .impact-chips { display: flex; gap: var(--rz-sp-3); flex-wrap: wrap; margin-top: auto; }
 
   /* FCDO award line + the subtle, hover-revealed CYB credit. ------------- */
-  .fcdo-award { font-family: var(--rz-mono); font-size: 0.875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rz-pink); margin: 0 0 var(--rz-sp-6); }
+  .fcdo-award { font-family: var(--rz-mono); font-size: 0.875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rz-pink); margin: 0 0 var(--rz-sp-4); max-width: none; }
+  @media (max-width: 768px) { .fcdo-award { font-size: 0.8rem; } }
 
   /* The credit is visually quiet by default (low-contrast, mono) and brightens
      on hover/focus, with a tooltip that fully spells out the shared delivery. */
@@ -477,20 +478,12 @@
           while serving 500,000+ citizens annually.
         </p>
         <p class="fcdo-award">Winner &middot; Digital Leaders AI Award 2025 &middot; Featured on AI.gov.uk</p>
+        <p class="impact-credit">In partnership with Caution Your Blast (CYB)</p>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">LLM architecture</span>
           <span class="rz-chip rz-chip--pink">Hallucination-safe design</span>
           <span class="rz-chip rz-chip--ghost">Production deployment</span>
         </div>
-        <!-- Subtle shared-credit: quiet by default, reveals on hover/focus. -->
-        <span class="cyb-credit" tabindex="0">
-          Delivered with CYB
-          <span class="cyb-credit__tip">
-            Delivered while freelancing through Caution Your Blast (CYB); the
-            Digital Leaders AI Award 2025 was won with the CYB team.
-            <a href="https://www.linkedin.com/posts/caution-your-blast_digileaders-impactawards-activity-7306241842101051392-hPeq/" target="_blank" rel="noopener">See the award</a>.
-          </span>
-        </span>
       </article>
 
       <!-- GOSH. 70% / 12 weeks kept (verified). -->
@@ -518,7 +511,7 @@
           <li>Modelled how a 1% cut in missed appointments could free a pathway to roughly 90,000 diagnostic appointments a year</li>
           <li>Secured funding for pilot projects and reached a working prototype within weeks</li>
         </ul>
-        <p class="impact-credit">Delivered via Hudson &amp; Hayes</p>
+        <p class="impact-credit">In partnership with Hudson &amp; Hayes</p>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--pink">Discovery</span>
           <span class="rz-chip rz-chip--ghost">Business case</span>
@@ -532,6 +525,7 @@
         <ul class="impact-list">
           <li>Built a publisher matching system processing 1,500 vendors in 2 hours, down from 10 days</li>
           <li>Automated workflows that verify ad placements, giving individual people back full days of work</li>
+          <li>Coaching the engineering team on building and using AI agents</li>
         </ul>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">Rapid prototyping</span>
@@ -543,7 +537,7 @@
            Framed high-level; confidential client and bid detail withheld. -->
       <article class="rz-card impact-card">
         <img src="assets/images/clients/pearson.png" alt="Pearson" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">A single front door</div>
+        <div class="impact-metric">A platform strategy and architecture</div>
         <ul class="impact-list">
           <li>AI strategy and platform architecture for the FTSE 100 education company
             <ul>
@@ -570,7 +564,7 @@
           <li>An MCP-based approach to make legacy systems AI-accessible</li>
           <li>Developer-tooling programme across a ~50-strong engineering team, with onboarding and process-design workshops</li>
         </ul>
-        <p class="impact-credit">Delivered via Hudson &amp; Hayes</p>
+        <p class="impact-credit">In partnership with Hudson &amp; Hayes</p>
         <div class="impact-chips">
           <span class="rz-chip rz-chip--yel">Roadmap</span>
           <span class="rz-chip rz-chip--ghost">Developer enablement</span>
