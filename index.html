@@ -221,6 +221,12 @@
   .card-logo img { height: 32px; width: auto; display: block; }
   .card-logo svg { height: 30px; width: auto; display: block; }
   .card-logo--psc { font-family: var(--rz-display); font-size: 1.25rem; letter-spacing: -0.01em; line-height: 1; color: var(--rz-ink); }
+  /* Featured card logo (GOSH) sits in the source row - give it more presence. */
+  .card-logo--feature { flex: 0 0 auto; }
+  .card-logo--feature img { height: 50px; }
+  /* ZINC letterform is wide; trim it in the small footer for balance. */
+  .card-logo--zinc svg { height: 24px; }
+  @media (max-width: 560px) { .card-logo--feature img { height: 42px; } }
 
   /* Clients logo wall --------------------------------------------------- */
   .clients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-12); }
@@ -547,28 +553,44 @@
     <span class="rz-eyebrow rz-eyebrow--yellow">In their words</span>
     <h2 class="ui-mt-4">From cautious to <span class="rz-mark rz-tilt">capable</span>.</h2>
 
-    <!-- ZINC RE - Gary Roberts. Fully approved, consented written testimonial.
-         TODO: add assets/images/clients/zinc.png and swap the wordmark for an img. -->
+    <!-- GOSH - Richard Grove. Featured. Approved; names David by name (the company
+         is not a lecturer, so the personal credit is the point here). -->
     <div class="rz-plate rz-plate--paper quote-card quote-card--feature">
-      <span class="rz-chip rz-chip--pink">Real Estate Asset Management</span>
-      <blockquote>&ldquo;We've asked them back.&rdquo;</blockquote>
+      <span class="rz-chip rz-chip--pink">Children's hospital charity</span>
+      <blockquote>&ldquo;This isn't change management, it's EQ and IQ.&rdquo;</blockquote>
       <p class="quote-body">
-        &ldquo;I brought Paidia Consulting in to get my team - a small senior
-        team at a real estate investment firm - genuinely capable with AI, not
-        just curious about it. Over four days they did exactly that. The training
-        was practical, well-paced, and pitched perfectly for people who needed to
-        apply this to real work the next morning, not sit through theory. The team
-        came away noticeably more confident and we're already using what they
-        taught us. We've asked them back. If you want a partner who can take a team
-        from cautious to capable quickly, I'd recommend them without hesitation.&rdquo;
+        &ldquo;Paidia's coaching has been unique in helping us actually
+        understand and use AI. David's experience as both a lecturer and an AI
+        expert is the perfect blend - this isn't change management, it's EQ and
+        IQ, giving people the confidence to try things and feel comfortable with
+        AI, so the whole organisation gets the best from it.&rdquo;
       </p>
       <p class="quote-attrib quote-attrib--ink quote-attrib--source">
-        <span class="zinc-logo zinc-logo--quote"><svg fill="currentColor" role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" xml:space="preserve"><g class="letter" ><path id="Shape" class="st0" d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"></path></g><g class="letter" ><path id="Shape_1_" class="st0" d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_2_" class="st0" d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_3_" class="st0" d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"></path></g></svg></span>
-        <span class="quote-attrib__text"><strong>Gary Roberts</strong>, CEO</span>
+        <span class="card-logo card-logo--feature"><img src="assets/images/clients/gosh-ink.png" alt="GOSH Charity" data-no-zoom></span>
+        <span class="quote-attrib__text"><strong>Richard Grove</strong>, CTO, GOSH Charity</span>
       </p>
     </div>
 
     <div class="quote-row">
+      <!-- ZINC RE - Gary Roberts. Fully approved, consented written testimonial. -->
+      <div class="rz-plate rz-plate--paper quote-card">
+        <span class="rz-chip rz-chip--pink">Real Estate Asset Management</span>
+        <blockquote class="quote-sm">
+          &ldquo;I brought Paidia Consulting in to get my team - a small senior
+          team at a real estate investment firm - genuinely capable with AI, not
+          just curious about it. Over four days they did exactly that. The training
+          was practical, well-paced, and pitched perfectly for people who needed to
+          apply this to real work the next morning, not sit through theory. The team
+          came away noticeably more confident and we're already using what they
+          taught us. We've asked them back. If you want a partner who can take a team
+          from cautious to capable quickly, I'd recommend them without hesitation.&rdquo;
+        </blockquote>
+        <div class="quote-foot">
+          <span class="card-logo card-logo--zinc"><svg fill="currentColor" role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" xml:space="preserve"><g class="letter" ><path id="Shape" class="st0" d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"></path></g><g class="letter" ><path id="Shape_1_" class="st0" d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_2_" class="st0" d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_3_" class="st0" d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"></path></g></svg></span>
+          <p class="quote-attrib quote-attrib--ink"><strong>Gary Roberts</strong>, CEO</p>
+        </div>
+      </div>
+
       <!-- PSC - Antonio Weiss. Approved by email 8 Jun 2026 (David: "I love it"). -->
       <div class="rz-plate rz-plate--paper quote-card">
         <span class="rz-chip rz-chip--pink">Public-service consultancy</span>
@@ -602,23 +624,6 @@
         <div class="quote-foot">
           <span class="card-logo"><svg class="logo-mark" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numerical Partners"><path d="M8 7 L20 7 M17.5 5 L20 7 L17.5 9" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="3" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">(</text><text x="9" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-style="italic" fill="currentColor">n</text><text x="18" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">)</text></svg></span>
           <p class="quote-attrib quote-attrib--ink"><strong>James Bentley</strong>, Founder, Numerical Partners</p>
-        </div>
-      </div>
-
-      <!-- GOSH - Richard Grove. Approved; names David by name (the company is not
-           a lecturer, so the personal credit is the point here). -->
-      <div class="rz-plate rz-plate--paper quote-card">
-        <span class="rz-chip rz-chip--pink">Children's hospital charity</span>
-        <blockquote class="quote-sm">
-          &ldquo;Paidia's coaching has been unique in helping us actually
-          understand and use AI. David's experience as both a lecturer and an AI
-          expert is the perfect blend - this isn't change management, it's EQ and
-          IQ, giving people the confidence to try things and feel comfortable with
-          AI, so the whole organisation gets the best from it.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo"><img src="assets/images/clients/gosh-ink.png" alt="GOSH Charity" data-no-zoom></span>
-          <p class="quote-attrib quote-attrib--ink"><strong>Richard Grove</strong>, CTO, GOSH Charity</p>
         </div>
       </div>
     </div>
