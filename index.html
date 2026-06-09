@@ -205,7 +205,7 @@
     .quote-attrib__text { text-align: left; }
     .zinc-logo--quote { width: 104px; }
   }
-  .quote-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
+  .quote-row { display: grid; grid-template-columns: repeat(2, 1fr); max-width: 56rem; gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
   @media (max-width: 900px) { .quote-row { grid-template-columns: 1fr; } }
   /* Pending testimonials shown as honest, visibly-empty slots - not faked. */
   .quote-card--placeholder { display: flex; flex-direction: column; border: 1.5px dashed var(--rz-rule-strong); border-radius: var(--rz-radius); padding: var(--rz-sp-8); }
@@ -627,6 +627,24 @@
         <div class="quote-foot">
           <span class="card-logo"><svg class="logo-mark" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numerical Partners"><path d="M8 7 L20 7 M17.5 5 L20 7 L17.5 9" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="3" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">(</text><text x="9" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-style="italic" fill="currentColor">n</text><text x="18" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">)</text></svg></span>
           <p class="quote-attrib quote-attrib--ink"><strong>James Bentley</strong>, Founder, Numerical Partners</p>
+        </div>
+      </div>
+
+      <!-- London Borough of Merton - Roger Todd. AI governance engagement
+           (Merton & Croydon). Supplied and approved 9 Jun 2026. -->
+      <div class="rz-plate rz-plate--paper quote-card">
+        <span class="rz-chip rz-chip--pink">Local government</span>
+        <blockquote class="quote-sm">
+          &ldquo;David and the team at Paidia gave us the governance to be
+          confident in how we procure, build and use AI. For a local authority
+          that matters enormously, and what they delivered was practical, not
+          abstract policy: clear AI procurement clauses and a checklist our
+          service owners can apply themselves. We're now on much firmer footing
+          to adopt AI responsibly. I'd recommend them without hesitation.&rdquo;
+        </blockquote>
+        <div class="quote-foot">
+          <span class="card-logo"><img src="assets/images/clients/merton-ink.png" alt="London Borough of Merton" data-no-zoom></span>
+          <p class="quote-attrib quote-attrib--ink"><strong>Roger Todd</strong>, Head of Digital &amp; Products,<br>London Borough of Merton</p>
         </div>
       </div>
     </div>
