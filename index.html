@@ -10,6 +10,11 @@
 <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32" />
 <link rel="apple-touch-icon" href="/assets/images/favicon-180.png" />
 
+<!-- Preload the display + body faces so the hero headline (the LCP element)
+     swaps to its real face without a late font waterfall. -->
+<link rel="preload" href="/rz/fonts/archivo-black-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/rz/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+
 <link rel="stylesheet" href="rz/fonts.css" />
 <link rel="stylesheet" href="rz/tokens.css" />
 <link rel="stylesheet" href="rz/components.css" />
@@ -62,6 +67,11 @@
   }
   .ui-stack-12 { margin-bottom: var(--rz-sp-12); }
   .ui-mt-4 { margin-top: var(--rz-sp-4); }
+  /* Bind a heading's spot-ink word to its full stop. The .rz-tilt mark is
+     display:inline-block, which opens a line-break opportunity before the
+     trailing period - on narrow screens the "." would orphan onto its own
+     line. nowrap glues the word + stop so they wrap together or not at all. */
+  .rz-bind { white-space: nowrap; }
 
   /* Big display headlines (Archivo Black) carry very long words like
      "organisations" / "codebase". On narrow viewports the clamp floor
@@ -379,7 +389,7 @@
     <span class="rz-eyebrow">AI enablement &middot; engineering &middot; coaching</span>
     <h1 class="rz-display ui-mt-4">
       We help organisations use AI
-      <span class="rz-mark rz-tilt">well</span>.
+      <span class="rz-bind"><span class="rz-mark rz-tilt">well</span>.</span>
     </h1>
     <p class="rz-lead ui-mt-6">
       We are AI experts who love everything from coaching and embedded AI
@@ -413,7 +423,7 @@
 <section class="rz-section rz-deep" id="services">
   <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
   <div class="rz-container">
-    <h2 class="ui-stack-12">From the boardroom to the <span class="rz-mark rz-tilt">codebase</span>.</h2>
+    <h2 class="ui-stack-12">From the boardroom to the <span class="rz-bind"><span class="rz-mark rz-tilt">codebase</span>.</span></h2>
 
     <p class="services-label rz-eyebrow rz-eyebrow--yellow">What we do</p>
 
@@ -476,7 +486,7 @@
   <div class="rz-container">
     <div class="ui-stack-12">
       <span class="rz-eyebrow">Selected work</span>
-      <h2 class="ui-mt-4">AI with real <span class="rz-mark rz-tilt">impact</span>.</h2>
+      <h2 class="ui-mt-4">AI with real <span class="rz-bind"><span class="rz-mark rz-tilt">impact</span>.</span></h2>
     </div>
 
     <div class="impact-grid">
@@ -484,7 +494,7 @@
       <!-- FCDO (featured). Corrected wording: "first public-facing LLM-powered
            service". Subtle, hover-revealed CYB credit at the foot of the card. -->
       <article class="rz-card impact-card impact-card--featured" id="fcdo-impact">
-        <img src="assets/images/clients/fcdo.png" alt="FCDO" class="impact-logo" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/fcdo.webp" alt="FCDO" class="impact-logo" data-no-zoom />
         <div class="impact-metric">The UK Government's first public-facing LLM-powered service</div>
         <p class="impact-desc">
           Live on GOV.UK and on every British Embassy website. Turned a 10-day
@@ -503,7 +513,7 @@
 
       <!-- GOSH. 70% / 12 weeks kept (verified). -->
       <article class="rz-card impact-card">
-        <img src="assets/images/clients/gosh.png" alt="GOSH Charity" class="impact-logo" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/gosh.webp" alt="GOSH Charity" class="impact-logo" data-no-zoom />
         <div class="impact-metric">70% adoption in 12 weeks</div>
         <ul class="impact-list">
           <li>From zero usage to 70% adoption across the charity in 12 weeks</li>
@@ -521,7 +531,7 @@
       <!-- NHS - delivered via Hudson & Hayes. 90,000 framed as an illustrative
            "pathway to"; figures kept to publishable claims. -->
       <article class="rz-card impact-card">
-        <img src="assets/images/clients/nhs.png" alt="NHS" class="impact-logo" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/nhs.png" alt="NHS" class="impact-logo" data-no-zoom />
         <div class="impact-metric">11 ICBs, one diagnostics discovery</div>
         <ul class="impact-list">
           <li>AI and automation discovery across 11 Integrated Care Boards in the NHS Midlands region</li>
@@ -538,7 +548,7 @@
 
       <!-- AWIN - live client. Matcher metric + Magic Eye, per David 9 Jun 2026. -->
       <article class="rz-card impact-card">
-        <img src="assets/images/clients/awin.png" alt="Awin" class="impact-logo" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/awin.webp" alt="Awin" class="impact-logo" data-no-zoom />
         <div class="impact-metric">10 Days &rarr; 2 Hours</div>
         <ul class="impact-list">
           <li>Publisher matching tool - 1,500 vendors in 2 hours, down from 10 days</li>
@@ -556,7 +566,7 @@
       <!-- PEARSON. Earlier platform work + ongoing early-careers/NEET programme.
            Framed high-level; confidential client and bid detail withheld. -->
       <article class="rz-card impact-card">
-        <img src="assets/images/clients/pearson.png" alt="Pearson" class="impact-logo" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/pearson.png" alt="Pearson" class="impact-logo" data-no-zoom />
         <div class="impact-metric">A platform strategy and architecture</div>
         <ul class="impact-list">
           <li>AI strategy and platform architecture for the FTSE 100 education company
@@ -577,7 +587,7 @@
       <!-- RIMES - delivered via Hudson & Hayes. Roadmap + MCP approach + developer
            tooling rollout; unevidenced figures withheld. -->
       <article class="rz-card impact-card">
-        <img src="assets/images/clients/rimes.png" alt="Rimes" class="impact-logo" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/rimes.webp" alt="Rimes" class="impact-logo" data-no-zoom />
         <div class="impact-metric">A roadmap and the tooling to use it</div>
         <ul class="impact-list">
           <li>AI transformation roadmap for a private-equity-backed financial-data firm targeting 3x growth</li>
@@ -600,7 +610,7 @@
   <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
   <div class="rz-container">
     <span class="rz-eyebrow rz-eyebrow--yellow">In their words</span>
-    <h2 class="ui-mt-4">From cautious to <span class="rz-mark rz-tilt">capable</span>.</h2>
+    <h2 class="ui-mt-4">From cautious to <span class="rz-bind"><span class="rz-mark rz-tilt">capable</span>.</span></h2>
 
     <!-- GOSH - Richard Grove. Featured. Approved; names David by name (the company
          is not a lecturer, so the personal credit is the point here). -->
@@ -615,7 +625,7 @@
         AI, so the whole organisation gets the best from it.&rdquo;
       </p>
       <p class="quote-attrib quote-attrib--ink quote-attrib--source">
-        <span class="card-logo card-logo--feature"><img src="assets/images/clients/gosh-ink.png" alt="GOSH Charity" data-no-zoom></span>
+        <span class="card-logo card-logo--feature"><img loading="lazy" decoding="async" src="assets/images/clients/gosh-ink.webp" alt="GOSH Charity" data-no-zoom></span>
         <span class="quote-attrib__text"><strong>Richard Grove</strong>, CTO, GOSH Charity</span>
       </p>
     </div>
@@ -653,7 +663,7 @@
           to adopt AI responsibly. I'd recommend them without hesitation.&rdquo;
         </blockquote>
         <div class="quote-foot">
-          <span class="card-logo"><img src="assets/images/clients/merton-ink.png" alt="London Borough of Merton" data-no-zoom></span>
+          <span class="card-logo"><img loading="lazy" decoding="async" src="assets/images/clients/merton-ink.png" alt="London Borough of Merton" data-no-zoom></span>
           <p class="quote-attrib quote-attrib--ink"><strong>Roger Todd</strong>, Head of Digital &amp; Products</p>
         </div>
       </div>
@@ -706,7 +716,7 @@
     <div class="ui-lead-split ui-stack-12">
       <div>
         <span class="rz-eyebrow">Our clients</span>
-        <h2 class="ui-mt-4">Trusted across <span class="rz-mark rz-tilt">sectors</span>.</h2>
+        <h2 class="ui-mt-4">Trusted across <span class="rz-bind"><span class="rz-mark rz-tilt">sectors</span>.</span></h2>
       </div>
       <div>
         <p>
@@ -718,47 +728,47 @@
 
     <div class="clients-grid">
       <div class="client-tile">
-        <img src="assets/images/clients/fcdo.png" alt="FCDO" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/fcdo.webp" alt="FCDO" data-no-zoom />
         <div class="client-name">Foreign, Commonwealth &amp; Development Office</div>
         <div class="client-sector">UK Government</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/nhs.png" alt="NHS" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/nhs.png" alt="NHS" data-no-zoom />
         <div class="client-name">NHS</div>
         <div class="client-sector">Healthcare</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/gosh.png" alt="GOSH Charity" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/gosh.webp" alt="GOSH Charity" data-no-zoom />
         <div class="client-name">GOSH Charity</div>
         <div class="client-sector">Charity</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/homes-england.png" alt="Homes England" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/homes-england.webp" alt="Homes England" data-no-zoom />
         <div class="client-name">Homes England</div>
         <div class="client-sector">Public Sector</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/awin.png" alt="Awin" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/awin.webp" alt="Awin" data-no-zoom />
         <div class="client-name">Awin</div>
         <div class="client-sector">Global Tech</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/rimes.png" alt="Rimes" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/rimes.webp" alt="Rimes" data-no-zoom />
         <div class="client-name">Rimes</div>
         <div class="client-sector">Financial Data</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/pearson.png" alt="Pearson" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/pearson.png" alt="Pearson" data-no-zoom />
         <div class="client-name">Pearson</div>
         <div class="client-sector">FTSE 100 Education</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/merton.png" alt="London Borough of Merton" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/merton.png" alt="London Borough of Merton" data-no-zoom />
         <div class="client-name">London Borough of Merton</div>
         <div class="client-sector">Local Government</div>
       </div>
       <div class="client-tile">
-        <img src="assets/images/clients/keele.png" alt="Keele University" data-no-zoom />
+        <img loading="lazy" decoding="async" src="assets/images/clients/keele.webp" alt="Keele University" data-no-zoom />
         <div class="client-name">Keele University</div>
         <div class="client-sector">Higher Education</div>
       </div>
@@ -777,7 +787,7 @@
 <section class="rz-section rz-deep" id="awards">
   <div class="rz-container">
     <span class="rz-eyebrow rz-eyebrow--yellow">Recognition</span>
-    <h2 class="ui-mt-4">Award-winning <span class="rz-mark rz-tilt">work</span>.</h2>
+    <h2 class="ui-mt-4">Award-winning <span class="rz-bind"><span class="rz-mark rz-tilt">work</span>.</span></h2>
     <p class="rz-lead ui-mt-6">
       Our recent work with the FCDO and CYB has been recognised across government
       and industry.
@@ -830,7 +840,7 @@
     <span class="rz-eyebrow">Get started</span>
     <h2 class="ui-mt-4" style="max-width: 20ch;">
       Let's build something that works
-      <span class="rz-mark--pink rz-tilt">for you</span>.
+      <span class="rz-bind"><span class="rz-mark--pink rz-tilt">for you</span>.</span>
     </h2>
     <p class="rz-lead ui-mt-6">
       Whether you're exploring AI strategy, need hands-on architecture help, or
@@ -896,6 +906,6 @@
 </script>
 
 <!-- Click-to-zoom image lightbox (system default). Load LAST. -->
-<script src="rz/lightbox.js"></script>
+<script src="rz/lightbox.js" defer></script>
 </body>
 </html>
