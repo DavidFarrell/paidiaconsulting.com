@@ -232,6 +232,10 @@
   }
   .quote-row { display: grid; grid-template-columns: repeat(2, 1fr); max-width: 56rem; gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
   @media (max-width: 900px) { .quote-row { grid-template-columns: 1fr; } }
+  /* Pearson card spans the full row as a closing testimonial, so the five quotes
+     read as 2 + 2 + 1-wide rather than leaving an orphaned half-width card. */
+  .quote-row .quote-card--wide { grid-column: 1 / -1; }
+  .quote-card--wide .quote-foot { min-height: 0; }
   /* Pending testimonials shown as honest, visibly-empty slots - not faked. */
   .quote-card--placeholder { display: flex; flex-direction: column; border: 1.5px dashed var(--rz-rule-strong); border-radius: var(--rz-radius); padding: var(--rz-sp-8); }
   .quote-ph-label { font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rz-paper-50); }
@@ -281,6 +285,70 @@
   .award-row .award-year { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; color: var(--rz-pink); white-space: nowrap; }
   .award-row h3 { font-family: var(--rz-display); font-size: var(--rz-fs-h4); line-height: 1.1; letter-spacing: var(--rz-track-tight); margin: 0; }
   .award-row p { margin: var(--rz-sp-2) 0 0; color: var(--rz-paper-70); font-size: var(--rz-fs-sm); }
+
+  /* Team ---------------------------------------------------------------- */
+  /* Type-forward, no photos (on-brand for the riso system): each person is a
+     spot-ink monogram tile + name + mono role line + a short bio. Founder gets
+     a wide feature card; associates sit in a three-up grid of deep-purple cards
+     matching the Services / Clients tiles. */
+  .team-monogram {
+    font-family: var(--rz-display); letter-spacing: var(--rz-track-tight);
+    color: var(--rz-ink); border-radius: var(--rz-radius); flex: 0 0 auto;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .team-monogram--yel { background: var(--rz-yellow); }
+  .team-monogram--pink { background: var(--rz-pink); }
+
+  .team-founder {
+    display: grid; grid-template-columns: auto 1fr; gap: var(--rz-grid-gutter);
+    align-items: center; margin-top: var(--rz-sp-12);
+    background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong);
+    border-radius: var(--rz-radius); padding: clamp(1.6rem, 3vw, 2.6rem);
+  }
+  .team-founder .team-monogram { width: 7rem; height: 7rem; font-size: 2rem; }
+  /* Founder portrait: kept black-and-white, framed with a hairline and a hard
+     riso offset block (no soft shadow). Aspect locked to the source so the face
+     is never cropped. */
+  .team-photo {
+    display: block; width: clamp(150px, 22vw, 240px);
+    aspect-ratio: 420 / 661; object-fit: cover; object-position: center top;
+    border-radius: var(--rz-radius); border: 1.5px solid var(--rz-rule-strong);
+    box-shadow: var(--rz-offset-sm-pink);
+    filter: grayscale(1) contrast(1.03);
+  }
+  @media (max-width: 640px) {
+    .team-founder { grid-template-columns: 1fr; align-items: start; }
+    .team-founder .team-monogram { width: 4.5rem; height: 4.5rem; font-size: 1.5rem; }
+    .team-photo { width: clamp(140px, 40vw, 180px); }
+  }
+
+  .team-name { font-family: var(--rz-display); line-height: 1.05; letter-spacing: var(--rz-track-tight); margin: 0; overflow-wrap: break-word; }
+  .team-founder .team-name { font-size: var(--rz-fs-h3); }
+  .team-role { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rz-pink); margin: var(--rz-sp-3) 0 var(--rz-sp-5); }
+  .team-bio { color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: var(--rz-lh-body); margin: 0; max-width: 64ch; }
+  .team-bio + .team-bio { margin-top: var(--rz-sp-4); }
+
+  .team-assoc-label { display: block; margin: var(--rz-sp-16) 0 0; }
+  .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-8); }
+  @media (max-width: 860px) { .team-grid { grid-template-columns: 1fr; } }
+  .team-card { background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong); border-radius: var(--rz-radius); padding: clamp(1.4rem, 2.2vw, 2rem); display: flex; flex-direction: column; }
+  .team-card .team-monogram { width: 3.5rem; height: 3.5rem; font-size: 1.2rem; margin-bottom: var(--rz-sp-5); }
+  /* Associate headshots: kept B&W, hairline-framed, top-anchored so faces sit
+     high in the frame. 2:3 matches the generated portraits (Ross reads as the
+     three-quarter-length shot; Jon and Gus as head-and-shoulders). */
+  .team-card-photo {
+    display: block; width: 100%; aspect-ratio: 2 / 3;
+    object-fit: cover; object-position: center top;
+    border-radius: var(--rz-radius); border: 1.5px solid var(--rz-rule-strong);
+    filter: grayscale(1) contrast(1.03);
+    margin-bottom: var(--rz-sp-5);
+  }
+  .team-card .team-name { font-size: var(--rz-fs-h4); }
+  .team-card .team-bio { margin-top: var(--rz-sp-4); }
+  /* The office cats: their own two-up row so the human associates stay a clean
+     three. Narrower than the associate grid so the two cards match card width. */
+  .team-cats { grid-template-columns: repeat(2, 1fr); max-width: 46rem; }
+  @media (max-width: 860px) { .team-cats { grid-template-columns: 1fr; max-width: none; } }
 
   /* Brand lockup in the header: fennec-fox emblem + PAIDIA wordmark. */
   .rz-header__brand--logo { display: inline-flex; align-items: center; gap: var(--rz-sp-4); padding: var(--rz-sp-2) 0; }
@@ -357,6 +425,7 @@
       <a href="#impact">Impact</a>
       <a href="#testimonials">Testimonials</a>
       <a href="#clients">Clients</a>
+      <a href="#team">Team</a>
       <a href="#contact" class="rz-btn">Get in touch</a>
     </nav>
   </div>
@@ -703,6 +772,25 @@
           <p class="quote-attrib quote-attrib--ink"><strong>James Bentley</strong>, Founder, Numerical Partners</p>
         </div>
       </div>
+
+      <!-- Pearson - Michelle Chu. Her own final wording, approved by email
+           10 Jun 2026 (she revised David's draft and sent this back). -->
+      <div class="rz-plate rz-plate--paper quote-card quote-card--wide">
+        <span class="rz-chip rz-chip--pink">FTSE 100 education</span>
+        <blockquote class="quote-sm">
+          &ldquo;David combines deep AI expertise with a rare ability to
+          <span class="rz-mark">make the future feel practical</span>. He moves
+          effortlessly between board-level strategy and the technical detail of
+          how things actually get built. His workshops and materials helped us
+          understand not just what AI could do, but what it could change - in our
+          processes, our platform strategy and the way we work. I'd recommend
+          Paidia without hesitation.&rdquo;
+        </blockquote>
+        <div class="quote-foot">
+          <span class="card-logo"><img loading="lazy" decoding="async" src="assets/images/clients/pearson-ink.webp" alt="Pearson" data-no-zoom></span>
+          <p class="quote-attrib quote-attrib--ink"><strong>Michelle Chu</strong>, Principal, Programme Management, Pearson</p>
+        </div>
+      </div>
     </div>
 
     <p class="quote-more">More references available on request.</p>
@@ -833,8 +921,135 @@
   </div>
 </section>
 
+<!-- TEAM ----------------------------------------------------------------- -->
+<section class="rz-section" id="team">
+  <div class="rz-wash rz-wash--subtle"></div>
+  <div class="rz-container">
+    <span class="rz-eyebrow">Who we are</span>
+    <h2 class="ui-mt-4">Meet the <span class="rz-bind"><span class="rz-mark rz-tilt">team</span>.</span></h2>
+
+    <!-- Founder. First-person voice, from David's own words. B&W portrait kept
+         monochrome, lifted off the card with a hard riso offset block. -->
+    <div class="team-founder">
+      <img class="team-photo" loading="lazy" decoding="async"
+           src="assets/images/team/david-bio.webp"
+           alt="Dr David Gérouville-Farrell" data-no-zoom />
+      <div>
+        <h3 class="team-name">Dr David Gérouville-Farrell</h3>
+        <p class="team-role">Founder &middot; AI strategy, architecture</p>
+        <p class="team-bio">
+          I spent fifteen years in academia as a university lecturer in computer
+          science, with thirty published papers and a background that runs from
+          web and game development through to service design, delivery and product
+          management. AI was my hobby long before ChatGPT - I spent my spare time
+          training computer vision models and fine-tuning diffusion models. When
+          ChatGPT arrived I couldn't stop thinking about the change about to hit
+          the world, so I built Paidia to help bring AI to the public and private
+          sector.
+        </p>
+        <p class="team-bio">
+          I had the privilege of architecting and engineering the UK Government's
+          first public-facing LLM service, for the FCDO. Since then I have led
+          Paidia's work with clients ranging from national institutions like the
+          NHS and Great Ormond Street Hospital Charity to SMEs and large
+          enterprises across the private sector. I work across the whole stack,
+          from boardroom strategy to hands-on architecture to one-to-one coaching.
+          I'm obsessed with AI.
+        </p>
+      </div>
+    </div>
+
+    <p class="team-assoc-label rz-eyebrow rz-eyebrow--yellow">Associates</p>
+
+    <div class="team-grid">
+      <!-- Dr Jonathan Sykes - delivery/transformation lead (Wild UX); led delivery
+           on the Merton & Croydon AI governance work. "Dr" per David - unverified
+           in notes, confirm. -->
+      <article class="team-card">
+        <img class="team-card-photo" loading="lazy" decoding="async"
+             src="assets/images/team/jon-sykes.webp" alt="Dr Jonathan Sykes" data-no-zoom />
+        <h3 class="team-name">Dr Jonathan Sykes</h3>
+        <p class="team-role">Delivery &amp; transformation</p>
+        <p class="team-bio">
+          Jon leads delivery and transformation on our public-sector engagements,
+          most recently the AI governance frameworks for a London borough. He
+          combines years of experience across a huge swathe of central and local
+          government departments with a research background in human behaviour and
+          HCI, and a strong grounding in service design - turning AI policy into
+          something teams can actually use.
+        </p>
+      </article>
+
+      <!-- Gus Laios - product & delivery manager. Bio grounded in his CV
+           (received 5 Jun 2026): 12+ yrs digital transformation, heavy UK gov /
+           GDS track record (ONS, BEIS, NHS, DIT, RBK), CSPO / PRINCE2 / ITIL. -->
+      <article class="team-card">
+        <img class="team-card-photo" loading="lazy" decoding="async"
+             src="assets/images/team/gus-laios.webp" alt="Gus Laios" data-no-zoom />
+        <h3 class="team-name">Gus Laios</h3>
+        <p class="team-role">Product &amp; delivery</p>
+        <p class="team-bio">
+          Gus Laios is a Product Manager and digital transformation leader with
+          over 15 years' experience delivering complex technology programmes
+          across the public and private sectors. He specialises in turning
+          strategic objectives into practical, user-centred solutions, leading
+          multidisciplinary teams to deliver products and services that create
+          measurable business value.
+        </p>
+        <p class="team-bio">
+          With a background spanning product management, delivery leadership, and
+          large-scale digital transformation, Gus brings a pragmatic approach to
+          solving complex challenges, helping organisations navigate change,
+          improve services, and realise the benefits of emerging technologies,
+          including AI.
+        </p>
+      </article>
+
+      <!-- Ross Anderson - software engineer & game developer (Paidia Games /
+           GuardIAS). 1st-class Computing Science, Glasgow. -->
+      <article class="team-card">
+        <img class="team-card-photo" loading="lazy" decoding="async"
+             src="assets/images/team/ross-anderson.webp" alt="Ross Anderson" data-no-zoom />
+        <h3 class="team-name">Ross Anderson</h3>
+        <p class="team-role">AI engineering</p>
+        <p class="team-bio">
+          Ross is our AI engineer, with experience spanning web and game
+          development and full-stack work across retrieval, agentic architecture,
+          web development and database design. Ross helps us build quickly and
+          efficiently, and has a relentless eye for detail.
+        </p>
+      </article>
+    </div>
+
+    <p class="team-assoc-label rz-eyebrow rz-eyebrow--yellow">The office cats</p>
+    <div class="team-grid team-cats">
+      <article class="team-card">
+        <img class="team-card-photo" loading="lazy" decoding="async"
+             src="assets/images/team/apollonia.webp" alt="Apollonia" data-no-zoom />
+        <h3 class="team-name">Apollonia</h3>
+        <p class="team-role">Chief Charisma Officer</p>
+        <p class="team-bio">
+          Apollonia is in charge of ensuring good vibes, no matter how much work
+          is on.
+        </p>
+      </article>
+      <article class="team-card">
+        <img class="team-card-photo" loading="lazy" decoding="async"
+             src="assets/images/team/bowie.webp" alt="Bowie" data-no-zoom />
+        <h3 class="team-name">Bowie</h3>
+        <p class="team-role">Chief Operating Officer</p>
+        <p class="team-bio">
+          Bowie keeps operations tight: he ensures we are awake every morning at
+          5am, and that breakfast, lunch and dinner are served at exactly the same
+          time, every day, without exception.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- CONTACT -------------------------------------------------------------- -->
-<section class="rz-section" id="contact">
+<section class="rz-section rz-deep" id="contact">
   <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
   <div class="rz-container">
     <span class="rz-eyebrow">Get started</span>
@@ -870,6 +1085,7 @@
         <li><a href="#impact">Impact</a></li>
         <li><a href="#testimonials">Testimonials</a></li>
         <li><a href="#clients">Clients</a></li>
+        <li><a href="#team">Team</a></li>
       </ul>
     </div>
     <div style="grid-column: span 3;">
