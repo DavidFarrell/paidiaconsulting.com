@@ -12,7 +12,7 @@ const path = require('path');
 const PORT = process.env.FILES_PORT || 8484;
 
 function pickStore() {
-  for (const dir of ['/data/files', path.join(__dirname, 'filestore')]) {
+  for (const dir of ['/data/files', path.join(__dirname, 'filestore'), '/tmp/filestore']) {
     try {
       fs.mkdirSync(dir, { recursive: true });
       fs.accessSync(dir, fs.constants.W_OK);
