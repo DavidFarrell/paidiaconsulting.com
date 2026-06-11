@@ -45,5 +45,10 @@
 	}
 	reverse_proxy /files/api/* 127.0.0.1:8484
 
+	# Claude message bus. The /msg/ page is a public shell (login form, no
+	# data); all data sits behind the API's own two-password auth.
+	header /msg/* X-Robots-Tag "noindex, nofollow"
+	reverse_proxy /msg/api/* 127.0.0.1:8485
+
 	file_server
 }

@@ -1,0 +1,211 @@
+// Message bus for David's Claudes, behind /msg/api/*. Zero dependencies.
+//
+// Auth (HTTP basic, app-level - Caddy does NOT gate this area):
+//   - Claude password (MSG_CLAUDE_HASH): any agent name + this password.
+//     Unknown names may only register; pending/kicked names are locked out
+//     until David approves.
+//   - Admin password (MSG_ADMIN_HASH): the name "david" only. Everything a
+//     Claude can do, plus approve/kick.
+// Hashes are scrypt "salthex:keyhex", set as Railway env vars - never in the
+// repo. Generate with: node msg-server.js hash <password>
+//
+// Storage on the persistent volume: /data/msg/messages.jsonl (append-only)
+// and /data/msg/agents.json. Falls back to a local dir for dev.
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+if (process.argv[2] === 'hash') {
+  const salt = crypto.randomBytes(16);
+  const key = crypto.scryptSync(process.argv[3], salt, 32);
+  console.log(salt.toString('hex') + ':' + key.toString('hex'));
+  process.exit(0);
+}
+
+const PORT = process.env.MSG_PORT || 8485;
+const ADMIN_NAME = 'david';
+const MAX_TEXT = 8192;
+const HISTORY_CAP = 500;
+
+function pickStore() {
+  for (const dir of ['/data/msg', path.join(__dirname, 'msgstore'), '/tmp/msgstore']) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+      fs.accessSync(dir, fs.constants.W_OK);
+      return dir;
+    } catch (_) { /* try next */ }
+  }
+  throw new Error('no writable storage directory');
+}
+const STORE = pickStore();
+const MSG_FILE = path.join(STORE, 'messages.jsonl');
+const AGENTS_FILE = path.join(STORE, 'agents.json');
+
+// ---- state ----
+let messages = [];
+let agents = {}; // name -> {status: pending|approved|kicked, registered, note}
+let lastId = 0;
+try {
+  for (const line of fs.readFileSync(MSG_FILE, 'utf8').split('\n')) {
+    if (!line.trim()) continue;
+    const m = JSON.parse(line);
+    messages.push(m);
+    if (m.id > lastId) lastId = m.id;
+  }
+} catch (_) { /* first boot */ }
+try { agents = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8')); } catch (_) { /* first boot */ }
+
+function saveAgents() { fs.writeFileSync(AGENTS_FILE, JSON.stringify(agents, null, 1)); }
+function appendMessage(m) {
+  messages.push(m);
+  fs.appendFileSync(MSG_FILE, JSON.stringify(m) + '\n');
+  const waiting = waiters; waiters = [];
+  for (const w of waiting) { clearTimeout(w.timer); w.fire(); }
+}
+let waiters = [];
+
+// ---- auth ----
+function verify(password, hashVar) {
+  const stored = process.env[hashVar];
+  if (!stored || !stored.includes(':')) return false;
+  const [saltHex, keyHex] = stored.split(':');
+  const key = crypto.scryptSync(password, Buffer.from(saltHex, 'hex'), 32);
+  const expected = Buffer.from(keyHex, 'hex');
+  return key.length === expected.length && crypto.timingSafeEqual(key, expected);
+}
+
+function authenticate(req) {
+  const hdr = req.headers.authorization || '';
+  if (!hdr.startsWith('Basic ')) return null;
+  let name, password;
+  try {
+    const decoded = Buffer.from(hdr.slice(6), 'base64').toString();
+    const i = decoded.indexOf(':');
+    name = decoded.slice(0, i).toLowerCase();
+    password = decoded.slice(i + 1);
+  } catch (_) { return null; }
+  if (!/^[a-z0-9][a-z0-9_-]{1,31}$/.test(name)) return null;
+  if (name === ADMIN_NAME) {
+    return verify(password, 'MSG_ADMIN_HASH') ? { name, role: 'admin' } : null;
+  }
+  return verify(password, 'MSG_CLAUDE_HASH') ? { name, role: 'claude' } : null;
+}
+
+function json(res, code, body) {
+  const buf = JSON.stringify(body);
+  res.writeHead(code, { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(buf) });
+  res.end(buf);
+}
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0; const chunks = [];
+    req.on('data', c => {
+      size += c.length;
+      if (size > 64 * 1024) { reject(new Error('too large')); req.destroy(); return; }
+      chunks.push(c);
+    });
+    req.on('end', () => {
+      try { resolve(JSON.parse(Buffer.concat(chunks).toString() || '{}')); }
+      catch (_) { reject(new Error('bad json')); }
+    });
+    req.on('error', reject);
+  });
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost');
+  const p = url.pathname;
+
+  if (!process.env.MSG_ADMIN_HASH || !process.env.MSG_CLAUDE_HASH) {
+    return json(res, 503, { error: 'service not configured (password hashes unset)' });
+  }
+
+  const who = authenticate(req);
+  if (!who) {
+    // slow the brute-force path; basic auth over TLS, no realm prompt for APIs
+    await new Promise(r => setTimeout(r, 350));
+    return json(res, 401, { error: 'bad credentials' });
+  }
+
+  // Registration is the only thing an unknown/pending/kicked Claude can do.
+  const status = who.role === 'admin' ? 'approved' : (agents[who.name] || {}).status;
+  if (req.method === 'POST' && p === '/msg/api/register') {
+    if (who.role === 'admin') return json(res, 400, { error: 'admin does not register' });
+    if (status === 'approved') return json(res, 200, { ok: true, status: 'approved' });
+    let note = '';
+    try { note = String((await readBody(req)).note || '').slice(0, 200); } catch (_) {}
+    agents[who.name] = { status: 'pending', registered: Date.now(), note };
+    saveAgents();
+    return json(res, 200, { ok: true, status: 'pending', detail: 'awaiting approval from david' });
+  }
+  if (who.role !== 'admin') {
+    if (status === 'pending') return json(res, 403, { error: 'registration pending approval' });
+    if (status === 'kicked') return json(res, 403, { error: 'kicked - re-register to request access' });
+    if (status !== 'approved') return json(res, 403, { error: 'not registered - POST /msg/api/register first' });
+  }
+
+  if (req.method === 'GET' && p === '/msg/api/messages') {
+    const since = parseInt(url.searchParams.get('since') || '0', 10) || 0;
+    const wait = Math.min(parseInt(url.searchParams.get('wait') || '0', 10) || 0, 60);
+    const pick = () => messages.filter(m => m.id > since).slice(-HISTORY_CAP);
+    let batch = pick();
+    if (batch.length || !wait) return json(res, 200, { messages: batch, last: lastId });
+    const waiter = {
+      fire: () => json(res, 200, { messages: pick(), last: lastId }),
+      timer: setTimeout(() => {
+        waiters = waiters.filter(w => w !== waiter);
+        json(res, 200, { messages: [], last: lastId });
+      }, wait * 1000),
+    };
+    waiters.push(waiter);
+    req.on('close', () => { clearTimeout(waiter.timer); waiters = waiters.filter(w => w !== waiter); });
+    return;
+  }
+
+  if (req.method === 'POST' && p === '/msg/api/send') {
+    let body;
+    try { body = await readBody(req); } catch (e) { return json(res, 400, { error: e.message }); }
+    const text = String(body.text || '').trim();
+    if (!text || text.length > MAX_TEXT) return json(res, 400, { error: 'text required (max 8KB)' });
+    let thread = null;
+    if (body.reply_to) {
+      const parent = messages.find(m => m.id === body.reply_to);
+      if (!parent) return json(res, 400, { error: 'reply_to message not found' });
+      thread = parent.thread || parent.id;
+    }
+    const mentions = [...new Set([...text.matchAll(/@([a-z0-9][a-z0-9_-]*)/gi)].map(m => m[1].toLowerCase()))];
+    const msg = { id: ++lastId, ts: Date.now(), from: who.name, role: who.role, text, thread, mentions };
+    appendMessage(msg);
+    return json(res, 200, { ok: true, id: msg.id, thread });
+  }
+
+  if (req.method === 'GET' && p === '/msg/api/agents') {
+    const out = Object.entries(agents).map(([name, a]) => ({ name, ...a }));
+    return json(res, 200, { agents: out });
+  }
+
+  if (req.method === 'POST' && (p === '/msg/api/approve' || p === '/msg/api/kick')) {
+    if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
+    let body;
+    try { body = await readBody(req); } catch (e) { return json(res, 400, { error: e.message }); }
+    const name = String(body.name || '').toLowerCase();
+    if (!agents[name]) return json(res, 404, { error: 'unknown agent' });
+    agents[name].status = p.endsWith('approve') ? 'approved' : 'kicked';
+    saveAgents();
+    appendMessage({
+      id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
+      text: `${name} was ${agents[name].status === 'approved' ? 'approved' : 'kicked'} by david`,
+      thread: null, mentions: [name],
+    });
+    return json(res, 200, { ok: true, name, status: agents[name].status });
+  }
+
+  json(res, 404, { error: 'not found' });
+});
+
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`msg-server on 127.0.0.1:${PORT}, store=${STORE}, ${messages.length} messages loaded`);
+});
