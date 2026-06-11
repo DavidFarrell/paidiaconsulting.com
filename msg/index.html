@@ -63,6 +63,12 @@
   @keyframes pulse { 50% { opacity: 0.55; } }
   .play { color: var(--accent); cursor: pointer; text-decoration: underline; }
   .msg audio { max-width: 100%; height: 36px; margin-top: 4px; }
+  #vmPending { display: flex; flex-wrap: wrap; gap: 6px; }
+  #vmPending:not(:empty) { padding: 6px 0; }
+  .vmchip { background: var(--mention); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 3px 10px; font-size: 0.8rem; font-family: -apple-system, sans-serif;
+    display: inline-flex; gap: 7px; align-items: center; }
+  .vmchip b { color: var(--accent); font-weight: 600; cursor: pointer; }
   #composer textarea { flex: 1; resize: none; height: 64px; padding: 8px 10px;
     border: 1px solid var(--rule); border-radius: 4px; font: inherit; font-size: 0.92rem; }
   #replyBar { display: none; font-size: 0.78rem; color: var(--muted); padding: 4px 0; }
@@ -92,8 +98,10 @@
     <div id="feed"></div>
     <div id="replyBar">Replying to #<span id="replyId"></span> · <a onclick="clearReply()">cancel</a></div>
     <div id="suggest"></div>
+    <div id="vmPending"></div>
     <div id="composer">
-      <textarea id="text" placeholder="Message... (@name to mention)"></textarea>
+      <textarea id="text" placeholder="Message... (@name to mention)" autocomplete="off"
+        data-bwignore data-lpignore="true" data-1p-ignore data-form-type="other"></textarea>
       <button id="mic" onclick="toggleRec()" title="record a voicemail">🎙️</button>
       <button onclick="send()">Send</button>
     </div>
@@ -184,9 +192,11 @@ function render(msgs) {
     const when = new Date(m.ts).toLocaleString('en-GB',
       { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
     let body = esc(m.text).replace(/@([a-z0-9][a-z0-9_-]*)/gi, '<span class="at">@$1</span>');
-    if (m.voicemail) {
-      body = '🎙️ <span class="play" onclick="playVm(\'' + m.voicemail + '\', this)">play voicemail</span>' +
-        ' <span style="color:var(--muted);font-size:0.78rem">' + esc(m.voicemail) + '</span>';
+    for (const v of (m.voicemails || (m.voicemail ? [m.voicemail] : []))) {
+      if (m.voicemail) body = '';  // legacy auto-posts: the text is just the filename line
+      body += (body ? '<br>' : '') +
+        '🎙️ <span class="play" onclick="playVm(\'' + v + '\', this)">play voicemail</span>' +
+        ' <span style="color:var(--muted);font-size:0.78rem">' + esc(v) + '</span>';
     }
     const delLink = isAdmin ? '<span class="del" onclick="del(' + m.id + ')">delete</span>' : '';
     div.innerHTML = m.role === 'system' ? body + (delLink ? ' ' + delLink : '') :
@@ -208,18 +218,37 @@ function setReply(id) {
 function clearReply() { replyTo = null; document.getElementById('replyBar').style.display = 'none'; }
 
 async function send() {
+  if (rec) { sendAfterStop = true; rec.stop(); return; }  // live clip joins the send
   const box = document.getElementById('text');
   const text = box.value.trim();
-  if (!text) return;
+  if (!text && !pendingVms.length) return;
   const r = await fetch('/msg/api/send', {
     method: 'POST', headers: hdrs(),
-    body: JSON.stringify({ text, reply_to: replyTo }),
+    body: JSON.stringify({ text, reply_to: replyTo, voicemails: pendingVms }),
   });
-  if (r.ok) { box.value = ''; clearReply(); }
+  if (r.ok) { box.value = ''; clearReply(); pendingVms = []; drawPending(); }
   else alert('Send failed: ' + (await r.json()).error);
 }
-// ---- voicemail recording + playback ----
-let rec = null;
+// ---- voicemail recording: Stop stages the clip as a composer attachment;
+// ---- Send fires text + all staged clips (+ the live recording) at once ----
+let rec = null, sendAfterStop = false, pendingVms = [];
+
+function drawPending() {
+  const box = document.getElementById('vmPending');
+  box.innerHTML = '';
+  pendingVms.forEach((name, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'vmchip';
+    chip.innerHTML = '🎙️ voicemail ' + (i + 1) + ' <b title="remove">✕</b>';
+    chip.querySelector('b').onclick = async () => {
+      pendingVms = pendingVms.filter(n => n !== name);
+      drawPending();
+      fetch('/msg/api/voicemail/' + name, { method: 'DELETE', headers: hdrs() });
+    };
+    box.appendChild(chip);
+  });
+}
+
 async function toggleRec() {
   const btn = document.getElementById('mic');
   if (rec) { rec.stop(); return; }
@@ -236,11 +265,14 @@ async function toggleRec() {
     btn.classList.remove('rec');
     btn.textContent = '🎙️';
     const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
-    const blob = new Blob(chunks, { type });
-    const r = await fetch('/msg/api/voicemail?ext=' + ext, {
-      method: 'POST', headers: { 'Authorization': 'Basic ' + auth }, body: blob,
+    const r = await fetch('/msg/api/voicemail?draft=1&ext=' + ext, {
+      method: 'POST', headers: { 'Authorization': 'Basic ' + auth },
+      body: new Blob(chunks, { type }),
     });
-    if (!r.ok) alert('Voicemail upload failed: ' + (await r.json()).error);
+    if (!r.ok) { alert('Voicemail upload failed: ' + (await r.json()).error); sendAfterStop = false; return; }
+    pendingVms.push((await r.json()).name);
+    drawPending();
+    if (sendAfterStop) { sendAfterStop = false; send(); }
   };
   rec.start();
   btn.classList.add('rec');
