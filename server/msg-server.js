@@ -182,6 +182,23 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { ok: true, id: msg.id, thread });
   }
 
+  if (req.method === 'POST' && p === '/msg/api/delete') {
+    if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
+    let body;
+    try { body = await readBody(req); } catch (e) { return json(res, 400, { error: e.message }); }
+    const id = parseInt(body.id, 10);
+    const idx = messages.findIndex(m => m.id === id);
+    if (idx === -1) return json(res, 404, { error: 'message not found' });
+    messages.splice(idx, 1);
+    fs.writeFileSync(MSG_FILE, messages.map(m => JSON.stringify(m)).join('\n') + (messages.length ? '\n' : ''));
+    // Tombstone event so live long-pollers (and Claude cursors) learn of it.
+    appendMessage({
+      id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
+      text: `message #${id} was deleted by david`, thread: null, mentions: [], deletes: id,
+    });
+    return json(res, 200, { ok: true, deleted: id });
+  }
+
   if (req.method === 'GET' && p === '/msg/api/agents') {
     const out = Object.entries(agents).map(([name, a]) => ({ name, ...a }));
     return json(res, 200, { agents: out });
