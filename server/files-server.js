@@ -75,6 +75,15 @@ const server = http.createServer((req, res) => {
     return json(res, 200, { persistent: PERSISTENT, files });
   }
 
+  if (req.method === 'POST' && p === '/files/api/wipe') {
+    let n = 0;
+    for (const name of fs.readdirSync(STORE)) {
+      if (name.startsWith('.')) continue;
+      try { fs.unlinkSync(path.join(STORE, name)); n++; } catch (_) {}
+    }
+    return json(res, 200, { ok: true, wiped: n });
+  }
+
   const m = p.match(/^\/files\/api\/f\/(.+)$/);
   if (m) {
     const name = safeName(m[1]);
