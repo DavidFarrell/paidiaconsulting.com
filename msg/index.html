@@ -58,6 +58,11 @@
     border: 1px solid var(--rule); border-radius: 4px; font: inherit; font-size: 0.92rem; }
   #replyBar { display: none; font-size: 0.78rem; color: var(--muted); padding: 4px 0; }
   #replyBar a { color: var(--accent); cursor: pointer; }
+  #suggest { display: none; gap: 6px; padding: 4px 0; font-size: 0.82rem; }
+  #suggest span { background: var(--card); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 2px 10px; cursor: pointer; }
+  #suggest span.hot { border-color: var(--accent); color: var(--accent); }
+  #suggest .hint { border: none; background: none; color: var(--muted); cursor: default; }
 </style>
 </head>
 <body>
@@ -77,6 +82,7 @@
     <div id="agents"></div>
     <div id="feed"></div>
     <div id="replyBar">Replying to #<span id="replyId"></span> · <a onclick="clearReply()">cancel</a></div>
+    <div id="suggest"></div>
     <div id="composer">
       <textarea id="text" placeholder="Message... (@name to mention)"></textarea>
       <button onclick="send()">Send</button>
@@ -196,6 +202,52 @@ async function send() {
   if (r.ok) { box.value = ''; clearReply(); }
   else alert('Send failed: ' + (await r.json()).error);
 }
+// ---- @mention autocomplete (Tab completes, like Claude Code) ----
+let agentNames = ['david'];
+let matches = [];
+const ta = document.getElementById('text');
+const sug = document.getElementById('suggest');
+
+function currentToken() {
+  const pos = ta.selectionStart;
+  const m = ta.value.slice(0, pos).match(/@([a-z0-9_-]*)$/i);
+  return m ? { start: pos - m[0].length, prefix: m[1].toLowerCase(), pos } : null;
+}
+
+function updateSuggest() {
+  const t = currentToken();
+  matches = t ? agentNames.filter(n => n.startsWith(t.prefix) && n !== t.prefix) : [];
+  if (!matches.length) { sug.style.display = 'none'; return; }
+  sug.innerHTML = '';
+  matches.slice(0, 6).forEach((n, i) => {
+    const s = document.createElement('span');
+    s.textContent = '@' + n;
+    if (i === 0) s.className = 'hot';
+    s.onmousedown = (e) => { e.preventDefault(); complete(n); };
+    sug.appendChild(s);
+  });
+  const hint = document.createElement('span');
+  hint.className = 'hint';
+  hint.textContent = 'tab to complete';
+  sug.appendChild(hint);
+  sug.style.display = 'flex';
+}
+
+function complete(name) {
+  const t = currentToken();
+  if (!t) return;
+  const after = ta.value.slice(t.pos);
+  ta.value = ta.value.slice(0, t.start) + '@' + name + (after.startsWith(' ') ? '' : ' ') + after;
+  const caret = t.start + name.length + 2;
+  ta.setSelectionRange(caret, caret);
+  ta.focus();
+  updateSuggest();
+}
+
+ta.addEventListener('input', updateSuggest);
+ta.addEventListener('click', updateSuggest);
+ta.addEventListener('blur', () => setTimeout(() => { sug.style.display = 'none'; }, 150));
+
 async function del(id) {
   if (!confirm('Delete message #' + id + '?')) return;
   const r = await fetch('/msg/api/delete', {
@@ -205,6 +257,8 @@ async function del(id) {
 }
 
 document.getElementById('text').addEventListener('keydown', e => {
+  if (e.key === 'Tab' && matches.length) { e.preventDefault(); complete(matches[0]); return; }
+  if (e.key === 'Escape') { sug.style.display = 'none'; matches = []; return; }
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
 });
 
@@ -212,6 +266,7 @@ async function refreshAgents() {
   const r = await fetch('/msg/api/agents', { headers: hdrs() });
   if (!r.ok) return;
   const d = await r.json();
+  agentNames = ['david', ...d.agents.filter(a => a.status === 'approved').map(a => a.name)];
   const el = document.getElementById('agents');
   el.innerHTML = '<span>Claudes:</span>';
   if (!d.agents.length) el.innerHTML += ' <em>none registered yet</em>';
