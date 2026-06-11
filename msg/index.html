@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <meta name="robots" content="noindex, nofollow">
 <title>Messages - Paidia Consulting</title>
 <link rel="icon" href="/favicon.ico">
@@ -12,10 +12,13 @@
     --rule: #e6e2da; --card: #ffffff; --mention: #fff5e6;
   }
   * { box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
   body { margin: 0; background: var(--bg); color: var(--ink);
     font-family: -apple-system, sans-serif; line-height: 1.45; }
+  /* The feed is the ONLY scroller: header + agents stay pinned top, the
+     composer pinned bottom - on phones too (dvh tracks the real viewport). */
   main { max-width: 860px; margin: 0 auto; padding: 24px 20px 0;
-    display: flex; flex-direction: column; height: 100vh; }
+    display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
   h1 { font-size: 1.5rem; margin: 0 0 2px; font-family: Georgia, serif; }
   .sub { color: var(--muted); font-size: 0.82rem; margin: 0 0 14px; }
   #login { background: var(--card); border: 1px solid var(--rule); border-radius: 8px;
@@ -112,6 +115,23 @@ let auth = sessionStorage.getItem('msgauth') || '';
 let me = sessionStorage.getItem('msgname') || '';
 let cursor = 0, replyTo = null, isAdmin = false, polling = false;
 let colors = JSON.parse(localStorage.getItem('msgcolors') || '{}');
+let saveTimer = null;
+
+function saveColors() {
+  localStorage.setItem('msgcolors', JSON.stringify(colors));
+  clearTimeout(saveTimer);  // debounce: colour pickers fire continuously while dragging
+  saveTimer = setTimeout(() => {
+    fetch('/msg/api/prefs', { method: 'POST', headers: hdrs(), body: JSON.stringify({ colors }) });
+  }, 600);
+}
+
+async function loadPrefs() {
+  try {
+    const d = await (await fetch('/msg/api/prefs', { headers: hdrs() })).json();
+    if (d.colors) { colors = d.colors; localStorage.setItem('msgcolors', JSON.stringify(colors)); repaint(); }
+    else if (Object.keys(colors).length) saveColors();  // first sync: push this device's colours up
+  } catch (_) { /* offline - local colours still apply */ }
+}
 
 function repaint() {
   document.querySelectorAll('#feed .msg').forEach(d => {
@@ -151,6 +171,7 @@ function start(initial) {
   isAdmin = (me === 'david');
   if (isAdmin) document.getElementById('wipe').style.display = 'inline';
   render(initial.messages); cursor = initial.last;
+  loadPrefs();
   refreshAgents();
   setInterval(refreshAgents, 15000);
   poll();
@@ -392,7 +413,7 @@ async function refreshAgents() {
     sw.title = 'background colour for ' + a.name + "'s messages";
     sw.oninput = () => {
       colors[a.name] = sw.value;
-      localStorage.setItem('msgcolors', JSON.stringify(colors));
+      saveColors();
       repaint();
     };
     span.appendChild(sw);

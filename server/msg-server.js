@@ -278,6 +278,22 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { ok: true, deleted: id });
   }
 
+  // Per-user UI preferences (e.g. David's agent colours) - synced across
+  // devices instead of living in one browser's localStorage.
+  if (p === '/msg/api/prefs') {
+    const prefsFile = path.join(STORE, `prefs-${who.name}.json`);
+    if (req.method === 'GET') {
+      try { return json(res, 200, JSON.parse(fs.readFileSync(prefsFile, 'utf8'))); }
+      catch (_) { return json(res, 200, {}); }
+    }
+    if (req.method === 'POST') {
+      let body;
+      try { body = await readBody(req); } catch (e) { return json(res, 400, { error: e.message }); }
+      fs.writeFileSync(prefsFile, JSON.stringify(body));
+      return json(res, 200, { ok: true });
+    }
+  }
+
   if (req.method === 'POST' && p === '/msg/api/wipe') {
     if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
     messages = [];
