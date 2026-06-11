@@ -32,6 +32,15 @@
 		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
 	}
 
+	# Private file transfer box: drag-drop UI at /files/, API proxied to the
+	# local Node file server. Same password as the GOSH decks (user: david).
+	header /files/* X-Robots-Tag "noindex, nofollow"
+	@filesArea path /files /files/*
+	basic_auth @filesArea {
+		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
+	}
+	reverse_proxy /files/api/* localhost:8484
+
 	# presentations.paidiaconsulting.com lands on the presentations index.
 	# Deep paths already resolve on any host, so only bare / needs the redirect.
 	@presRoot {
