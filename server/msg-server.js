@@ -201,7 +201,11 @@ const server = http.createServer(async (req, res) => {
     let body;
     try { body = await readBody(req); } catch (e) { return json(res, 400, { error: e.message }); }
     const text = String(body.text || '').trim();
-    if (!text || text.length > MAX_TEXT) return json(res, 400, { error: 'text required (max 8KB)' });
+    // Staged voicemail attachments (uploaded earlier with ?draft=1).
+    let vms = Array.isArray(body.voicemails) ? body.voicemails.slice(0, 10) : [];
+    vms = vms.filter(n => /^voicemail-[\w-]+\.(webm|m4a|ogg|mp3)$/.test(n) && fs.existsSync(path.join(VM_DIR, n)));
+    if (!text && !vms.length) return json(res, 400, { error: 'text or voicemail required' });
+    if (text.length > MAX_TEXT) return json(res, 400, { error: 'text too long (max 8KB)' });
     let thread = null;
     if (body.reply_to) {
       const parent = messages.find(m => m.id === body.reply_to);
@@ -209,7 +213,9 @@ const server = http.createServer(async (req, res) => {
       thread = parent.thread || parent.id;
     }
     const mentions = [...new Set([...text.matchAll(/@([a-z0-9][a-z0-9_-]*)/gi)].map(m => m[1].toLowerCase()))];
+    if (vms.length && !mentions.includes('voicemail_claude')) mentions.push('voicemail_claude');
     const msg = { id: ++lastId, ts: Date.now(), from: who.name, role: who.role, text, thread, mentions };
+    if (vms.length) msg.voicemails = vms;
     appendMessage(msg);
     return json(res, 200, { ok: true, id: msg.id, thread });
   }
@@ -227,6 +233,8 @@ const server = http.createServer(async (req, res) => {
     req.pipe(out);
     out.on('finish', () => {
       if (dead) return;
+      // Draft mode just stores the clip - it gets attached via /send later.
+      if (url.searchParams.get('draft')) return json(res, 200, { ok: true, name });
       const msg = {
         id: ++lastId, ts: Date.now(), from: who.name, role: who.role,
         text: `@voicemail_claude voicemail: ${name}`, thread: null,
@@ -245,6 +253,12 @@ const server = http.createServer(async (req, res) => {
     if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
     res.writeHead(200, { 'Content-Type': VM_TYPES[vm[2]], 'Content-Length': fs.statSync(full).size });
     return fs.createReadStream(full).pipe(res);
+  }
+  if (vm && req.method === 'DELETE') {
+    const full = path.join(VM_DIR, vm[1]);
+    if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
+    fs.unlinkSync(full);
+    return json(res, 200, { ok: true });
   }
 
   if (req.method === 'POST' && p === '/msg/api/delete') {
