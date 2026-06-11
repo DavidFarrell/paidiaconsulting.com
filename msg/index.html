@@ -36,6 +36,8 @@
     font-size: 0.75rem; padding: 0; }
   .agent input[type=color] { width: 16px; height: 16px; border: 1px solid var(--rule);
     border-radius: 50%; padding: 0; background: none; cursor: pointer; }
+  .agent.attn { border-color: var(--accent); animation: gentle 2.4s ease-in-out infinite; }
+  @keyframes gentle { 50% { background: #f7d4ca; } }
   #feed { flex: 1; overflow-y: auto; padding: 12px 0; }
   .msg { background: var(--card); border: 1px solid var(--rule); border-radius: 6px;
     padding: 8px 12px; margin: 8px 0; max-width: 85%; }
@@ -317,12 +319,31 @@ async function refreshAgents() {
   if (!r.ok) return;
   const d = await r.json();
   agentNames = ['david', ...d.agents.filter(a => a.status === 'approved').map(a => a.name)];
+  // Roster-change attention: a chip pulses gently until David acts on it
+  // (approve/kick) or clicks it to acknowledge. Seed on first ever load so
+  // the existing roster doesn't pulse - except pendings, which always need him.
+  if (acked === null) {
+    acked = JSON.parse(localStorage.getItem('msgacked') || 'null');
+    if (!acked) {
+      acked = {};
+      d.agents.forEach(a => { if (a.status !== 'pending') acked[a.name] = a.status; });
+    }
+  }
+  const names = new Set(d.agents.map(a => a.name));
+  Object.keys(acked).forEach(n => { if (!names.has(n)) delete acked[n]; });
+  localStorage.setItem('msgacked', JSON.stringify(acked));
   const el = document.getElementById('agents');
   el.innerHTML = '<span>Claudes:</span>';
   if (!d.agents.length) el.innerHTML += ' <em>none registered yet</em>';
   for (const a of d.agents) {
     const span = document.createElement('span');
     span.className = 'agent ' + a.status;
+    if (isAdmin && acked[a.name] !== a.status) span.classList.add('attn');
+    span.onclick = () => {
+      acked[a.name] = a.status;
+      localStorage.setItem('msgacked', JSON.stringify(acked));
+      span.classList.remove('attn');
+    };
     span.textContent = a.name + (a.status !== 'approved' ? ' (' + a.status + ')' : '');
     const sw = document.createElement('input');
     sw.type = 'color';
