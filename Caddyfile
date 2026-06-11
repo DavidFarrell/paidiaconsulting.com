@@ -45,13 +45,5 @@
 	}
 	reverse_proxy /files/api/* 127.0.0.1:8484
 
-	# presentations.paidiaconsulting.com lands on the presentations index.
-	# Deep paths already resolve on any host, so only bare / needs the redirect.
-	@presRoot {
-		host presentations.paidiaconsulting.com
-		path /
-	}
-	redir @presRoot /presentations/ 302
-
 	file_server
 }
