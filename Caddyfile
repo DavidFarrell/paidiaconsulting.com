@@ -22,5 +22,23 @@
 	}
 	header @html Cache-Control "public, max-age=300, must-revalidate"
 
+	# Presentations area: reachable only by link, never indexed.
+	header /presentations/* X-Robots-Tag "noindex, nofollow"
+
+	# GOSH client decks sit behind basic auth (user: david). One login per
+	# browser session covers both decks.
+	@goshDecks path /presentations/gosh/*
+	basic_auth @goshDecks {
+		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
+	}
+
+	# presentations.paidiaconsulting.com lands on the presentations index.
+	# Deep paths already resolve on any host, so only bare / needs the redirect.
+	@presRoot {
+		host presentations.paidiaconsulting.com
+		path /
+	}
+	redir @presRoot /presentations/ 302
+
 	file_server
 }

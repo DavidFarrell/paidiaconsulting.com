@@ -1,0 +1,250 @@
+/* ==========================================================================
+   Paidia · Riso Zine Funky — DECK system
+   --------------------------------------------------------------------------
+   The slide vocabulary, namespaced .rz-*. Built for a 1920×1080 stage driven
+   by runtime/deck-stage.js (a <deck-stage> web component that scales the
+   canvas to fit, handles keyboard nav, a thumbnail rail, and Print → PDF).
+
+   Authoring shape:
+
+     <deck-stage width="1920" height="1080">
+       <section data-label="Title">
+         <div class="rz-slide rz-slide--deep">
+           <div class="rz-halftone rz-halftone--subtle"></div>
+           <div class="rz-body"> … </div>
+           <footer class="rz-foot">
+             <span class="rz-foot__section">Title</span>
+             <span class="rz-foot__page">01 / 12</span>
+           </footer>
+         </div>
+       </section>
+       …
+     </deck-stage>
+     <script src="runtime/image-slot.js"></script>
+     <script src="runtime/deck-stage.js"></script>
+
+   Load order: fonts.css → src/tokens.css → src/deck.css.
+   ========================================================================== */
+
+/* ── Slide skeleton ─────────────────────────────────────────────────────── */
+.rz-slide {
+  position: absolute; inset: 0;
+  padding: var(--rz-d-slide-pad);
+  box-sizing: border-box;
+  display: flex; flex-direction: column;
+  background: var(--rz-purple);
+  color: var(--rz-paper);
+  font-family: var(--rz-sans);
+  overflow: hidden;
+}
+.rz-slide--deep { background: var(--rz-purple-deep); }
+
+.rz-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+.rz-body--top    { justify-content: flex-start; padding-top: 24px; }
+.rz-body--center { justify-content: center; align-items: center; text-align: center; }
+.rz-body--end    { justify-content: flex-end; }
+
+/* ── Footer chrome (section name left · page number right) ───────────────── */
+.rz-foot {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-family: var(--rz-mono);
+  font-size: var(--rz-d-mono-foot);
+  letter-spacing: var(--rz-d-mono-foot-track);
+  text-transform: uppercase;
+  color: var(--rz-paper-70);
+  margin-top: 24px;
+}
+.rz-foot__section { color: var(--rz-yellow); font-weight: 600; }
+.rz-foot__page    { font-variant-numeric: tabular-nums; }
+
+/* ── Halftone wash ──────────────────────────────────────────────────────── */
+.rz-halftone {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: var(--rz-halftone-opacity);
+  background-image: var(--rz-halftone-yellow);
+  background-size: var(--rz-halftone-size);
+}
+.rz-halftone--pink   { background-image: var(--rz-halftone-pink); }
+.rz-halftone--subtle { opacity: var(--rz-halftone-opacity-subtle); }
+
+/* ── Display + heading type ─────────────────────────────────────────────── */
+.rz-display {
+  font-family: var(--rz-display);
+  line-height: var(--rz-d-display-lh);
+  letter-spacing: var(--rz-d-display-track);
+  margin: 0;
+}
+.rz-display--1 { font-size: var(--rz-d-display-1); }
+.rz-display--2 { font-size: var(--rz-d-display-2); }
+.rz-display--3 { font-size: var(--rz-d-display-3); }
+
+.rz-heading {
+  font-family: var(--rz-display);
+  line-height: var(--rz-d-heading-lh);
+  letter-spacing: var(--rz-d-heading-track);
+  margin: 0;
+}
+.rz-heading--1 { font-size: var(--rz-d-heading-1); }
+.rz-heading--2 { font-size: var(--rz-d-heading-2); }
+.rz-heading--3 { font-size: var(--rz-d-heading-3); }
+.rz-heading--4 { font-size: var(--rz-d-heading-4); }
+
+.rz-lead     { font-size: var(--rz-d-lead); line-height: var(--rz-d-lead-lh); max-width: 1300px; font-weight: 500; margin: 0; }
+.rz-bodytext { font-size: var(--rz-d-body); line-height: var(--rz-d-body-lh); max-width: 900px; margin: 0; }
+.rz-bodytext--sm { font-size: var(--rz-d-body-sm); }
+
+/* Deck eyebrow (small mono kicker above a headline). */
+.rz-eyebrow {
+  font-family: var(--rz-mono);
+  font-size: var(--rz-d-mono-eyebrow);
+  letter-spacing: var(--rz-d-mono-eyebrow-track);
+  text-transform: uppercase;
+  color: var(--rz-pink);
+  font-weight: 700;
+}
+.rz-eyebrow--yellow { color: var(--rz-yellow); }
+
+/* ── Spot-ink text treatments ───────────────────────────────────────────── */
+.rz-yel  { color: var(--rz-yellow); }
+.rz-pink { color: var(--rz-pink); }
+/* Highlighter — a spot-ink plate behind a word, ink type on top. */
+.rz-em-yel  { background: var(--rz-yellow); color: var(--rz-ink); padding: 0 10px; }
+.rz-em-pink { background: var(--rz-pink);   color: var(--rz-ink); padding: 0 10px; }
+/* Tilt a highlighter for the hero treatment (inline-block needed). */
+.rz-em-yel.rz-tilt, .rz-em-pink.rz-tilt { display: inline-block; transform: rotate(var(--rz-rot-md)); padding: 0 20px; }
+
+/* Scribble — a skewed spot-ink bar drawn behind text like a marker stroke. */
+.rz-scribble { position: relative; display: inline-block; }
+.rz-scribble::after {
+  content: ""; position: absolute; left: -6px; right: -6px; bottom: -8px; height: 14px;
+  background: var(--rz-yellow);
+  transform: skewX(var(--rz-skew));
+  z-index: -1; border-radius: var(--rz-radius-sm);
+}
+.rz-scribble--pink::after { background: var(--rz-pink); }
+
+/* Big rotated numeral marker (01. / 02.) above a build-list. */
+.rz-num-marker {
+  font-family: var(--rz-display);
+  color: var(--rz-yellow);
+  font-size: var(--rz-d-tile-num); line-height: 0.86; letter-spacing: -0.04em;
+  display: inline-block; transform: rotate(var(--rz-rot-xl));
+}
+.rz-num-marker--pink { color: var(--rz-pink); }
+
+/* ── Build list (the workhorse bulleted slide) ──────────────────────────── */
+.rz-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+.rz-list li {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 32px; align-items: baseline;
+  padding: 20px 0;
+  border-top: 1.5px solid var(--rz-rule);
+  font-size: var(--rz-d-list); line-height: 1.32;
+}
+.rz-list li:first-child { border-top: none; }
+.rz-list strong { font-weight: 700; }
+.rz-list em { color: var(--rz-yellow); font-style: normal; }   /* "emphasis" = spot ink, not italic */
+.rz-list .rz-dash  { font-family: var(--rz-mono); color: var(--rz-pink);   font-size: 24px; }
+.rz-list .rz-arrow { font-family: var(--rz-mono); color: var(--rz-yellow); font-size: 24px; }
+.rz-list--lg li    { font-size: var(--rz-d-list-lg); padding: 24px 0; }
+.rz-list--tight li { font-size: var(--rz-d-list-sm); padding: 14px 0; }
+.rz-sublist { list-style: none; padding: 0; margin: 16px 0 0 28px; display: flex; flex-direction: column; gap: 10px; }
+.rz-sublist li { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: baseline; padding: 0; border: none; font-size: var(--rz-d-list-sm); line-height: 1.3; }
+/* Source links - subtle yellow underline, never disrupt the layout; open in a new tab so a click never leaves the deck. */
+a.rz-src, a.rz-src:link, a.rz-src:visited { color: inherit; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; text-decoration-color: rgba(255,242,0,0.55); }
+a.rz-src:hover { text-decoration-color: var(--rz-pink); }
+
+/* ── Tiles (riso-flat colour plates, slightly rotated) ──────────────────── */
+.rz-tile { padding: 36px; border-radius: var(--rz-radius); }
+.rz-tile--yel   { background: var(--rz-yellow); color: var(--rz-ink); transform: rotate(var(--rz-rot-sm)); }
+.rz-tile--pink  { background: var(--rz-pink);   color: var(--rz-ink); transform: rotate(var(--rz-rot-sm-cw)); }
+.rz-tile--paper { background: var(--rz-paper);  color: var(--rz-ink); transform: rotate(var(--rz-rot-xs)); }
+.rz-tile--deep  { background: var(--rz-purple-deep); color: var(--rz-paper); border: 1px solid var(--rz-rule-strong); }
+.rz-tile--flat  { transform: none; }
+.rz-tile h3 { font-family: var(--rz-display); font-size: var(--rz-d-tile-h); line-height: 0.88; margin: 0; letter-spacing: -0.03em; }
+.rz-tile .rz-lbl {
+  font-family: var(--rz-mono); font-size: var(--rz-d-mono-lbl);
+  letter-spacing: var(--rz-d-mono-lbl-track); text-transform: uppercase;
+  font-weight: 700; margin-bottom: 14px; opacity: 0.85;
+}
+
+/* ── Chips (mono pills, rotated) ────────────────────────────────────────── */
+.rz-chip {
+  display: inline-block; font-family: var(--rz-mono);
+  font-size: var(--rz-d-mono-chip); letter-spacing: var(--rz-d-mono-chip-track);
+  text-transform: uppercase; padding: 12px 20px; border-radius: var(--rz-radius-pill); font-weight: 700;
+}
+.rz-chip--yel   { background: var(--rz-yellow); color: var(--rz-ink); transform: rotate(var(--rz-rot-chip)); }
+.rz-chip--pink  { background: var(--rz-pink);   color: var(--rz-ink); transform: rotate(var(--rz-rot-chip-cw)); }
+.rz-chip--ghost { background: transparent; color: var(--rz-paper); border: 1px solid var(--rz-rule-strong); transform: none; }
+
+/* ── Category card (e.g. Cog / Intern / Human) ──────────────────────────── */
+.rz-cat { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start; }
+.rz-cat__side { display: flex; flex-direction: column; gap: 20px; }
+.rz-cat__big  { font-family: var(--rz-display); font-size: var(--rz-d-tile-num); line-height: 0.88; letter-spacing: -0.04em; margin: 0; }
+.rz-cat__desc { font-size: 24px; line-height: 1.45; opacity: 0.9; }
+.rz-cat__examples { display: flex; flex-direction: column; gap: 0; }
+.rz-cat__item {
+  display: grid; grid-template-columns: 60px 1fr; gap: 20px; align-items: baseline;
+  padding: 18px 0; border-top: 1.5px solid var(--rz-rule);
+  font-size: 24px; line-height: 1.42;
+}
+.rz-cat__item:first-child { border-top: none; }
+.rz-cat__item .rz-n { font-family: var(--rz-mono); font-size: 18px; letter-spacing: 0.1em; color: var(--rz-yellow); }
+
+/* ── Code block (structured-prompt style) ───────────────────────────────── */
+.rz-code {
+  background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong); border-radius: var(--rz-radius);
+  padding: 32px 36px; font-family: var(--rz-mono); font-size: 24px; line-height: 1.55; color: var(--rz-paper);
+}
+.rz-code .rz-h   { color: var(--rz-yellow); font-weight: 700; }              /* # Heading */
+.rz-code .rz-tag { color: var(--rz-pink);   font-weight: 600; }              /* <tag> */
+.rz-code .rz-com { color: var(--rz-paper-50); font-style: italic; }          /* [comment] */
+.rz-code .rz-ph  { color: var(--rz-paper-85); }                             /* placeholder text */
+
+/* ── Figure / image slot ────────────────────────────────────────────────── */
+.rz-figure {
+  background: var(--rz-paper); border-radius: var(--rz-radius); padding: 18px;
+  color: var(--rz-ink); transform: rotate(var(--rz-rot-xs));
+  box-shadow: var(--rz-offset-pink);
+}
+.rz-figure--alt { transform: rotate(var(--rz-rot-fig-alt)); box-shadow: var(--rz-offset-yellow); }
+.rz-figure__caption {
+  font-family: var(--rz-mono); font-size: 16px; letter-spacing: 0.12em;
+  text-transform: uppercase; opacity: 0.65; margin-top: 10px; text-align: center;
+}
+/* <image-slot> default sizing on a figure plate (see runtime/image-slot.js). */
+image-slot {
+  display: block; width: 100%; min-height: 380px;
+  --is-bg: rgba(26, 20, 56, 0.06);
+  --is-border: rgba(26, 20, 56, 0.35);
+  --is-color: rgba(26, 20, 56, 0.7);
+}
+
+/* ── Grids ──────────────────────────────────────────────────────────────── */
+.rz-grid-asym      { display: grid; grid-template-columns: 5fr 6fr; gap: 56px; align-items: start; }
+.rz-grid-asym--flip{ grid-template-columns: 6fr 5fr; }
+.rz-grid-2         { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+.rz-grid-3         { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+
+/* ── Live dot (title slide) ─────────────────────────────────────────────── */
+.rz-live {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--rz-mono); font-size: 24px; letter-spacing: 0.14em; text-transform: uppercase;
+}
+/* The live dot stays a true circle even in the straight cut (50% is
+   intentional, not the --rz-radius-pill token). */
+.rz-live::before {
+  content: ""; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--rz-yellow); box-shadow: 0 0 14px var(--rz-yellow);
+}
+
+/* ── Chat mock-up (you / it exchange on a paper tile) ────────────────────── */
+.rz-chat { font-family: var(--rz-mono); font-size: 22px; line-height: 1.55; color: var(--rz-ink); }
+.rz-chat__you { color: var(--rz-plum); font-weight: 700; margin-bottom: 8px; }
+.rz-chat__it  { margin-bottom: 20px; }
+.rz-stamp {
+  display: inline-block; padding: 10px 16px; background: var(--rz-yellow); color: var(--rz-ink);
+  border-radius: var(--rz-radius-sm); font-weight: 700; transform: rotate(var(--rz-rot-sm));
+}
+.rz-stamp--fail { background: var(--rz-pink); }
