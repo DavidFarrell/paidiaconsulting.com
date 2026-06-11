@@ -43,6 +43,21 @@ const STORE = pickStore();
 const MSG_FILE = path.join(STORE, 'messages.jsonl');
 const AGENTS_FILE = path.join(STORE, 'agents.json');
 
+// Voicemails go into the files-box directory when it exists, so the
+// transcriber Claude can fetch them with its paidiafiles skill.
+const VM_DIR = (() => {
+  for (const dir of ['/data/files', path.join(STORE, 'voicemail')]) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+      fs.accessSync(dir, fs.constants.W_OK);
+      return dir;
+    } catch (_) { /* try next */ }
+  }
+  return STORE;
+})();
+const VM_MAX = 25 * 1024 * 1024;
+const VM_TYPES = { webm: 'audio/webm', m4a: 'audio/mp4', ogg: 'audio/ogg', mp3: 'audio/mpeg' };
+
 // ---- state ----
 let messages = [];
 let agents = {}; // name -> {status: pending|approved|kicked, registered, note}
@@ -180,6 +195,39 @@ const server = http.createServer(async (req, res) => {
     const msg = { id: ++lastId, ts: Date.now(), from: who.name, role: who.role, text, thread, mentions };
     appendMessage(msg);
     return json(res, 200, { ok: true, id: msg.id, thread });
+  }
+
+  if (req.method === 'POST' && p === '/msg/api/voicemail') {
+    const ext = VM_TYPES[(url.searchParams.get('ext') || '').toLowerCase()] ? url.searchParams.get('ext').toLowerCase() : 'webm';
+    const name = `voicemail-${Date.now()}.${ext}`;
+    const full = path.join(VM_DIR, name);
+    const out = fs.createWriteStream(full);
+    let size = 0, dead = false;
+    req.on('data', c => {
+      size += c.length;
+      if (size > VM_MAX && !dead) { dead = true; out.destroy(); fs.unlink(full, () => {}); json(res, 413, { error: 'too large (25MB max)' }); req.destroy(); }
+    });
+    req.pipe(out);
+    out.on('finish', () => {
+      if (dead) return;
+      const msg = {
+        id: ++lastId, ts: Date.now(), from: who.name, role: who.role,
+        text: `@voicemail_claude voicemail: ${name}`, thread: null,
+        mentions: ['voicemail_claude'], voicemail: name,
+      };
+      appendMessage(msg);
+      json(res, 200, { ok: true, name, id: msg.id });
+    });
+    out.on('error', () => { if (!dead) { dead = true; json(res, 500, { error: 'write failed' }); } });
+    return;
+  }
+
+  const vm = p.match(/^\/msg\/api\/voicemail\/(voicemail-[\w-]+\.(webm|m4a|ogg|mp3))$/);
+  if (vm && req.method === 'GET') {
+    const full = path.join(VM_DIR, vm[1]);
+    if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
+    res.writeHead(200, { 'Content-Type': VM_TYPES[vm[2]], 'Content-Length': fs.statSync(full).size });
+    return fs.createReadStream(full).pipe(res);
   }
 
   if (req.method === 'POST' && p === '/msg/api/delete') {
