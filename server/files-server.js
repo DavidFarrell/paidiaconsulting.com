@@ -24,6 +24,25 @@ function pickStore() {
 const STORE = pickStore();
 const PERSISTENT = STORE.startsWith('/data/');
 
+// The box is a transfer scratchpad, not storage: anything older than 7 days
+// is swept hourly so cruft (and old voicemails) never piles up.
+const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+function sweep() {
+  const cutoff = Date.now() - MAX_AGE_MS;
+  for (const n of fs.readdirSync(STORE)) {
+    if (n.startsWith('.')) continue;
+    try {
+      const full = path.join(STORE, n);
+      if (fs.statSync(full).mtimeMs < cutoff) {
+        fs.unlinkSync(full);
+        console.log(`swept (>7 days old): ${n}`);
+      }
+    } catch (_) { /* raced with a delete - fine */ }
+  }
+}
+sweep();
+setInterval(sweep, 60 * 60 * 1000);
+
 // A name is valid only if it round-trips through basename unchanged and has
 // no path or hidden-file tricks in it.
 function safeName(raw) {

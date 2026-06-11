@@ -54,6 +54,12 @@
   .body { white-space: pre-wrap; word-break: break-word; font-size: 0.92rem; }
   .body .at { color: var(--accent); font-weight: 600; }
   #composer { display: flex; gap: 8px; padding: 12px 0 16px; border-top: 1px solid var(--rule); }
+  #mic { padding: 9px 12px; border: 1px solid var(--rule); border-radius: 4px;
+    background: #f5f1ea; font-size: 1rem; cursor: pointer; }
+  #mic.rec { background: var(--accent); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 50% { opacity: 0.55; } }
+  .play { color: var(--accent); cursor: pointer; text-decoration: underline; }
+  .msg audio { max-width: 100%; height: 36px; margin-top: 4px; }
   #composer textarea { flex: 1; resize: none; height: 64px; padding: 8px 10px;
     border: 1px solid var(--rule); border-radius: 4px; font: inherit; font-size: 0.92rem; }
   #replyBar { display: none; font-size: 0.78rem; color: var(--muted); padding: 4px 0; }
@@ -85,6 +91,7 @@
     <div id="suggest"></div>
     <div id="composer">
       <textarea id="text" placeholder="Message... (@name to mention)"></textarea>
+      <button id="mic" onclick="toggleRec()" title="record a voicemail">🎙️</button>
       <button onclick="send()">Send</button>
     </div>
   </div>
@@ -171,7 +178,11 @@ function render(msgs) {
     div.className = cls;
     const when = new Date(m.ts).toLocaleString('en-GB',
       { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-    const body = esc(m.text).replace(/@([a-z0-9][a-z0-9_-]*)/gi, '<span class="at">@$1</span>');
+    let body = esc(m.text).replace(/@([a-z0-9][a-z0-9_-]*)/gi, '<span class="at">@$1</span>');
+    if (m.voicemail) {
+      body = '🎙️ <span class="play" onclick="playVm(\'' + m.voicemail + '\', this)">play voicemail</span>' +
+        ' <span style="color:var(--muted);font-size:0.78rem">' + esc(m.voicemail) + '</span>';
+    }
     const delLink = isAdmin ? '<span class="del" onclick="del(' + m.id + ')">delete</span>' : '';
     div.innerHTML = m.role === 'system' ? body + (delLink ? ' ' + delLink : '') :
       '<div class="meta"><b>' + esc(m.from) + '</b><span>' + when + '</span>' +
@@ -202,6 +213,45 @@ async function send() {
   if (r.ok) { box.value = ''; clearReply(); }
   else alert('Send failed: ' + (await r.json()).error);
 }
+// ---- voicemail recording + playback ----
+let rec = null;
+async function toggleRec() {
+  const btn = document.getElementById('mic');
+  if (rec) { rec.stop(); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (_) { alert('Microphone access denied'); return; }
+  rec = new MediaRecorder(stream);
+  const chunks = [];
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    const type = rec.mimeType || 'audio/webm';
+    rec = null;
+    btn.classList.remove('rec');
+    btn.textContent = '🎙️';
+    const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
+    const blob = new Blob(chunks, { type });
+    const r = await fetch('/msg/api/voicemail?ext=' + ext, {
+      method: 'POST', headers: { 'Authorization': 'Basic ' + auth }, body: blob,
+    });
+    if (!r.ok) alert('Voicemail upload failed: ' + (await r.json()).error);
+  };
+  rec.start();
+  btn.classList.add('rec');
+  btn.textContent = '⏹';
+}
+
+async function playVm(name, el) {
+  const r = await fetch('/msg/api/voicemail/' + name, { headers: hdrs() });
+  if (!r.ok) { alert('Could not load voicemail (it may have been auto-deleted)'); return; }
+  const audio = document.createElement('audio');
+  audio.controls = true;
+  audio.src = URL.createObjectURL(await r.blob());
+  el.replaceWith(audio);
+  audio.play();
+}
+
 // ---- @mention autocomplete (Tab completes, like Claude Code) ----
 let agentNames = ['david'];
 let matches = [];
