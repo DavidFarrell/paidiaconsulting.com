@@ -1,0 +1,1573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Reviewing AI Work</title>
+
+<!-- Vendored Riso Zine Funky design system - all local, no CDN. -->
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  /* Hide the stage until the web component upgrades (prevents a flash of the
+     first slide at authored size). Standard deck-stage boilerplate. */
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--rz-paper);
+             font-family:var(--rz-sans); overflow:hidden }
+  deck-stage{ background:var(--rz-purple) }
+  /* TOGGLE (David, 2026-06-07): footer section labels hidden. Delete this rule to bring the yellow footer text back. */
+  .rz-foot__section { display: none; }
+  /* With the section label hidden, the footer's space-between would let the lone
+     page number drift left. margin-left:auto always pushes it to the right,
+     whether or not the section label is present. */
+  .rz-foot__page { margin-left: auto; }
+  /* TOGGLE (David, 2026-06-07): hide context-kicker eyebrows deck-wide; keep functional labels via rz-eyebrow--keep. Delete this rule to bring them back. */
+  .rz-eyebrow:not(.rz-eyebrow--keep) { display: none; }
+  /* Click-to-zoom image lightbox. Images get a zoom-in cursor; the overlay
+     sits above everything (deck-stage uses up to ~2147483000) on a deep-purple
+     translucent backdrop. Excludes <video> by design (handled in JS). */
+  image-slot, img.rz-zoomable, .rz-slide img { cursor: zoom-in; }
+  #rz-lightbox {
+    position: fixed; inset: 0; z-index: 2147483600;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(26,20,56,0.92); cursor: zoom-out;
+  }
+  #rz-lightbox.is-open { display: flex; }
+  #rz-lightbox img {
+    max-width: 92vw; max-height: 92vh; width: auto; height: auto;
+    object-fit: contain; box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    border-radius: 6px; cursor: zoom-out;
+  }
+  /* SVG diagrams open zoomed onto a paper plate (the diagrams are dark-on-light,
+     so they need the cream backing they have on-slide). Sized in JS to fit. */
+  #rz-lightbox-svg {
+    display: none; background: var(--rz-paper); border-radius: 8px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5); box-sizing: border-box; cursor: zoom-out;
+  }
+  /* Presenter laser pointer (toggle with the L key). A red dot that follows the
+     mouse; the system cursor is hidden while it's on. Above everything. */
+  #rz-laser {
+    position: fixed; z-index: 2147483647; width: 18px; height: 18px;
+    margin-left: -9px; margin-top: -9px; border-radius: 50%;
+    display: none; pointer-events: none;
+    background: radial-gradient(circle, #ff3b30 0%, #ff3b30 38%, rgba(255,59,48,0.55) 60%, rgba(255,59,48,0) 75%);
+    box-shadow: 0 0 14px 4px rgba(255,59,48,0.6);
+  }
+  body.rz-laser-on, body.rz-laser-on * { cursor: none !important; }
+</style>
+</head>
+<body>
+
+<!--
+  REVIEWING AI WORK - conference-talk deck (61 slides, 5 sections), second pass,
+  rebuilt at David's measured speaking cadence on the PaidiaRhisoZineFunky <deck-stage>
+  runtime in the funky Riso cut. Each <section> is one slide; the runtime auto-numbers,
+  drives nav (arrows / Space / Home / End / number keys), the thumbnail rail, and
+  Print -> Save as PDF (one page per slide at 1920x1080). Speaker notes live in the
+  #speaker-notes JSON array below the stage, one entry per slide in document order.
+
+  Footer chrome: section NAME bottom-left, page number "NN / 61" bottom-right. Nothing
+  in the top corners. No section symbols. Four inks only.
+
+  Slice 0 - Foundation: vendored assets, 60-section scaffold, footer chrome, the
+  speaker-notes scaffold (60 entries), and the slide-1 Dax cold-open as proof of life.
+  Slides 2-60 are placeholder scaffolds filled in by slices 1-5.
+-->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- 01 - TITLE CARD - Climbing the Ladder of Abstraction ──────────────────── -->
+  <section data-label="Title">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--subtle"></div>
+      <div class="rz-body rz-body--center">
+        <h1 class="rz-display rz-display--1" style="text-align:center; max-width:1600px; line-height:0.92">
+          Climbing the Ladder of <span class="rz-yel">Abstraction</span>
+        </h1>
+        <p class="rz-lead" style="text-align:center; margin-top:36px; max-width:1200px">
+          How do we review an endless stream of agent work?
+        </p>
+        <div style="margin-top:54px; text-align:center; font-family:var(--rz-mono); font-size:24px; letter-spacing:0.12em; text-transform:uppercase; line-height:1.7">
+          David Gérouville-Farrell<br/>
+          <span style="color:var(--rz-paper-70)">david@paidiaconsulting.com</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01b - ABOUT - who I am / Paidia Consulting ───────────────────────────── -->
+  <section data-label="Who's talking">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center; gap:24px">
+        <div style="display:flex; align-items:center; gap:26px">
+          <image-slot id="paidia-fox" src="assets/img/paidia-fox-paper.png" fit="contain" style="width:124px; min-height:124px; flex:0 0 auto"></image-slot>
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <h2 class="rz-heading rz-heading--1" style="margin:0"><span class="rz-yel">Paidia</span> Consulting.</h2>
+            <p class="rz-bodytext rz-bodytext--sm" style="margin:0; color:var(--rz-paper-70)">Generalist specialists - from the boardroom to the codebase.</p>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:26px; align-self:stretch; max-width:1560px; margin:0 auto; width:100%">
+          <div style="border:2px solid var(--rz-yellow); border-radius:12px; padding:22px 28px; display:flex; flex-direction:column; gap:11px">
+            <div class="rz-eyebrow rz-eyebrow--keep" style="color:var(--rz-yellow)">Coaching &amp; enablement</div>
+            <p class="rz-bodytext"><strong class="rz-yel">C-suite coaching</strong> and AI enablement - supporting leaders and teams to think through how AI affects their practice.</p>
+            <p class="rz-bodytext"><strong class="rz-yel">Transformation.</strong> Embedding with your team to bring AI into the work you already do - change management and culture change, not just tools.</p>
+          </div>
+          <div style="border:2px solid var(--rz-pink); border-radius:12px; padding:22px 28px; display:flex; flex-direction:column; gap:11px">
+            <div class="rz-eyebrow rz-eyebrow--keep" style="color:var(--rz-pink)">Architecture &amp; engineering</div>
+            <p class="rz-bodytext"><strong class="rz-pink">We build the systems too.</strong> Experienced across retrieval-pipeline approaches, agentic workflows and hallucination mitigation.</p>
+            <p class="rz-bodytext"><strong class="rz-pink">Hands-on.</strong> From bespoke architecture to embedded AI engineering - we work in a way that suits your team.</p>
+          </div>
+        </div>
+        <div style="align-self:stretch; max-width:1680px; margin:0 auto; width:100%">
+          <div class="rz-eyebrow" style="text-align:center; margin-bottom:14px; opacity:0.8">Trusted across the public &amp; private sectors</div>
+          <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:14px">
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/fcdo.png" alt="FCDO" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/nhs.png" alt="NHS" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/gosh.png" alt="GOSH Charity" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/homes-england.png" alt="Homes England" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/awin.png" alt="Awin" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/rimes.png" alt="Rimes" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/pearson.png" alt="Pearson" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/merton.png" alt="London Borough of Merton" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.16); border-radius:12px; height:80px; padding:10px 22px; display:flex; align-items:center; justify-content:center"><img src="assets/img/clients/keele.png" alt="Keele University" style="max-height:46px; max-width:150px; width:auto; object-fit:contain; display:block"></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">Who's talking</span>
+        <span class="rz-foot__page">2 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SCAFFOLD-START - slides 02-60 placeholders, filled by slices 1-5 ──────── -->
+
+  <!-- 02 - HAYAKAWA - the ladder of abstraction ─────────────────────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:flex-start; gap:20px">
+        <div class="rz-eyebrow rz-eyebrow--keep" style="margin-bottom:0">Hayakawa's Ladder of Abstraction</div>
+        <div class="rz-figure" style="flex:1; align-self:stretch; min-height:0">
+          <image-slot id="ladder-v1" src="assets/img/ladder-abstraction-v1.png"
+                      fit="contain" shape="rounded"
+                      style="height:740px; width:100%"></image-slot>
+        </div>
+        <p class="rz-bodytext rz-bodytext--sm" style="text-align:center; max-width:1500px; margin:0 auto; color:var(--rz-paper-70)">
+          The higher you go, the fewer characteristics you include - the more things the word refers to.
+        </p>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">1 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 03 - SPLIT - the Z pole: read every line (Zechner) ─────────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The two poles</div>
+            <h2 class="rz-heading rz-heading--1">Read every <span class="rz-yel">line</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Mario Zechner, Pi: "read every f*****g line of critical code".</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="zechner" src="assets/img/zechner-onstage.jpg" fit="cover" position="78% 45%" shape="rounded" style="min-height:520px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://www.youtube.com/watch?v=RjfbvDXpFls" target="_blank" rel="noopener">Mario Zechner <span class="rz-yel">&rsaquo;</span> AI Engineer, London</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">3 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 04 - SPLIT - the L pole: code is a liability (Lopopolo) ────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The two poles</div>
+            <h2 class="rz-heading rz-heading--1">Code is a <span class="rz-pink">liability</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Ryan Lopopolo, OpenAI: "code is a liability - become a token billionaire".</span><span class="rz-dash">—</span></li>
+              <li><span>His team: 1M lines, 5 months, 2-3 people - zero written by hand.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="lopopolo" src="assets/img/ryan-lopopolo-onstage.jpg" fit="cover" position="50% 16%" shape="rounded" style="min-height:520px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://www.youtube.com/watch?v=CeOXx-XTYek" target="_blank" rel="noopener">Ryan Lopopolo <span class="rz-pink">&rsaquo;</span> AI Engineer, London</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">4 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 05 - IMAGE-FEATURE - the axis: Z-L Continuum (Volkov) ──────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center; gap:26px">
+        <div>
+          <div class="rz-eyebrow" style="margin-bottom:14px">The axis</div>
+          <h2 class="rz-heading rz-heading--1">Alex Volkov named it the <span class="rz-yel">Z-L Continuum</span>.</h2>
+        </div>
+        <div class="rz-grid-asym" style="align-items:center">
+          <div class="rz-figure">
+            <image-slot id="volkov" src="assets/img/volkov-onstage.png" fit="cover" position="50% 35%" shape="rounded" style="min-height:460px"></image-slot>
+            <div class="rz-figure__caption">Alex Volkov <span class="rz-yel">&rsaquo;</span> ThursdAI</div>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="zl-banner" src="assets/img/zl-continuum-banner.png" fit="contain" shape="rounded" style="min-height:460px"></image-slot>
+            <div class="rz-figure__caption"><a href="https://sub.thursdai.news/p/the-lopopolo-zechner-spectrum" style="color:inherit; text-decoration:underline; text-underline-offset:3px">The Z-L Continuum <span class="rz-yel">&rsaquo;</span> Alex Volkov, ThursdAI</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">5 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 06 - DIVIDER build-up - the axis is really a timeline ──────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--subtle"></div>
+      <div class="rz-body" style="justify-content:center">
+        <h1 class="rz-display rz-display--2" style="max-width:1480px; line-height:0.9">
+          The axis is really a <span class="rz-yel">timeline</span>.
+        </h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 - BEAT 1 - the cost of making collapsed (march hero) ────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center; gap:24px">
+        <div>
+          <div class="rz-eyebrow" style="margin-bottom:12px">Where this is going</div>
+          <h2 class="rz-heading rz-heading--1">The cost of <span class="rz-yel">making</span> collapsed.</h2>
+        </div>
+        <div class="rz-figure" style="align-self:stretch">
+          <image-slot id="march" src="assets/img/march-of-progress.png" fit="contain" shape="rounded" style="height:520px"></image-slot>
+        </div>
+        <p class="rz-bodytext rz-bodytext--sm" style="font-family:var(--rz-mono); letter-spacing:0.05em; text-align:center; text-transform:uppercase; color:var(--rz-paper-70)">
+          Producing code went from costly <span class="rz-yel">→</span> to nearly <span class="rz-pink">free</span>
+        </p>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">7 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 08 - BEAT 2 - we've always coped (PREVENT vs GATE) ──────────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center; gap:36px">
+        <div>
+          <div class="rz-eyebrow" style="margin-bottom:12px">Where this is going</div>
+          <h2 class="rz-heading rz-heading--1">We've always coped with more code than we can <span class="rz-yel">read</span>.</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px; align-self:stretch; max-width:1480px; margin:0 auto">
+          <div style="border:2px solid var(--rz-yellow); border-radius:12px; padding:28px 32px; display:flex; flex-direction:column; gap:14px">
+            <div class="rz-eyebrow rz-eyebrow--keep" style="color:var(--rz-yellow)">Prevent</div>
+            <p class="rz-bodytext"><strong class="rz-yel">Pair programming.</strong> Two people, real time - fewer bugs ever get written.</p>
+            <p class="rz-bodytext rz-bodytext--sm" style="color:var(--rz-paper)"><strong class="rz-yel">Adversarial review.</strong> A second coding agent, ideally a different model family, reviews the first.</p>
+          </div>
+          <div style="border:2px solid var(--rz-pink); border-radius:12px; padding:28px 32px; display:flex; flex-direction:column; gap:14px">
+            <div class="rz-eyebrow rz-eyebrow--keep" style="color:var(--rz-pink)">Gate</div>
+            <p class="rz-bodytext"><strong class="rz-pink">PR review.</strong> Doesn't reduce errors - gives you a chance to reject work that still has them.</p>
+            <p class="rz-bodytext rz-bodytext--sm" style="color:var(--rz-paper)"><strong class="rz-pink">Tests / CI</strong> just automate the gate.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">8 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 08b - BEAT 3 - this time production is unbounded ─────────────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Where this is going</div>
+            <h2 class="rz-heading rz-heading--1">This time, production is <span class="rz-pink">unbounded</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Every old coping mechanism assumed human-paced production. AI breaks them at once.</span><span class="rz-dash">—</span></li>
+              <li><span>You weren't there to pair, so prevention is gone - and the gate is now facing a firehose.</span><span class="rz-dash">—</span></li>
+              <li><span>Our old gating mechanisms are insufficient for this challenge - so we have to move them <strong class="rz-yel">up the abstraction ladder</strong>.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="unbounded" src="assets/img/unbounded-3.png" fit="contain" shape="rounded" style="min-height:440px"></image-slot>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">8 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 09 - HERO QUOTE - the drift (David's own line) ─────────────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--pink"></div>
+      <div class="rz-body rz-body--center" style="position:relative">
+        <h2 class="rz-display" style="text-align:center; max-width:1500px; font-size:92px; line-height:1.34">
+          The direction of travel is clearly <span class="rz-em-yel">rightwards</span> and clearly <span class="rz-em-pink">up the abstraction hierarchy</span>.
+        </h2>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">9 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 10 - SPLIT - nobody's confident they'll still read code (march HELD) ─ -->
+  <section data-label="The spectrum">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The drift</div>
+            <h2 class="rz-heading rz-heading--1">Nobody's confident they'll still be <span class="rz-pink">reading code</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Volkov: "nobody could give a confident answer that they will still be looking at code in 12 months".</span><span class="rz-dash">—</span></li>
+              <li><span>Wherever you sit today, the drift is toward <strong class="rz-pink">L</strong>.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="zl-banner-volkov" src="assets/img/zl-continuum-banner.png" fit="contain" shape="rounded" style="min-height:440px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://sub.thursdai.news/p/the-lopopolo-zechner-spectrum" target="_blank" rel="noopener">The Z-L Continuum <span class="rz-yel">&rsaquo;</span> Alex Volkov, ThursdAI</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">10 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 11 - IMAGE-FEATURE - review becomes the bottleneck ─────────────────── -->
+  <section data-label="The spectrum">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The consequence</div>
+            <h2 class="rz-heading rz-heading--1">As you move up, review becomes the <span class="rz-pink">bottleneck</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>The constraint starts being "can I build it" and becomes "can I review it fast enough".</span><span class="rz-dash">—</span></li>
+              <li><span>Review doesn't mean read the code:<ul class="rz-sublist"><li><span class="rz-dash">—</span><span>it means seeing if the work is good enough and</span></li><li><span class="rz-arrow">&rsaquo;</span><span>whether it does what we wanted.</span></li></ul></span><span></span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="bottleneck" src="assets/img/bottleneck.png" fit="contain" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">AI generation <span class="rz-pink">&rsaquo;</span> the narrow neck <span class="rz-pink">&rsaquo;</span> reviewed and shipped</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The spectrum</span>
+        <span class="rz-foot__page">11 / 60</span>
+      </footer>
+    </div>
+  </section>
+
+<!-- 16 - SECTION OPENER - even the read-every-line guy had to cope ──────────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--pink"></div>
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-eyebrow" style="letter-spacing:0.2em; margin-bottom:20px">The OSS extreme</div>
+        <h1 class="rz-display rz-display--1" style="font-size:128px; line-height:0.94">
+          What this looks like in <span class="rz-yel">practice</span>.
+        </h1>
+        <ul class="rz-list" style="max-width:1200px; margin-top:36px">
+          <li><span>Mario's minimalist agent <a class="rz-src" href="https://github.com/earendil-works/pi" target="_blank" rel="noopener"><span class="rz-yel">pi</span></a> blew up when Pete Steinberger built <a class="rz-src" href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener">OpenClaw</a>.</span><span class="rz-dash">—</span></li>
+          <li><span>He now gets 30-50 issues and PRs a day - far more than he can review.</span><span class="rz-arrow">&rsaquo;</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+<!-- 17 - SPLIT - coping 1: auto-close by default ──────────────────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Coping 1</div>
+            <h2 class="rz-heading rz-heading--1">Auto-close every new contributor's issue and <span class="rz-pink">PR</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>By default every new PR or issue is auto-closed.</span><span class="rz-dash">—</span></li>
+              <li><span>A modern captcha - a contributor must jump through some hoops to prove they're real before being permitted to submit PRs and issues.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="autoclose-shot" src="assets/img/mario-autoclose-human-voice.jpg" fit="contain" shape="rounded" style="min-height:460px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://lucumr.pocoo.org/2026/5/24/pi-oss/" target="_blank" rel="noopener">The auto-close bot comment</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">17 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 18 - SPLIT - coping 2: open-source holidays ──────────────────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow rz-eyebrow--yellow">Coping 2</div>
+            <h2 class="rz-heading rz-heading--1">OSS <span class="rz-em-yel rz-tilt">vacation</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>When it gets too much he just stops - declares an "OSS vacation" and pauses maintenance to protect his time.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="vacation-shot" src="assets/img/mario-vacation-announce.jpg" fit="contain" shape="rounded" style="min-height:460px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://x.com/badlogicgames/status/2021164603506368693" target="_blank" rel="noopener">The "OSS vacation" announcement</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">18 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 19A - SPLIT - coping 3 (VARIANT A: VIDEO) cluster the issue flood ───── -->
+  <section data-label="A review problem">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Coping 3</div>
+            <h2 class="rz-heading rz-heading--1">Cluster the issue flood into one HTML <span class="rz-yel">map</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Embed every PR and issue (title + description) into a vector <span class="rz-yel">→</span> UMAP to 2D <span class="rz-yel">→</span> one interactive HTML map.</span><span class="rz-dash">—</span></li>
+              <li><span>Then review the big clusters - what are all these people actually asking for - instead of individual PRs.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <video controls preload="metadata" playsinline style="width:100%; border-radius:18px"><source src="assets/video/mario-cluster-map.mp4" type="video/mp4"></video>
+            <div class="rz-figure__caption" style="font-family:var(--rz-mono)"><a class="rz-src" href="https://github.com/badlogic/doppelgangers" target="_blank" rel="noopener">cluster map - video</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">19 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 20 - STAT TILES - the bottleneck, in numbers ─────────────────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--subtle"></div>
+      <div class="rz-body" style="justify-content:center; gap:48px">
+        <div>
+          <div class="rz-eyebrow" style="margin-bottom:14px">The numbers</div>
+          <h2 class="rz-heading rz-heading--1">The bottleneck, in <span class="rz-yel">numbers</span>.</h2>
+        </div>
+        <div class="rz-grid-2" style="max-width:1400px">
+          <div class="rz-tile rz-tile--yel" style="padding:40px 44px">
+            <div style="font-family:var(--rz-display); font-size:120px; line-height:0.86; letter-spacing:-0.04em">714</div>
+            <div class="rz-lbl" style="opacity:0.7; margin-top:10px">External PRs auto-closed (90 days)</div>
+          </div>
+          <div class="rz-tile rz-tile--pink" style="padding:40px 44px">
+            <div style="font-family:var(--rz-display); font-size:120px; line-height:0.86; letter-spacing:-0.04em">~8%</div>
+            <div class="rz-lbl" style="opacity:0.75; margin-top:10px">Ever merged</div>
+          </div>
+        </div>
+        <div class="rz-lbl" style="opacity:0.6; font-family:var(--rz-mono); letter-spacing:0.04em; max-width:1400px">Source: <a class="rz-src" href="https://lucumr.pocoo.org/2026/5/24/pi-oss/" target="_blank" rel="noopener">Armin Ronacher, "pi-oss" - lucumr.pocoo.org</a></div>
+        <p class="rz-bodytext rz-bodytext--sm" style="margin-top:6px; max-width:1400px; color:var(--rz-paper-70)">pi was acquired by <span class="rz-yel">Earendil</span>; Mario now works there with Armin Ronacher.</p>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">20 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 21 - SPLIT - the human face (REDACTED) ────────────────────────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:22px">
+            <div class="rz-eyebrow">The human face</div>
+            <h2 class="rz-heading rz-heading--1">One reviewer<span class="rz-pink">,</span> a queue of AI pull requests.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>The head of engineering at a client - a small expert team that ships a lot of code, very inconsistent.</span><span class="rz-dash">—</span></li>
+              <li><span>Some engineers use agents well, some don't; for any given PR it's hard to tell whether it was done well.</span><span class="rz-dash">—</span></li>
+              <li><span>The AI-written PRs are overwhelming - even the PR's own writeup is too much to read, never mind the code itself.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="dax-skill-shot" src="assets/img/dax-deep-skill-tweet.jpg" fit="contain" shape="rounded" style="min-height:460px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://x.com/thdxr/status/2060553984947950017" target="_blank" rel="noopener">Dax Raad, OpenCode <span class="rz-yel">&rsaquo;</span> using an agent is a deep skill</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">21 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 22 - SPLIT - her response: write the standards down ───────────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The human face</div>
+            <h2 class="rz-heading rz-heading--1">Her response was to write the <span class="rz-yel">standards</span> down.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>She started writing AI coding standards for the team, to reduce the surface area of review.</span><span class="rz-dash">—</span></li>
+              <li><span>Even so, it is not really sustainable at this level - this is an industry-wide problem.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-tile rz-tile--paper" style="padding:36px 40px; align-self:center; width:100%; color:var(--rz-ink)">
+            <div class="rz-lbl" style="opacity:0.7; margin-bottom:18px">AI coding standards <span style="opacity:0.55">/ draft</span></div>
+            <ul style="list-style:none; margin:0; padding:0; font-family:var(--rz-mono); font-size:21px; line-height:1.5">
+              <li style="padding:9px 0; border-bottom:1px solid rgba(26,20,56,0.18)">01 &nbsp; Every PR ships with a demo of the change working</li>
+              <li style="padding:9px 0; border-bottom:1px solid rgba(26,20,56,0.18)">02 &nbsp; No agent merge without a human on the strategic calls</li>
+              <li style="padding:9px 0; border-bottom:1px solid rgba(26,20,56,0.18)">03 &nbsp; Tests must fail before they pass</li>
+              <li style="padding:9px 0">04 &nbsp; Keep the diff small enough to review</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">22 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 23 - IMAGE-FEATURE - generation has outrun review (Parakhin) ───────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The trend</div>
+            <h2 class="rz-heading rz-heading--1">Generation has <span class="rz-pink">outrun</span> review.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Parakhin (CTO, Shopify): PR merges now growing ~30% month on month, up from ~10%.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <!-- NOTE: parakhin-pr-growth.png is illustrative; the ~30% figure is spoken (Latent Space), not a chart Parakhin posted. David to decide whether to keep the image. -->
+          <div class="rz-figure">
+            <image-slot id="parakhin" src="assets/img/parakhin-pr-growth.png" fit="contain" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://www.latent.space/p/shopify" target="_blank" rel="noopener">Mikhail Parakhin, CTO, Shopify <span class="rz-yel">&rsaquo;</span> Latent Space, 2026</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">23 / 60</span>
+      </footer>
+    </div>
+  </section>
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-body--center" style="max-width:1500px; margin:0 auto; text-align:left">
+          <div class="rz-eyebrow" style="margin-bottom:22px">The right altitude</div>
+          <p class="rz-bodytext rz-bodytext--sm" style="max-width:1150px; margin-bottom:26px; opacity:0.92">The merge question is not "can you explain every line". It is:</p>
+          <h2 class="rz-heading rz-heading--1" style="margin-bottom:34px; max-width:1450px">Would you be comfortable owning a <span class="rz-yel">production incident</span> tied to this pull request?</h2>
+          <ul class="rz-list" style="max-width:1320px">
+            <li><span>You comprehend the software - the architecture, the weak spots, where the bodies are buried. Not every line.</span><span class="rz-arrow">&rsaquo;</span></li>
+          </ul>
+          <div class="rz-lbl" style="margin-top:32px; opacity:0.6">Vercel <a class="rz-src" href="https://vercel.com/blog/agent-responsibly" target="_blank" rel="noopener">"Agent Responsibly"</a>, via <a class="rz-src" href="https://www.youtube.com/watch?v=VIYnXUQkKsU" target="_blank" rel="noopener">Tom Enden, Engineering Lead, Wix</a></div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">42 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 42 - SPLIT - Legora CODE quote + triage rule (corroboration) ──────── -->
+  <!-- 42 - SPLIT - Legora CODE quote + triage rule (corroboration) ──────── -->
+  <section data-label="The methods">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div class="rz-eyebrow">The right altitude</div>
+            <h2 class="rz-heading rz-heading--2">A CTO running one of the fastest-growing eng orgs says the <span class="rz-yel">same</span>.</h2>
+            <p class="rz-bodytext rz-bodytext--sm" style="max-width:860px; opacity:0.92">Jacob Lauritzen, CTO of Legora: writing code was the bottleneck for ~100 years and is now cheap - so review moves up.</p>
+            <ul class="rz-list rz-list--tight" style="max-width:860px">
+              <li><span>What matters: the impact on systems architecture, design, stability, security boundaries.</span><span class="rz-dash">—</span></li>
+              <li><span>No strategic change <span class="rz-yel">→</span> unleash the agent.</span><span class="rz-dash">—</span></li>
+              <li><span>A strategic trade-off <span class="rz-pink">→</span> a human decides "yes, this is the right direction".</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-tile rz-tile--deep" style="padding:30px 32px; align-self:center; width:100%">
+            <div class="rz-lbl" style="margin-bottom:18px">Jacob Lauritzen <span style="opacity:0.6">/ CTO, Legora</span></div>
+            <p style="font-family:var(--rz-sans); font-weight:700; font-size:25px; line-height:1.5; margin:0">
+              "If that doesn't change, maybe you don't have to review it at all - just unleash the agent. But if there are strategic trade-offs, then you want a human to be like, yeah, this is the right direction."
+            </p>
+            <div class="rz-lbl" style="margin-top:20px; opacity:0.6"><a class="rz-src" href="https://www.youtube.com/watch?v=UkERw3cBEAo" target="_blank" rel="noopener">20VC, "Inside Legora's Tech Stack"</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">43 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 31 - SPLIT - coders are just the forefront (canary) ───────────────── -->
+  <section data-label="Not just code">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:22px">
+            <div class="rz-eyebrow">The canary</div>
+            <h2 class="rz-heading rz-heading--1">Coders are the <span class="rz-yel">canary</span>.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>AI is genuinely good at code now, and we use more of it than anyone - so we hit this first.</span><span class="rz-dash">—</span></li>
+              <li><span>We built the advanced tooling for ourselves, which makes us the <strong class="rz-yel">canary</strong>.</span><span class="rz-dash">—</span></li>
+              <li><span>Every field doing information work is walking into the same wall.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="canary" src="assets/img/canary.png" fit="contain" position="center" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">The canary in the coal mine</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">Not just code</span>
+        <span class="rz-foot__page">31 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 28 - SPLIT - romance authors are already living this ──────────────── -->
+  <section data-label="Not just code">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Another field</div>
+            <h2 class="rz-heading rz-heading--1">Romance authors are already <span class="rz-pink">living this</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span><a class="rz-src" href="https://podcasts.apple.com/us/podcast/something-big-is-happening-a-i-rocks-the-romance/id1528594034?i=1000749587690" target="_blank" rel="noopener">Hard Fork</a> covered <a class="rz-src" href="https://www.nytimes.com/2026/02/08/business/ai-claude-romance-books.html" target="_blank" rel="noopener">Alexandra Alter's New York Times piece</a> on AI in romance publishing.</span><span class="rz-dash">—</span></li>
+              <li><span>The making is no longer the constraint - the judgement and the review are.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="romance" src="assets/img/romance-stack.png" fit="cover" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">The making is no longer the constraint</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">Not just code</span>
+        <span class="rz-foot__page">28 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 29 - STAT TILES - 200+ novels in a year ──────────────────────────── -->
+  <section data-label="Not just code">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--subtle"></div>
+      <div class="rz-body" style="justify-content:center; gap:44px">
+        <div>
+          <div class="rz-eyebrow" style="margin-bottom:14px">Another field</div>
+          <h2 class="rz-heading rz-heading--1">200+ novels in a <span class="rz-yel">year</span>.</h2>
+        </div>
+        <div class="rz-grid-3" style="max-width:1500px">
+          <div class="rz-tile rz-tile--yel" style="padding:34px 36px">
+            <div style="font-family:var(--rz-display); font-size:92px; line-height:0.86; letter-spacing:-0.04em">200+</div>
+            <div class="rz-lbl" style="opacity:0.7; margin-top:10px">Romance novels, in one year</div>
+          </div>
+          <div class="rz-tile rz-tile--pink" style="padding:34px 36px">
+            <div style="font-family:var(--rz-display); font-size:92px; line-height:0.86; letter-spacing:-0.04em">21</div>
+            <div class="rz-lbl" style="opacity:0.75; margin-top:10px">Pen names</div>
+          </div>
+          <div class="rz-tile rz-tile--paper" style="padding:34px 36px; color:var(--rz-ink)">
+            <div style="font-family:var(--rz-display); font-size:92px; line-height:0.86; letter-spacing:-0.04em">AI</div>
+            <div class="rz-lbl" style="opacity:0.7; margin-top:10px">Coral Hart's version of 714 PRs in 90 days</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">Not just code</span>
+        <span class="rz-foot__page">29 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 30 - HERO QUOTE - director, not writer (Coral Hart) ───────────────── -->
+  <section data-label="Not just code">
+    <div class="rz-slide">
+      <div class="rz-halftone rz-halftone--pink"></div>
+      <div class="rz-body rz-body--center" style="position:relative">
+        <p class="rz-lead" style="text-align:center; max-width:1200px; opacity:0.85; margin-bottom:30px">
+          "Do you still think of yourself as a writer?"
+        </p>
+        <h2 class="rz-display" style="text-align:center; max-width:1500px; font-size:108px; line-height:1.28">
+          "With AI, I am the creative <span class="rz-em-yel">director</span>… the editor, I'm the <span class="rz-em-pink">boss</span>."
+        </h2>
+        <p class="rz-bodytext rz-bodytext--sm" style="text-align:center; margin-top:46px; font-family:var(--rz-mono); letter-spacing:0.06em; text-transform:uppercase; color:var(--rz-paper-70)">
+          <a class="rz-src" href="https://www.nytimes.com/2026/02/08/business/ai-claude-romance-books.html" target="_blank" rel="noopener">Coral Hart, romance author</a>
+        </p>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">Not just code</span>
+        <span class="rz-foot__page">30 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 43 - TWO-COLUMN - the same move, outside engineering (Code | Law) ──── -->
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center; gap:26px">
+        <div>
+          <div class="rz-eyebrow" style="margin-bottom:14px">Code | Law</div>
+          <h2 class="rz-heading rz-heading--1">The same move, outside <span class="rz-yel">engineering</span>.</h2>
+        </div>
+        <div class="rz-grid-asym" style="align-items:center">
+          <div class="rz-grid-2" style="max-width:900px">
+            <div class="rz-tile rz-tile--deep" style="padding:24px 26px">
+              <div class="rz-lbl rz-yel" style="margin-bottom:14px">Code</div>
+              <p style="margin:0; font-size:22px; line-height:1.45">Stop reading source line-by-line <span class="rz-yel">→</span> review architecture, security, direction.</p>
+            </div>
+            <div class="rz-tile rz-tile--deep" style="padding:24px 26px">
+              <div class="rz-lbl rz-pink" style="margin-bottom:14px">Law</div>
+              <p style="margin:0; font-size:22px; line-height:1.45">Stop being nitty-gritty about contract language <span class="rz-pink">→</span> "what's our negotiation stance? which risks are we okay with?"</p>
+            </div>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="code-law" src="assets/img/code-law.png" fit="contain" shape="rounded" style="min-height:420px"></image-slot>
+            <div class="rz-figure__caption"><a class="rz-src" href="https://www.youtube.com/watch?v=UkERw3cBEAo" target="_blank" rel="noopener">Both move up a layer <span class="rz-yel">&rsaquo;</span> Lauritzen, Legora</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">44 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- The future of review (chapter divider) ─────────────────────────────── -->
+  <section data-label="The future of review">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone"></div>
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-eyebrow" style="letter-spacing:0.2em; margin-bottom:24px">The future of review</div>
+        <h1 class="rz-display rz-display--1">
+          The future of <span class="rz-yel">review</span>.
+        </h1>
+      </div>
+    </div>
+  </section>
+<!-- 26 - IMAGE-FEATURE - the default surface is wrong (Meijer) ─────────── -->
+  <section data-label="A review problem">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">The unsolved bit</div>
+            <h2 class="rz-heading rz-heading--1">The default surface is <span class="rz-pink">wrong</span>.</h2>
+            <blockquote style="margin:0; max-width:840px; border-left:3px solid var(--rz-yellow); padding-left:24px">
+              <p style="margin:0 0 16px; font-size:26px; line-height:1.45; color:var(--rz-paper)">"Reading large amounts of information on a rich surface is much more pleasant than reading it from a terminal - there's no reason to go back to that part of the 80s."</p>
+              <cite style="font-style:normal; font-size:18px; color:var(--rz-paper-70)"><a class="rz-src" href="https://www.youtube.com/watch?v=fdbXNWkpPMY" target="_blank" rel="noopener">Lucas Meijer, <span class="rz-yel">"A Love Letter to Pi"</span></a></cite>
+            </blockquote>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="meijer" src="assets/img/meijer-onstage.jpg" fit="contain" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">Lucas Meijer: embrace HTML as the output form factor</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">A review problem</span>
+        <span class="rz-foot__page">26 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 37 - SPLIT - design: review by looking (Claude Design) ────────────── -->
+  <!-- 37 - SPLIT - design: review by looking (Claude Design) ────────────── -->
+  <section data-label="The methods">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Design</div>
+            <h2 class="rz-heading rz-heading--1">A redesign you review by <span class="rz-yel">looking</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Anthropic's <a class="rz-src" href="https://www.anthropic.com/news/claude-design-anthropic-labs" target="_blank" rel="noopener">Claude Design</a> produced the look and feel for this deck - many variations, never a line of CSS read by hand.</span><span class="rz-dash">—</span></li>
+              <li><span>For a visual task the review surface is the rendered output - you review it there, not in the code.</span><span class="rz-dash">—</span></li>
+              <li><span>It's currently the best tool in this space.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <image-slot id="claude-design" src="assets/img/claude-design-mockups.png" fit="contain" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">Claude Design directions for this deck</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">37 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 38 - LIVE DEMO - DeepWiki: map the whole system ───────────────────── -->
+  <!-- 39 - LIVE DEMO - DeepWiki: map the whole system ───────────────────── -->
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Wikis</div>
+            <h2 class="rz-heading rz-heading--1">Let the agent <span class="rz-yel">map</span> the whole system.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Swap github.com <span class="rz-yel">→</span> <a class="rz-src" href="https://deepwiki.com" target="_blank" rel="noopener">deepwiki.com</a> on any public repo and Cognition's Devin reads the whole codebase for you.</span><span class="rz-dash">—</span></li>
+              <li><span>You get a generated wiki - architecture overview, diagrams, and an "ask the codebase" box answered from the actual source.</span><span class="rz-dash">—</span></li>
+              <li><span>You review the shape of the system, not the code - before you touch an unfamiliar repo, or to sanity-check one an agent built.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <div style="position:absolute; top:14px; left:14px; z-index:2"><span class="rz-chip rz-chip--pink">Live demo</span></div>
+            <image-slot id="deepwiki" src="assets/img/deepwiki-cognition.png" fit="contain" shape="rounded" style="min-height:460px"></image-slot>
+            <div class="rz-figure__caption">DeepWiki (microsoft/vscode), <a class="rz-src" href="https://cognition.ai/blog/deepwiki" target="_blank" rel="noopener">Cognition <span class="rz-yel">&rsaquo;</span> cognition.ai</a></div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">39 / 60</span>
+      </footer>
+    </div>
+  </section>
+  <!-- 44 - SPLIT - demos: demonstrate it works, from real output (Showboat + Rodney) ───── -->
+  <section data-label="The methods">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:22px">
+            <div class="rz-eyebrow">Demos</div>
+            <h2 class="rz-heading rz-heading--1">Make the agent <span class="rz-pink">demonstrate</span> it works - from real output.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>Tests passing isn't proof - you have to see it run.</span><span class="rz-dash">—</span></li>
+              <li><span><a class="rz-src" href="https://github.com/simonw/rodney" target="_blank" rel="noopener"><strong class="rz-yel">Rodney</strong></a> captures the agent's real browser session - screenshots, clicks.</span><span class="rz-dash">—</span></li>
+              <li><span><a class="rz-src" href="https://github.com/simonw/showboat" target="_blank" rel="noopener"><strong class="rz-yel">Showboat</strong></a> captures the agent's real CLI output - into a doc you read.</span><span class="rz-dash">—</span></li>
+              <li><span>Real execution, not narration - the agent can't fake it.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div data-gallery style="align-self:center; width:100%; display:flex; flex-direction:column; gap:14px">
+            <div class="rz-figure rz-figure--alt" style="margin:0">
+              <image-slot id="showboat2" src="assets/img/rodney-session.jpg" fit="contain" shape="rounded" style="min-height:285px"></image-slot>
+              <div class="rz-figure__caption">Rodney <span class="rz-yel">&rsaquo;</span> drives a real browser, captures it</div>
+            </div>
+            <div class="rz-figure" style="margin:0">
+              <image-slot id="showboat" src="assets/img/showboat-demo-real.jpg" fit="contain" shape="rounded" style="min-height:285px"></image-slot>
+              <div class="rz-figure__caption">Showboat <span class="rz-yel">&rsaquo;</span> the agent's real run, written to a doc</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">45 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 46 - SPLIT - decks: a slide deck of what the agent did (Lucas) ─────── -->
+  <!-- 46 - SPLIT - decks: a slide deck of what the agent did (Lucas) ─────── -->
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Decks</div>
+            <h2 class="rz-heading rz-heading--1">A slide deck of what the agent <span class="rz-yel">did</span>.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>Lucas Meijer (<a class="rz-src" href="https://www.youtube.com/watch?v=fdbXNWkpPMY" target="_blank" rel="noopener">"A Love Letter to Pi"</a>) doesn't like reviewing code in a text interface.</span><span class="rz-dash">—</span></li>
+              <li><span>So his agent builds an HTML deck of what it did - he reviews the walkthrough, not the diff.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <image-slot id="pi-eval" src="assets/img/pi-eval-pack.jpg" fit="contain" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">Pi builds a review pack of what it did</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">47 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 47 - SPLIT - video: a short video of the work ──────────────────────── -->
+  <!-- 47 - SPLIT - video: a short video of the work ──────────────────────── -->
+  <section data-label="The methods">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:24px">
+            <div class="rz-eyebrow">Video</div>
+            <h2 class="rz-heading rz-heading--1">A short <span class="rz-pink">video</span> of the work.</h2>
+            <ul class="rz-list" style="max-width:840px">
+              <li><span>He reviews the finished walkthrough - the final product, not the diffs.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <video controls muted playsinline preload="metadata" style="width:100%; border-radius:18px"><source src="assets/video/meijer-eval-walkthrough.mp4" type="video/mp4"></video>
+            <div class="rz-figure__caption" style="font-family:var(--rz-mono)">Lucas hits play - the eval-pack walkthrough video</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">48 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 48 - SECTION MINI-DIVIDER - my own practice ───────────────────────── -->
+  <!-- 48 - SECTION MINI-DIVIDER - my own practice ───────────────────────── -->
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--pink"></div>
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-eyebrow rz-eyebrow--yellow" style="letter-spacing:0.2em; margin-bottom:24px">My own practice</div>
+        <h1 class="rz-display rz-display--2" style="max-width:1480px; line-height:0.9">
+          My <span class="rz-yel">experience</span>.
+        </h1>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">49 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 49 - SPLIT - my own: scoping where review matters (REDACTED) ──────── -->
+  <!-- 49 - SPLIT - my own: scoping where review matters (REDACTED) ──────── -->
+  <section data-label="The methods">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div class="rz-eyebrow">My own: the build</div>
+            <h2 class="rz-heading rz-heading--2">Contract review <span class="rz-yel">agent</span>.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>GOSH Charity send <strong>every</strong> contract to a two-person legal team.</span><span class="rz-dash">—</span></li>
+              <li><span>Internal app: GenAI checks each one against approved templates, playbooks and charity-sector best practice.</span><span class="rz-dash">—</span></li>
+              <li><span>Under the value threshold and strongly aligned &rarr; auto-approve.</span><span class="rz-dash">—</span></li>
+              <li><span>Two integrations only: a locked-down web search (allow-listed domains) and one email out.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <svg data-zoom viewBox="0 0 620 520" width="100%" style="display:block" font-family="JetBrains Mono, ui-monospace, monospace" role="img" aria-label="How it works today: every contract funnels through two lawyers">
+              <defs>
+                <marker id="rzbn-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#2b1f4f"></path>
+                </marker>
+              </defs>
+              <!-- LEFT: incoming contract chips -->
+              <text x="14" y="26" fill="#2b1f4f" font-size="15" font-weight="700" letter-spacing="1.5">CONTRACTS IN</text>
+              <g font-size="13" fill="#2b1f4f">
+                <g>
+                  <rect x="14" y="40" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="62">Services Agreement</text>
+                </g>
+                <g>
+                  <rect x="14" y="82" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="104">NDA</text>
+                </g>
+                <g>
+                  <rect x="14" y="124" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="146">Data Processing Agr.</text>
+                </g>
+                <g>
+                  <rect x="14" y="166" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="188">Venue / marquee hire</text>
+                </g>
+                <g>
+                  <rect x="14" y="208" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="230">SaaS subscription</text>
+                </g>
+                <g>
+                  <rect x="14" y="250" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="272">Statement of Work</text>
+                </g>
+                <g>
+                  <rect x="14" y="292" width="200" height="34" rx="6" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="314">Corporate sponsor</text>
+                </g>
+                <g>
+                  <rect x="14" y="334" width="200" height="34" rx="6" fill="#ff5fa2" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                  <text x="26" y="356">+ more types</text>
+                </g>
+              </g>
+              <!-- funnel lines converging to the bottleneck -->
+              <g stroke="#2b1f4f" stroke-width="1.5" fill="none" opacity="0.55">
+                <path d="M214,57 C266,57 286,225 326,243"></path>
+                <path d="M214,99 C266,99 290,232 326,250"></path>
+                <path d="M214,141 C268,141 292,240 326,255"></path>
+                <path d="M214,225 L326,260"></path>
+                <path d="M214,309 C268,309 292,276 326,263"></path>
+                <path d="M214,351 C266,351 290,290 326,268"></path>
+              </g>
+              <!-- MIDDLE: bottleneck = two lawyers -->
+              <g transform="translate(330,210)">
+                <rect x="0" y="0" width="118" height="118" rx="10" fill="#2b1f4f"></rect>
+                <!-- two person silhouettes -->
+                <g fill="#fff200" stroke="#2b1f4f" stroke-width="1">
+                  <circle cx="38" cy="40" r="16"></circle>
+                  <path d="M14,86 C14,62 62,62 62,86 Z"></path>
+                  <circle cx="80" cy="40" r="16"></circle>
+                  <path d="M56,86 C56,62 104,62 104,86 Z"></path>
+                </g>
+              </g>
+              <text x="389" y="350" fill="#2b1f4f" font-size="15" font-weight="700" text-anchor="middle">Legal - 2 people</text>
+              <!-- arrows out of the bottleneck to the two piles -->
+              <g stroke="#2b1f4f" stroke-width="2" fill="none">
+                <path d="M448,238 C490,238 500,150 528,150" marker-end="url(#rzbn-arrow)"></path>
+                <path d="M448,300 C490,300 500,388 528,388" marker-end="url(#rzbn-arrow)"></path>
+              </g>
+              <!-- RIGHT: two output piles -->
+              <g>
+                <rect x="528" y="118" width="78" height="64" rx="8" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                <text x="567" y="146" fill="#2b1f4f" font-size="14" font-weight="700" text-anchor="middle">Approved</text>
+                <text x="567" y="166" fill="#2b1f4f" font-size="12" text-anchor="middle" opacity="0.7">pile</text>
+              </g>
+              <g>
+                <rect x="528" y="356" width="78" height="64" rx="8" fill="#ff5fa2" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                <text x="567" y="384" fill="#2b1f4f" font-size="14" font-weight="700" text-anchor="middle">Rejected</text>
+                <text x="567" y="404" fill="#2b1f4f" font-size="12" text-anchor="middle" opacity="0.7">pile</text>
+              </g>
+              <!-- many -> 2 -> out label -->
+              <text x="389" y="470" fill="#2b1f4f" font-size="15" font-weight="700" text-anchor="middle" letter-spacing="1">MANY &rsaquo; 2 &rsaquo; OUT</text>
+            </svg>
+            <div class="rz-figure__caption">Every contract funnels through two lawyers</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">50 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 50 - SPLIT - my own: attention on the one small AI bit (HELD) ──────── -->
+  <!-- 50 - SPLIT - my own: attention on the one small AI bit (HELD) ──────── -->
+  <section data-label="The methods">
+    <div class="rz-slide">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div class="rz-eyebrow">My own: the build</div>
+            <h2 class="rz-heading rz-heading--2">I put my attention on the one small AI bit.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>The shell is a standard boilerplate cloud web app - not worth line-by-line attention.</span><span class="rz-dash">—</span></li>
+              <li><span>The AI in the middle is the only novel part, so that is the <strong class="rz-yel">risky surface</strong> I review - not every line of the plumbing.</span><span class="rz-dash">—</span></li>
+              <li><span>Rather than dictate it, I go back and forth with the agent - defining and refining until we are on the same page about what I want it to do.
+                <ul style="list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:7px">
+                  <li style="display:flex; grid-template-columns:none; gap:12px; padding:0; border-top:none; align-items:baseline; font-size:0.82em; opacity:0.9"><span class="rz-pink" style="font-family:var(--rz-mono)">&middot;</span><span>tenant-only auth</span></li>
+                  <li style="display:flex; grid-template-columns:none; gap:12px; padding:0; border-top:none; align-items:baseline; font-size:0.82em; opacity:0.9"><span class="rz-pink" style="font-family:var(--rz-mono)">&middot;</span><span>a closed network</span></li>
+                  <li style="display:flex; grid-template-columns:none; gap:12px; padding:0; border-top:none; align-items:baseline; font-size:0.82em; opacity:0.9"><span class="rz-pink" style="font-family:var(--rz-mono)">&middot;</span><span>the agent's only two exits - vetted legal sources, one fixed inbox <span style="opacity:0.7">(i.e. preventing the lethal trifecta)</span></span></li>
+                </ul>
+              </span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure rz-figure--alt">
+            <svg data-zoom viewBox="0 0 680 540" width="100%" style="display:block" font-family="JetBrains Mono, ui-monospace, monospace" role="img" aria-label="Most of the build is standard boilerplate; only the AI agent in the middle is the risky surface, with just two controlled ways out">
+              <defs>
+                <marker id="rzai-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="#2b1f4f"></path>
+                </marker>
+              </defs>
+              <!-- BOILERPLATE SHELL (muted) -->
+              <text x="22" y="26" fill="#2b1f4f" font-size="14" font-weight="700" letter-spacing="1" opacity="0.55">STANDARD CLOUD WEB APP</text>
+              <text x="22" y="44" fill="#2b1f4f" font-size="12" opacity="0.45">boilerplate - barely worth a glance</text>
+              <rect x="16" y="56" width="424" height="462" rx="20" fill="none" stroke="#2b1f4f" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.55"></rect>
+              <!-- shell capability chips (muted) -->
+              <g opacity="0.6">
+                <rect x="40" y="78" width="372" height="40" rx="8" fill="#2b1f4f" fill-opacity="0.06" stroke="#2b1f4f" stroke-width="1"></rect>
+                <text x="56" y="103" fill="#2b1f4f" font-size="13">OAuth SSO &middot; charity tenant only</text>
+                <rect x="40" y="126" width="372" height="40" rx="8" fill="#2b1f4f" fill-opacity="0.06" stroke="#2b1f4f" stroke-width="1"></rect>
+                <text x="56" y="151" fill="#2b1f4f" font-size="13">Private network &middot; no inbound internet</text>
+              </g>
+              <!-- AI CORE (vivid) -->
+              <rect x="70" y="250" width="312" height="150" rx="20" fill="#ff5fa2" opacity="0.22"></rect>
+              <rect x="84" y="262" width="284" height="126" rx="14" fill="#fff200" stroke="#2b1f4f" stroke-width="3"></rect>
+              <text x="226" y="300" fill="#2b1f4f" font-size="21" font-weight="800" text-anchor="middle" letter-spacing="0.5">THE AI AGENT</text>
+              <text x="226" y="326" fill="#2b1f4f" font-size="13" text-anchor="middle">contract &harr; approved template</text>
+              <text x="226" y="350" fill="#2b1f4f" font-size="12.5" font-style="italic" text-anchor="middle" opacity="0.72">the one novel, risky bit</text>
+              <!-- "I review this" pill -->
+              <g>
+                <rect x="120" y="420" width="212" height="36" rx="18" fill="#ff5fa2" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                <text x="226" y="444" fill="#2b1f4f" font-size="14" font-weight="700" text-anchor="middle">&uarr; I review THIS surface</text>
+              </g>
+              <!-- EGRESS: gate 1 web (allowed) -->
+              <path d="M368,300 C410,300 416,150 452,150" stroke="#2b1f4f" stroke-width="2.5" fill="none" marker-end="url(#rzai-arrow)"></path>
+              <rect x="430" y="140" width="20" height="20" rx="3" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+              <g>
+                <rect x="456" y="120" width="212" height="70" rx="9" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                <text x="470" y="143" fill="#2b1f4f" font-size="14" font-weight="800">WEB</text>
+                <text x="470" y="162" fill="#2b1f4f" font-size="11.5">approved legal sources</text>
+                <text x="470" y="178" fill="#2b1f4f" font-size="11.5" opacity="0.7">allow-list, not open search</text>
+              </g>
+              <!-- EGRESS: open internet (blocked) -->
+              <path d="M368,325 C404,325 414,250 446,250" stroke="#2b1f4f" stroke-width="1.5" fill="none" stroke-dasharray="5 4" opacity="0.5"></path>
+              <g>
+                <circle cx="452" cy="250" r="12" fill="none" stroke="#2b1f4f" stroke-width="2"></circle>
+                <line x1="444" y1="258" x2="460" y2="242" stroke="#2b1f4f" stroke-width="2"></line>
+                <text x="470" y="246" fill="#2b1f4f" font-size="12.5" font-weight="700" opacity="0.7">open internet</text>
+                <text x="470" y="262" fill="#2b1f4f" font-size="11.5" opacity="0.55">no general egress</text>
+              </g>
+              <!-- EGRESS: gate 2 email (allowed) -->
+              <path d="M368,360 C410,360 416,400 452,400" stroke="#2b1f4f" stroke-width="2.5" fill="none" marker-end="url(#rzai-arrow)"></path>
+              <rect x="430" y="350" width="20" height="20" rx="3" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+              <g>
+                <rect x="456" y="372" width="212" height="58" rx="9" fill="#fff200" stroke="#2b1f4f" stroke-width="1.5"></rect>
+                <text x="470" y="396" fill="#2b1f4f" font-size="14" font-weight="800">EMAIL</text>
+                <text x="470" y="416" fill="#2b1f4f" font-size="11.5">one fixed inbox</text>
+              </g>
+            </svg>
+            <div class="rz-figure__caption">Standard issue all around - I review the middle and its only two exits. That is how you contain the lethal trifecta.</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">51 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- SPLIT - my own: the plan as a deck (two linked deck covers) ──────────── -->
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:22px">
+            <div class="rz-eyebrow">My own: surfaces</div>
+            <h2 class="rz-heading rz-heading--1">The agent proposes its plan as a <span class="rz-yel">deck</span>.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>Architecture deck: I click through its plan, not a wall of text.</span><span class="rz-dash">—</span></li>
+              <li><span>I push back and change things - but we stay at the level of the diagram, not the code.</span><span class="rz-dash">—</span></li>
+              <li><span>I double-check what bites - how it handles authentication, the security boundaries.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div style="align-self:center; width:100%">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start">
+              <a href="/presentations/gosh/architecture.html" target="_blank" rel="noopener" aria-label="Open the System Architecture deck" style="display:block; width:100%; aspect-ratio:1340 / 1700; background:center/contain no-repeat url('assets/img/gosh-cover-architecture.png')"></a>
+              <a href="/presentations/gosh/implementation.html" target="_blank" rel="noopener" aria-label="Open the Software Implementation deck" style="display:block; width:100%; aspect-ratio:1340 / 1700; background:center/contain no-repeat url('assets/img/gosh-cover-implementation.png')"></a>
+            </div>
+            <div style="font-family:var(--rz-mono); font-size:15px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.6; margin-top:14px; text-align:center">Two decks - click a cover to open it</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">52 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 55 - LIVE DEMO - the pattern (Thariq) ─────────────────────────────── -->
+  <!-- 55 - LIVE DEMO - the pattern (Thariq) ─────────────────────────────── -->
+  <section data-label="The methods">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-body" style="justify-content:center">
+        <div class="rz-grid-asym">
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div class="rz-eyebrow">The pattern</div>
+            <h2 class="rz-heading rz-heading--2">It's all the same move: surfaces you <span class="rz-yel">read</span>, not diffs you edit.</h2>
+            <ul class="rz-list rz-list--tight" style="max-width:840px">
+              <li><span>Every one of those was the agent handing you a surface to READ.</span><span class="rz-dash">—</span></li>
+              <li><span>Thariq Shihipar (Anthropic): <a class="rz-src" href="https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html" target="_blank" rel="noopener">"The Unreasonable Effectiveness of HTML"</a> - AI is unreasonably good at communicating to humans.</span><span class="rz-dash">—</span></li>
+              <li><span>Context in is curated and auto-hydrated; work out is HTML, decks, the surfaces above.</span><span class="rz-arrow">&rsaquo;</span></li>
+            </ul>
+          </div>
+          <div class="rz-figure">
+            <div style="position:absolute; top:14px; left:14px; z-index:2"><span class="rz-chip rz-chip--pink">Live demo</span></div>
+            <image-slot id="thariq" src="assets/img/thariq-gallery.png" fit="cover" position="50% 0%" shape="rounded" style="min-height:480px"></image-slot>
+            <div class="rz-figure__caption">Thariq Shihipar <span class="rz-yel">&rsaquo;</span> the unreasonable effectiveness of HTML</div>
+          </div>
+        </div>
+      </div>
+      <footer class="rz-foot">
+        <span class="rz-foot__section">The methods</span>
+        <span class="rz-foot__page">56 / 60</span>
+      </footer>
+    </div>
+  </section>
+<!-- 60 - END CARD (mirrors the cover) ─────────────────────────────────── -->
+  <section data-label="Close">
+    <div class="rz-slide rz-slide--deep">
+      <div class="rz-halftone rz-halftone--subtle"></div>
+      <div class="rz-body" style="justify-content:center; align-items:center; flex-direction:row; gap:64px">
+        <div style="display:flex; flex-direction:column; align-items:flex-start">
+          <div class="rz-eyebrow rz-eyebrow--yellow" style="margin-bottom:20px">Reviewing AI Work</div>
+          <h1 class="rz-display rz-display--2" style="max-width:1400px; line-height:0.98">
+            How do you think we can move up the <span class="rz-yel">ladder</span>?
+          </h1>
+          <div style="margin-top:44px; font-family:var(--rz-mono); font-size:24px; letter-spacing:0.12em; text-transform:uppercase; line-height:1.6">
+            David Gérouville-Farrell<br/>
+            <span style="color:var(--rz-paper-70)">david@paidiaconsulting.com</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:16px">
+          <div style="background:#ffffff; border-radius:20px; padding:22px">
+            <image-slot id="linkedin-qr" src="assets/img/linkedin-qr.png"
+                        fit="contain" style="width:320px; height:320px; display:block"></image-slot>
+          </div>
+          <div style="font-family:var(--rz-mono); font-size:18px; letter-spacing:0.12em; text-transform:uppercase; color:var(--rz-paper-70)">Connect on LinkedIn</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</deck-stage>
+
+<!-- Speaker notes: one entry per slide, in document order. -->
+<script type="application/json" id="speaker-notes">
+[
+  "Title card. Calm cover beat - state the talk and the question it answers: how do we review an endless stream of agent work? Then move into the ladder.",
+  "About me / Paidia. Quick credibility beat before the ideas. I run Paidia, a small AI consultancy. Two halves to what we do: coaching and enablement (a lot of C-suite coaching, and embedding with teams to bring AI into the work they already do) and architecture and engineering (we build the systems too). Generalist specialists, boardroom to codebase. Clients span public sector - the Foreign Office, the NHS, Great Ormond Street Hospital Charity - and private sector - financial services, real estate, even affiliate marketing. Site is paidiaconsulting.com. Don't read out the quotes; just establish range, then move into the ladder. This matters because later I show a real engineering build, so I want them to know I actually build things.",
+  "Hayakawa's ladder of abstraction. Higher = more general, more useful for reasoning at scale; lower = richer, more specific, closer to the thing. The higher you go, the fewer characteristics you include - the more things the word refers to. This frame sets up steering at different altitudes for the rest of the talk.",
+  "One honest extreme - the man who insists on reading everything. PROFANITY FLAG: the swear is on-slide verbatim as in the storyboard; I may soften to 'read every line of critical code' for the room - my call, both carried.",
+  "The opposite extreme. Don't read it - steer it, and treat the code itself as cost. Two opposite habits, not two camps.",
+  "Volkov wrote up AI Engineer London afterwards and named the Zechner-Lopopolo spectrum. Walk the axis once - this frame carries the rest of the talk.",
+  "The axis isn't a snapshot of where people sit - it's a direction. Here's the picture.",
+  "Beat one - the cost of making collapsed. Producing code used to be slow and expensive; today an agent writes it faster than you can read it. The price of producing code went from astronomical to near zero. (The punch-cards-to-English abstraction ladder comes a few slides on, in section two.)",
+  "Beat two - we have always coped with more code than we can read, and there are two kinds of coping. Pair programming prevents: two people in real time means fewer bugs ever get written. PR review is a gate: it does not reduce errors, it just gives you a chance to reject work that still has them. Tests and CI automate that gate. Land the prevent versus gate distinction here - it is the sharpest idea in this section.",
+  "Beat three - this time production is unbounded. Every one of those coping mechanisms assumed human-paced production. AI breaks them all at once: you were not there to pair, so prevention is gone, and the gate is now facing a firehose. A gate that worked line-by-line for one person typing one feature a day cannot work line-by-line against an agent. So the gate has to move up - you stop checking every line and start reviewing higher up. That sets up the drift.",
+  "My own line to a client. You don't have to like it - I'm telling you which way the river flows.",
+  "It's not just me saying it. The room at AI Engineer couldn't answer the 12-month question either.",
+  "The hinge for the whole talk. You're the narrow bit.",
+  "The man who insists on reading everything is the clearest proof you can't. Here are his three fixes.",
+  "Not paused - actively rejected by default. ATTRIBUTION: the policy is Mario's Pi project; the descriptive quote is Armin Ronacher's - don't put the words in Mario's mouth.",
+  "His second fix is simply to stop. Quote verified from X, 16 Feb 2026 - the typo is his.",
+  "His third fix outputs HTML you READ - which is exactly where section four goes. The bridge. Play the cluster-map video here.",
+  "Give the numbers a card of their own. Verified 2026-05-29.",
+  "The bottleneck with a face on it. ANONYMISE: 'a head of engineering with one of my clients' - no name, no org, not even the sector. The 'slop' framing is mine and the CTO's, NOT hers. The PR queue is a synthetic mockup, not real client data.",
+  "What facing the bottleneck honestly looks like. Keep her sympathetic. The standards card is illustrative, not her actual document.",
+  "The generation curve. Now the bit that can't keep up.",
+  "The altitude principle made concrete. This litmus test is from Vercel's 'Agent Responsibly' manifesto - I came across it via Tom Enden's 'End of Determinism' talk at the Wix Engineering Conference. Notice what the question is NOT asking: not 'can you explain every line', not 'do you understand the whole language'. Experienced engineers never understood code that way - we comprehend the software: architecture, strengths and weaknesses, where the bodies are buried. Tom's reframe (patter, optional): when you RELY on AI you outsource your thinking; when you LEVERAGE it you own the outcome and would stand behind it. Authorship is distributed now; ownership is not - someone stands behind this PR, and that someone is you. Auto-captions - verify wording against the video before quoting verbatim.",
+  "External corroboration, NOT the origin of the idea - a CTO independently arriving at the same conclusion. The CODE proof point + the clean triage rule. If wording can't be confirmed, prefer a close paraphrase over a false-verbatim quote.",
+  "We built the agent tooling for ourselves first, so we're the test case. Your field is next. TITLE FLAG: GPT-5 felt 'Coders are just the forefront' slightly awkward and offered 'Coders are the canary' / 'Coders hit it first' - David's call, do not silently reword.",
+  "Same shift as ours, different field, same place.",
+  "Give the number a card. Naming Coral Hart is fine - she's named in the NYT and on Hard Fork.",
+  "Read it slowly. Director, not writer. The same sentence a lot of us would now write about ourselves and code. VERBATIM (Hard Fork, 2026-02-13). The first-person line is Coral Hart's exact words; the plots/characters/author gloss is Alter's REPORTED speech - say it as patter, keep it out of the quote marks.",
+  "The generalisation - this widens the talk past a dev audience. Everyone gets 'stop arguing about comma placement in the contract; decide which risks you'll accept.' Lauritzen deliberately mirrors the code point. NEW slide, NEW image.",
+  "Chapter break into the future-of-review ideas.",
+  "The default review surface is scrolling raw text in a terminal, and that's the unsolved bit. Lucas Meijer's 'A Love Letter to Pi': a rich surface beats CLI text - no reason to go back to that part of the 80s. His thesis on screen behind him: embrace HTML as the output form factor. This sets up the surfaces section.",
+  "David's call - OPEN the methods with this. I made this deck via Claude Design, staying at look-and-feel and never dropping into the CSS - pushed through many variations by looking at the rendered output. The takeaway: for a rendered/visual task you review at the level of the final output, not the code. It proves 'review the work, not the code' on a non-code task before the coding-agent tools, and generalises to everything that follows.",
+  "DeepWiki - David can explain it himself now. Swap github.com for deepwiki.com on any public repo and Cognition's Devin reads the whole codebase: a generated wiki, architecture diagrams, and a source-grounded 'ask the codebase' box. The point is read the map before you read the code - before touching an unfamiliar repo, or to sanity-check one an agent built. Live demo if I can; fallback is the screenshot.",
+  "Demos - make the agent prove it runs, from REAL output. Tests passing isn't proof; you have to see it run. Simon Willison's Showboat: the agent runs real commands and Showboat writes the real output straight into a Markdown demo doc - you watch it build live, like a colleague walking you through their work. The cheat-the-artifact failure mode is real (the doc is just Markdown, so an agent could hand-write a run that never happened) - so the demo must come from real execution. Rodney is the sidekick for the browser case: it drives a real Chrome browser, capturing real screenshots and clicks into the doc. What I review is the real behaviour, not how it was built.",
+  "I lean on this heavily - my own version is a few slides on.",
+  "Play the clip: he reviews the finished walkthrough - the final product, not the diffs. Instead of reading the terminal or the diff, he hits play on the agent-built walkthrough video and watches the finished app do its thing - renaming photos, adding them to a timeline, changing transitions.",
+  "Now my own implementations of these surfaces, on a real client build.",
+  "GOSH Charity send every contract through a two-person legal team. I'm building them an internal app: GenAI compares each procurement contract against approved templates, playbooks and charity-sector best practice, auto-approves the clear, well-aligned ones under a value threshold, and escalates the rest to the lawyers. It has just two integrations: a tightly constrained web search restricted to an allow-list of vetted legal domains, and a single outbound email. The real value is the agentic comparison in the middle. Diagram shows the manual bottleneck today: every contract type funnels through two people, out to an approved or rejected pile.",
+  "The whole shell is standard boilerplate - a cloud web app behind OAuth SSO, locked to the charity's tenant, on a private network with no inbound from the internet. I don't review that line by line. The only novel, risky thing is the AI agent in the middle, so that's where my attention goes. What I actually check is the architecture: tenant-only auth, the closed network, and the agent's only two ways out - web access restricted to an allow-list of vetted legal sources (UK contract law, the charity's own guidance - not an open Google search), and email to one fixed inbox. No general internet egress. Constrain those and you've contained the lethal trifecta (private data + untrusted content + a way to exfiltrate). So rather than dictate every trade-off, I go back and forth with the agent - refining until we are on the same page - while making sure the big architectural calls are right: tenant-only auth, the closed network, and the two egress channels. Then I'm confident it's safe.",
+  "These are the real design slides from the GOSH build, shown as two deck covers - the System Architecture deck and the Software Implementation deck - each a link that opens the real deck. When the agent proposes a plan, this is where I review it: at the level of the diagram. I click into whichever deck I want to walk through, push back on the shape, the auth, the security boundaries - I don't read the code here. GOSH is cleared to name, and nothing sensitive is on these slides - the spend threshold only ever shows as a config value, never a number.",
+  "Saved for the end - name the pattern AFTER they've seen the instances of it. The unifying payoff. Live demo (Thariq's self-contained HTML gallery); fallback is the screenshot.",
+  "Closing card. The slide asks the audience directly - how do you think we can move up the ladder - then go straight to questions / the panel. Keep it quiet. Name is just David Gérouville-Farrell now (dropped Paidia), with email and the LinkedIn QR. The double-barrel renders (local latin-ext font carries the é)."
+]
+</script>
+
+<!-- Runtime: image-slot first (so slots upgrade), then the stage. -->
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<!-- Click-to-zoom image lightbox (self-contained, dependency-free).
+     Click any image-slot or <img> to open it fullscreen; click / Esc / Space /
+     any Arrow closes it. While open, those keys are intercepted at the capture
+     phase so deck-stage's nav handler never sees them. <video> is excluded so
+     its native fullscreen/controls keep working. -->
+<script>
+(function () {
+  // One reusable overlay holding both an <img> (raster) and an SVG plate.
+  var overlay = null, overlayImg = null, svgWrap = null;
+  var group = [], idx = 0;   // items: {kind:'img',src} | {kind:'svg',el}
+
+  function ensureOverlay() {
+    if (overlay) return overlay;
+    overlay = document.createElement('div');
+    overlay.id = 'rz-lightbox';
+    overlayImg = document.createElement('img');
+    overlayImg.alt = '';
+    overlay.appendChild(overlayImg);
+    svgWrap = document.createElement('div');
+    svgWrap.id = 'rz-lightbox-svg';
+    overlay.appendChild(svgWrap);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function (e) { e.stopPropagation(); close(); });
+    return overlay;
+  }
+
+  function isOpen() { return overlay && overlay.classList.contains('is-open'); }
+
+  // Render whatever item is at idx - a raster src into the <img>, or a cloned
+  // inline <svg> scaled to fit the viewport onto the paper plate.
+  function render() {
+    var it = group[idx];
+    if (!it) return;
+    if (it.kind === 'svg') {
+      overlayImg.style.display = 'none';
+      svgWrap.style.display = 'block';
+      var el = it.el;
+      var vb = (el.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number);
+      var w = vb[2] || el.clientWidth || 600, h = vb[3] || el.clientHeight || 400;
+      var pad = 28;
+      var availW = window.innerWidth * 0.92 - pad * 2;
+      var availH = window.innerHeight * 0.92 - pad * 2;
+      var scale = Math.min(availW / w, availH / h);
+      var dw = Math.round(w * scale), dh = Math.round(h * scale);
+      var clone = el.cloneNode(true);
+      clone.setAttribute('width', dw);
+      clone.setAttribute('height', dh);
+      clone.style.width = dw + 'px';
+      clone.style.height = dh + 'px';
+      clone.style.display = 'block';
+      svgWrap.style.padding = pad + 'px';
+      svgWrap.innerHTML = '';
+      svgWrap.appendChild(clone);
+    } else {
+      svgWrap.style.display = 'none';
+      svgWrap.innerHTML = '';
+      overlayImg.style.display = 'block';
+      overlayImg.src = it.src;
+    }
+  }
+
+  function show(i) {
+    if (!group.length) return;
+    idx = (i + group.length) % group.length;
+    render();
+  }
+
+  function open(node) {
+    var g = groupFor(node);
+    if (!g.items.length) return;
+    group = g.items; idx = g.idx;
+    ensureOverlay();
+    render();
+    overlay.classList.add('is-open');
+  }
+
+  function close() {
+    if (overlay) {
+      overlay.classList.remove('is-open');
+      overlayImg.removeAttribute('src');
+      if (svgWrap) svgWrap.innerHTML = '';
+    }
+    group = []; idx = 0;
+  }
+
+  function resolve(raw) {
+    if (!raw) return '';
+    try { return new URL(raw, document.baseURI).href; } catch (e) { return raw; }
+  }
+
+  function srcFor(node) {
+    if (!node) return '';
+    var tag = (node.tagName || '').toLowerCase();
+    if (tag === 'image-slot') {
+      try {
+        var inner = node.shadowRoot && node.shadowRoot.querySelector('img[part="image"]');
+        if (inner && inner.getAttribute('src')) return resolve(inner.getAttribute('src'));
+      } catch (e) {}
+      return resolve(node.getAttribute('src'));
+    }
+    if (tag === 'img') return resolve(node.getAttribute('src') || node.currentSrc || node.src);
+    return '';
+  }
+
+  // Turn a node into a lightbox item, or null if it isn't zoomable.
+  function itemFor(node) {
+    if (!node) return null;
+    var tag = (node.tagName || '').toLowerCase();
+    if (tag === 'svg') return { kind: 'svg', el: node };
+    var s = srcFor(node);
+    return s ? { kind: 'img', src: s } : null;
+  }
+
+  // Build the navigable set. If the clicked node is inside a [data-gallery]
+  // container, the set is every zoomable item in that container (document
+  // order) and arrows cycle through them. Otherwise the set is just the one
+  // item, and arrows close (single-item behaviour).
+  function groupFor(node) {
+    var gal = node.closest ? node.closest('[data-gallery]') : null;
+    var items = [], idx0 = 0;
+    if (gal) {
+      var nodes = Array.prototype.slice.call(gal.querySelectorAll('image-slot, img, svg[data-zoom]'));
+      for (var i = 0; i < nodes.length; i++) {
+        if (overlay && overlay.contains(nodes[i])) continue;
+        var it = itemFor(nodes[i]);
+        if (!it) continue;
+        if (nodes[i] === node) idx0 = items.length;
+        items.push(it);
+      }
+    }
+    if (!items.length) { var single = itemFor(node); if (single) items.push(single); }
+    return { items: items, idx: idx0 };
+  }
+
+  // Walk up the composed path to find a zoomable element, but bail if a
+  // <video> is in the path (its native controls/fullscreen own the click).
+  function findTarget(e) {
+    var path = (e.composedPath && e.composedPath()) || [];
+    if (!path.length && e.target) path = [e.target];
+    // The clicked node for an <image-slot> is the <img> inside its shadow DOM,
+    // which appears in the composed path BEFORE the host. We must return the
+    // host <image-slot> (it lives in light DOM, so .closest('[data-gallery]')
+    // can reach the gallery container). Remember a bare <img> or inline <svg>
+    // as fallbacks but prefer an <image-slot> host if one is in the path.
+    var imgFallback = null, svgFallback = null;
+    for (var i = 0; i < path.length; i++) {
+      var n = path[i];
+      if (!n || !n.tagName) continue;
+      var tag = n.tagName.toLowerCase();
+      if (tag === 'video') return null;          // never hijack video
+      if (tag === 'image-slot') return n;        // host element wins
+      if (tag === 'img') {
+        if (overlay && overlay.contains(n)) return null;  // ignore overlay/ghost imgs
+        if (!imgFallback) imgFallback = n;        // remember, keep looking for a host
+      }
+      if (tag === 'svg') {
+        if (overlay && overlay.contains(n)) return null;
+        // Only zoom SVGs explicitly opted in with data-zoom (the diagram
+        // figures). This excludes deck-stage's own nav-arrow chevrons and any
+        // image-slot placeholder SVGs, which must NOT open the lightbox.
+        if (n.hasAttribute && n.hasAttribute('data-zoom') && !svgFallback) svgFallback = n;
+      }
+    }
+    return imgFallback || svgFallback;
+  }
+
+  // Single delegated click listener (bubble phase): open the lightbox.
+  document.addEventListener('click', function (e) {
+    if (isOpen()) return;
+    if (e.defaultPrevented) return;
+    var node = findTarget(e);
+    if (!node) return;
+    e.preventDefault();
+    e.stopPropagation();
+    open(node);
+  });
+
+  // Capture-phase keydown while OPEN: Esc/Space always close; arrows cycle a
+  // multi-image gallery, else close a single image. Either way deck-stage never
+  // sees the key (stop + prevent), so the slide never navigates underneath.
+  window.addEventListener('keydown', function (e) {
+    if (!isOpen()) return;
+    var k = e.key, multi = group.length > 1;
+    if (k === 'Escape' || k === ' ' || k === 'Spacebar') {
+      e.stopPropagation(); e.preventDefault(); close(); return;
+    }
+    if (k === 'ArrowRight' || k === 'ArrowDown') {
+      e.stopPropagation(); e.preventDefault();
+      if (multi) show(idx + 1); else close();
+      return;
+    }
+    if (k === 'ArrowLeft' || k === 'ArrowUp') {
+      e.stopPropagation(); e.preventDefault();
+      if (multi) show(idx - 1); else close();
+      return;
+    }
+  }, true);
+})();
+</script>
+
+<!-- Auto-number footer page numbers. Slides have been added/removed over time,
+     so the hard-coded "N / 60" values drift out of sequence. Rather than hand-
+     number, renumber on load: every footer-bearing slide carries a
+     .rz-foot__page span (authored inline in light DOM, so a top-level
+     querySelectorAll finds them in document order). Section-divider slides have
+     no footer and are correctly excluded from both the count and the numbering.
+     Dependency-free; runs once after the DOM is ready. -->
+<script>
+(function () {
+  function numberFooters() {
+    var pages = document.querySelectorAll('.rz-foot__page');
+    var total = pages.length;
+    for (var i = 0; i < total; i++) {
+      pages[i].textContent = (i + 1) + ' / ' + total;
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+
+<!-- (Click-to-advance was removed: clicking the slide body no longer navigates.
+     Use the bottom-corner prev/next arrows, the keyboard ←/→, or Space. -->
+
+<!-- Presenter laser pointer. Press L to toggle: the mouse becomes a red dot and
+     the system cursor is hidden; press L (or Esc) again to turn it off. The key
+     is caught in the capture phase so deck-stage never sees it. pointer-events
+     stay off the dot, so clicking still advances slides while pointing. -->
+<script>
+(function () {
+  var dot = null, on = false, x = -100, y = -100;
+  function ensureDot() {
+    if (dot) return dot;
+    dot = document.createElement('div');
+    dot.id = 'rz-laser';
+    document.body.appendChild(dot);
+    return dot;
+  }
+  function place() { if (dot) { dot.style.left = x + 'px'; dot.style.top = y + 'px'; } }
+  document.addEventListener('mousemove', function (e) {
+    x = e.clientX; y = e.clientY; if (on) place();
+  }, true);
+  function setOn(v) {
+    on = v; ensureDot();
+    if (on) { document.body.classList.add('rz-laser-on'); dot.style.display = 'block'; place(); }
+    else { document.body.classList.remove('rz-laser-on'); dot.style.display = 'none'; }
+  }
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'l' || e.key === 'L') {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      e.stopImmediatePropagation(); e.preventDefault();
+      setOn(!on);
+      return;
+    }
+    if (on && e.key === 'Escape') {
+      e.stopImmediatePropagation(); e.preventDefault();
+      setOn(false);
+    }
+  }, true);
+})();
+</script>
+</body>
+</html>

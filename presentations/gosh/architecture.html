@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GOSH Contract Triage - web app - Architecture</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/white.css">
+<style>
+:root {
+  --bg: #ffffff;
+  --ink: #1c1c1c;
+  --muted: #555;
+  --accent: #2b6cb0;
+}
+.reveal { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: var(--ink); }
+.reveal h1, .reveal h2, .reveal h3 { font-weight: 600; text-transform: none; color: var(--ink); }
+.reveal h1 { font-size: 32pt; margin-bottom: 12pt; }
+.reveal h2 { font-size: 24pt; margin-bottom: 14pt; }
+.reveal h3 { font-size: 18pt; }
+.reveal p, .reveal li { font-size: 15pt; line-height: 1.4; }
+.reveal .slides section { padding: 24px 40px; text-align: left; }
+.reveal img.diagram { max-height: 56vh; max-width: 100%; display: block; margin: 0 auto; box-shadow: 0 2px 6px rgba(0,0,0,.08); border-radius: 4px; background: #fff; }
+.reveal .small { font-size: 12pt; color: var(--muted); }
+.reveal .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11pt; }
+.reveal .tag.cut  { background: #fed7d7; color: #742a2a; }
+.reveal .tag.cfg  { background: #c6f6d5; color: #22543d; }
+.reveal table { font-size: 13pt; }
+.reveal td, .reveal th { vertical-align: top; }
+.reveal code { background: #edf2f7; padding: 1px 5px; border-radius: 3px; font-size: 13pt; }
+.reveal ol, .reveal ul { margin-left: 1em; }
+
+/* Tooltip system */
+.tt {
+  border-bottom: 1px dashed #2b6cb0;
+  cursor: help;
+}
+#shared-tt {
+  position: fixed;
+  top: 0; left: 0;
+  background: #1a202c;
+  color: #f7fafc;
+  font-size: 13pt;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+  max-width: 320px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999;
+}
+#shared-tt.show { opacity: 1; transition: none; }
+#shared-tt.hide { opacity: 0; transition: opacity 500ms ease; }
+</style>
+</head>
+<body>
+
+<div id="shared-tt"></div>
+
+<div class="reveal"><div class="slides">
+
+  <!-- ===== Slide 1: Title + reframed problem ===== -->
+  <section id="title">
+    <h1>GOSH contract triage - web app</h1>
+    <p class="small">Architecture design - May 2026</p>
+    <p>Today every third-party contract at GOSH goes through the Legal team. That makes
+      Matthew Martinez and Emma Arbuthnot a bottleneck - overloaded, and holding up the
+      rest of the charity. The idea, worked out with Matthew: for <strong>low-value,
+      low-risk contracts that meet a defined set of criteria</strong>, AI could approve
+      them automatically - so only the contracts that genuinely need a lawyer reach one.</p>
+    <p>A first version exists as a
+      <span class="tt" data-tt="A ChatGPT custom GPT: a saved ChatGPT configuration with its own instructions and uploaded knowledge files.">custom GPT</span>,
+      but its workflow is clunky - drag files in, read the reply, copy it into an email,
+      re-attach the contract, send. This web app puts the same triage into practice and
+      removes the app-switching. Richard Grove has approved it as an initial exploration,
+      and as a way for GOSH to build practice in using AI inside real workflows.</p>
+    <p class="small">Two decks: this is the architecture. The companion deck is the software implementation.</p>
+  </section>
+
+  <!-- ===== Slide 2: User journey ===== -->
+  <section id="journey">
+    <h2>User journey</h2>
+    <ol>
+      <li>Visit the internal URL. Click "Sign in".</li>
+      <li>Sign in with
+        <span class="tt" data-tt="Microsoft Entra ID (formerly Azure AD) is GOSH's identity system - the same login behind GOSH email and SharePoint. The app trusts it to say who you are.">Microsoft Entra ID</span>.
+        A
+        <span class="tt" data-tt="The app is registered in GOSH's own Entra tenant only. That single fact means only GOSH accounts can ever sign in - there is no separate list of allowed people to maintain.">single-tenant registration</span>
+        means only GOSH accounts get in.</li>
+      <li>Land on one screen: a short form - contract type, supplier, total value, term,
+        "does this involve a flow of personal data?" - a comments box, and a file upload
+        (drag-drop or browse, one or more PDF / Word files).</li>
+      <li>Submit. The page shows a spinner while the triage runs.</li>
+      <li>The result page shows one of three outcomes - approved, sent to Legal, or
+        rejected. When it is rejected, the page also gives the user guidance on the
+        changes to request from the provider.</li>
+    </ol>
+  </section>
+
+  <!-- ===== Slide 3: The pipeline ===== -->
+  <section id="pipeline">
+    <h2>What happens on submit - three stages</h2>
+    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 24px; align-items: start;">
+      <img class="diagram" src="img/pipeline.png" alt="Three-stage pipeline diagram">
+      <div>
+        <ol>
+          <li><strong>Deterministic
+            <span class="tt" data-tt="A plain code check with a fixed yes/no answer - no AI involved. Same inputs always give the same result, so it is easy to read and to test.">gate</span></strong>
+            - plain TypeScript. Required fields present? Files of an allowed type and within
+            size limits? Value a real number? If not, the form comes straight back. No AI
+            call is made.</li>
+          <li><strong>AI triage</strong> - one or more calls to the language model. It
+            compares the contract against the GOSH templates and returns a
+            <span class="tt" data-tt="Red / Amber / Green. A simple risk rating the model assigns - Red means clear misalignment, Green means it looks fine, Amber is in between.">RAG rating</span>,
+            the key issues, and a suggested outcome.</li>
+          <li><strong>Outcome</strong> - plain TypeScript again. A small fixed mapping
+            combines the form criteria and the AI's rating into the final outcome.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Slide 4: How the outcome is decided ===== -->
+  <section id="router">
+    <h2>How the outcome is decided</h2>
+    <div style="display: grid; grid-template-columns: 2fr 3fr; gap: 20px; align-items: start;">
+      <img class="diagram" src="img/router.png" alt="Outcome decision flowchart">
+      <div>
+        <p>The outcome is <em>driven by criteria</em>, not decided in a separate step
+          after the AI.</p>
+        <ul style="font-size: 13pt;">
+          <li><strong>Form-driven criteria.</strong> Two answers off the form route
+            straight to <strong>Legal review</strong>: a flow of personal data, or a value
+            over the
+            <span class="tag cfg">CONFIG</span>
+            auto-approve threshold.</li>
+          <li><strong>The AI rating.</strong> Otherwise the RAG rating maps through:
+            Red &rarr; <strong>Reject</strong>, Amber &rarr; <strong>Legal review</strong>,
+            Green &rarr; <strong>Auto-approve</strong>.</li>
+        </ul>
+        <p><strong>Green is a checklist, not a vibe</strong> - no material deviation from
+          the GOSH templates, value and term consistent with the form, acceptable key
+          clauses, every file cleanly extracted. That is what makes a separate
+          form-versus-document re-check unnecessary.</p>
+        <p class="small">Fallbacks: malformed AI output retries, then goes to Legal review;
+          a document too large to analyse goes to Legal review.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Slide 5: Three outcomes ===== -->
+  <section id="outcomes">
+    <h2>Three outcomes, three emails, one inbox</h2>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #edf2f7;">
+          <th style="text-align:left; padding: 8px;">Outcome</th>
+          <th style="text-align:left; padding: 8px;">The user sees</th>
+          <th style="text-align:left; padding: 8px;">Email to the triage inbox</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>Reject</strong></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Rejected, with wording they can send the provider to ask for changes</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Type A - reject record</td></tr>
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>Auto-approve</strong></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Approved for this spend</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Type B - auto-approval filing</td></tr>
+        <tr><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;"><strong>Legal review</strong></td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Sent to Legal - they will be in touch</td><td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Type C - flagged for Matthew / Emma, with a reviewer guide</td></tr>
+      </tbody>
+    </table>
+    <p>The application does not require a database to record outcomes. The result of each
+      triage is an email sent to a pre-configured inbox - for example
+      <code>contractreview@gosh.org</code>. This inbox is dedicated to this purpose, and
+      the email subject line allows sorting. The app's own copy of the file is deleted
+      within a week, so each email is a self-contained
+      <span class="tt" data-tt="Because the app's own copy expires, the filing email carries everything: the original files attached, the form metadata, the final outcome, the full AI triage output, the search source URLs, version identifiers, a run ID, and a hash of each file.">filing bundle</span>.</p>
+  </section>
+
+  <!-- ===== Slide 6: AWS architecture ===== -->
+  <section id="aws">
+    <h2>AWS architecture (minimum viable)</h2>
+    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 24px; align-items: start;">
+      <img class="diagram" src="img/aws.png" alt="AWS architecture diagram">
+      <div>
+        <p>One AWS account, one region:</p>
+        <ul style="font-size: 13pt;">
+          <li><strong>
+            <span class="tt" data-tt="ECS Fargate runs a container without you managing any servers. An Application Load Balancer (ALB) sits in front, terminates HTTPS, and forwards requests to the container.">ECS Fargate + load balancer</span></strong>
+            - runs the one app container behind HTTPS.</li>
+          <li><strong>
+            <span class="tt" data-tt="Amazon S3 - object storage, like a private folder of files in the cloud. Holds the uploaded contracts only briefly.">S3 bucket</span></strong>
+            - uploaded files, encrypted, auto-deleted after about 7 days.</li>
+          <li><strong>
+            <span class="tt" data-tt="Amazon Simple Email Service - AWS's send-email service. The app uses it to send the three filing emails.">Amazon SES</span></strong>
+            - sends the filing emails.</li>
+          <li><strong>
+            <span class="tt" data-tt="AWS Secrets Manager - a guarded store for passwords and API keys. The app reads them at startup; they never sit in the code or in plain config.">Secrets Manager</span></strong>
+            - the OpenAI key and the Entra client secret.</li>
+          <li><strong>
+            <span class="tt" data-tt="AWS's log service. The app writes one structured line per run - who, when, outcome, duration - but never the contract text itself.">CloudWatch Logs</span></strong>
+            - one trace line per run.</li>
+        </ul>
+        <p class="small">Microsoft Entra ID sits outside AWS, in GOSH's own tenant.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Slide 7: Auth flow ===== -->
+  <section id="auth">
+    <h2>Login flow
+      (<span class="tt" data-tt="OpenID Connect - the standard way an app asks an identity system 'who is this person?' without ever handling their password. The login layer built on top of OAuth.">OIDC</span>
+      with Microsoft Entra)</h2>
+    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 16px; align-items: start;">
+      <img class="diagram" src="img/auth.png" alt="OIDC login sequence diagram">
+      <div style="font-size: 13pt;">
+        <ol style="font-size: 13pt;">
+          <li>The browser hits <code>/login</code>. The app redirects to Microsoft Entra,
+            using
+            <span class="tt" data-tt="Proof Key for Code Exchange. The app keeps a secret to itself and only sends a hash of it up front; it must present the real secret later to redeem the login. Stops a stolen login code being usable by anyone else.">PKCE</span>.</li>
+          <li>The user signs in to Entra. Entra redirects back to the app with a one-time
+            code.</li>
+          <li>The app swaps the code for an
+            <span class="tt" data-tt="A short signed token from Entra that states who the user is - their email and name. The app verifies the signature and the claims, then trusts it.">id_token</span>,
+            verifies it, and sets a signed
+            <span class="tt" data-tt="A small signed cookie that tells the app 'this is the same signed-in user' on later requests. Secure, HttpOnly, SameSite=Lax, lasts about 8 hours. No database lookup needed.">session cookie</span>.</li>
+          <li>The user lands on the form.</li>
+        </ol>
+        <p>This uses the maintained
+          <span class="tt" data-tt="openid-client - a widely used, well-tested Node.js library for OIDC. Using it means the app does not hand-roll security-sensitive token-verification code.">openid-client</span>
+          library - the app does not hand-write token crypto. All form posts are
+          <span class="tt" data-tt="Cross-Site Request Forgery protection. A per-session token on every form post, so another site cannot trick a logged-in user's browser into submitting.">CSRF-protected</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Slide 8: The AI step ===== -->
+  <section id="aistep">
+    <h2>The AI step</h2>
+    <p>The AI step may make one or more model calls. It is given the five GOSH template
+      documents as plain text, a list of the relevant UK legislation, and - found at run
+      time - current UK regulatory sources, via an
+      <span class="tt" data-tt="An agentic search: the model decides what to search for, reads results, and searches again as needed, rather than running one fixed query. Pattern reused from the awin_cpi_app_detection project.">agentic web search</span>.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px;">
+      <div>
+        <h3>Models</h3>
+        <p><strong>GPT-5</strong> does the triage reasoning.
+          <span class="tt" data-tt="A smaller, cheaper model in the GPT-5 family. Used for the search loop because search is the higher-volume, lower-stakes step.">GPT-5 Mini</span>
+          runs the agentic search loop. The search is guided on what counts as a
+          legitimate UK source - ICO, GOV.UK, the Charity Commission, the Fundraising
+          Regulator.</p>
+      </div>
+      <div>
+        <h3>The search is kept safe</h3>
+        <p>It never receives contract text - it searches generic UK-law questions only.
+          The source list is enforced in code. And it can only raise risk, never lower it:
+          a failed search forces Legal review, it never enables an auto-approval.</p>
+      </div>
+    </div>
+    <p class="small">This is the OpenAI implementation. If the project moves to Anthropic,
+      or later abstracts these details to be provider-agnostic, the specifics change - but
+      the app reaches the model through one interface either way (next slide).</p>
+  </section>
+
+  <!-- ===== Slide 9: LLM provider tradeoff ===== -->
+  <section id="provider">
+    <h2>One open decision: which model provider</h2>
+    <p>The MVP at present is designed around OpenAI, but we may change this for Anthropic.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 10px;">
+      <div style="border: 2px solid #cbd5e0; border-radius: 6px; padding: 14px 18px;">
+        <h3>Anthropic via
+          <span class="tt" data-tt="Amazon Bedrock - AWS's own service for calling large language models, including Anthropic's Claude. The call stays inside AWS.">AWS Bedrock</span></h3>
+        <p class="small">The model call stays inside GOSH's AWS account and region. One
+          cloud, one data-residency story, one set of compliance paperwork. Means changing
+          the model family the GPT prompt was tuned against.</p>
+      </div>
+      <div style="border: 2px solid #cbd5e0; border-radius: 6px; padding: 14px 18px;">
+        <h3>OpenAI via
+          <span class="tt" data-tt="Azure OpenAI Service - Microsoft's enterprise-governed way to call OpenAI models, with data-handling controls. GOSH is moving off Azure, so this reintroduces an Azure dependency.">Azure OpenAI</span></h3>
+        <p class="small">Keeps the exact OpenAI models the GPT already works well with, with
+          enterprise data controls. But it reintroduces an Azure dependency, just as GOSH is
+          moving to AWS.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Slide 10: Local-dev parity ===== -->
+  <section id="localdev">
+    <h2>Same code on a laptop and on AWS</h2>
+    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 24px; align-items: start;">
+      <img class="diagram" src="img/localdev.png" alt="Local dev versus AWS parity diagram">
+      <div>
+        <p>The identical TypeScript app runs on a developer's laptop and on GOSH's AWS.
+          Three small modules each pick their implementation from <strong>one environment
+          variable</strong>:</p>
+        <ul>
+          <li><strong>Storage</strong> - S3 on AWS, the local filesystem on a laptop.</li>
+          <li><strong>Email</strong> - SES on AWS, written to the console on a laptop (no
+            real mail in dev).</li>
+          <li><strong>Secrets</strong> - Secrets Manager on AWS, a <code>.env</code> file on
+            a laptop.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Slide 11: Out of scope ===== -->
+  <section id="scope">
+    <h2>Deliberately out of MVP scope</h2>
+    <p>What this first version explicitly does not do:</p>
+    <ul style="font-size: 18pt; line-height: 1.7;">
+      <li>A per-user history of past triages.</li>
+      <li>Integration with a line-of-business system for the Legal team.</li>
+      <li>Any application database.</li>
+      <li>A job queue / background worker.</li>
+      <li>Dynamic
+        <span class="tt" data-tt="Retrieval-augmented generation: a retrieval / vector-search layer to pull in contract comparisons at run time. Not needed for five short, stable templates.">RAG</span>
+        for contract comparison.</li>
+      <li>Provider-agnostic search.</li>
+      <li><span class="tt" data-tt="GEPA = Genetic-Pareto: a reflective prompt-evolution optimiser. It could later be used to get frontier-model performance from a lighter, cheaper model - but it is not for the MVP.">DSPy GEPA-style</span>
+        prompt optimisation.</li>
+    </ul>
+  </section>
+
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  controls: true,
+  progress: true,
+  slideNumber: true,
+  center: false,
+  transition: 'none',
+});
+
+(function setupTooltips() {
+  const tt = document.getElementById('shared-tt');
+  let hideTimer = null;
+  let activeEl = null;
+
+  function show(el) {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    activeEl = el;
+    tt.textContent = el.getAttribute('data-tt') || '';
+    tt.classList.remove('hide');
+    tt.classList.add('show');
+    tt.style.left = '0px';
+    tt.style.top  = '0px';
+    const r   = el.getBoundingClientRect();
+    const ttR = tt.getBoundingClientRect();
+    let left = r.left + (r.width / 2) - (ttR.width / 2);
+    let top  = r.top - ttR.height - 8;
+    if (top < 6) top = r.bottom + 8;
+    if (left < 6) left = 6;
+    if (left + ttR.width > window.innerWidth - 6) {
+      left = window.innerWidth - ttR.width - 6;
+    }
+    tt.style.left = left + 'px';
+    tt.style.top  = top  + 'px';
+  }
+
+  function scheduleHide() {
+    tt.classList.remove('show');
+    tt.classList.add('hide');
+    hideTimer = setTimeout(() => { activeEl = null; hideTimer = null; }, 500);
+  }
+
+  document.addEventListener('mouseover', (e) => {
+    const el = e.target.closest('.tt');
+    if (!el || el === activeEl) return;
+    show(el);
+  });
+  document.addEventListener('mouseout', (e) => {
+    const el = e.target.closest('.tt');
+    if (!el) return;
+    const next = e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.tt');
+    if (next && next !== el) return;
+    scheduleHide();
+  });
+})();
+</script>
+
+<!-- Click-to-zoom for diagrams -->
+<style>
+.reveal .slides img.diagram { cursor: zoom-in; }
+.img-zoom-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: rgba(15,15,14,0.92);
+  display: flex; align-items: center; justify-content: center;
+  cursor: zoom-out;
+  animation: imgZoomFade 0.15s ease-out;
+}
+.img-zoom-overlay img {
+  max-width: 95vw; max-height: 95vh;
+  object-fit: contain;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  background: #fff;
+  border-radius: 4px;
+}
+.img-zoom-overlay__hint {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11pt; letter-spacing: 1px; color: rgba(247,247,247,0.65);
+  text-transform: uppercase;
+}
+@keyframes imgZoomFade { from { opacity: 0; } to { opacity: 1; } }
+</style>
+<script>
+(function() {
+  let overlay = null;
+  function close() {
+    if (!overlay) return;
+    overlay.remove();
+    overlay = null;
+    document.removeEventListener('keydown', onKey, true);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape' || e.key === 'Backspace') {
+      e.stopPropagation(); e.preventDefault(); close();
+    }
+  }
+  document.addEventListener('click', function(e) {
+    if (overlay) return;
+    const img = e.target.closest('.reveal .slides img.diagram');
+    if (!img) return;
+    e.preventDefault();
+    e.stopPropagation();
+    overlay = document.createElement('div');
+    overlay.className = 'img-zoom-overlay';
+    const big = document.createElement('img');
+    big.src = img.src;
+    big.alt = img.alt || '';
+    overlay.appendChild(big);
+    const hint = document.createElement('div');
+    hint.className = 'img-zoom-overlay__hint';
+    hint.textContent = 'click anywhere or press esc to close';
+    overlay.appendChild(hint);
+    overlay.addEventListener('click', close);
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(overlay);
+  }, true);
+})();
+</script>
+
+</body>
+</html>
