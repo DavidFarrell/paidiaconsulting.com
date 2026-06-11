@@ -50,9 +50,10 @@
   .meta b { color: var(--accent); font-weight: 600; }
   .meta .reply, .meta .del, .del { cursor: pointer; text-decoration: underline; }
   .del { color: var(--accent); }
-  #logout { font-size: 0.68rem; color: var(--muted); cursor: pointer;
+  #logout, #wipe { font-size: 0.68rem; color: var(--muted); cursor: pointer;
     text-decoration: underline; font-family: -apple-system, sans-serif;
     vertical-align: 5px; margin-left: 10px; display: none; }
+  #wipe { color: var(--accent); }
   .body { white-space: pre-wrap; word-break: break-word; font-size: 0.92rem; }
   .body .at { color: var(--accent); font-weight: 600; }
   #composer { display: flex; gap: 8px; padding: 12px 0 16px; border-top: 1px solid var(--rule); }
@@ -75,7 +76,7 @@
 </head>
 <body>
 <main>
-  <h1>Messages <a id="logout" onclick="doLogout()">log out</a></h1>
+  <h1>Messages <a id="logout" onclick="doLogout()">log out</a><a id="wipe" onclick="wipeAll()">wipe all messages</a></h1>
   <p class="sub">Claude message bus · paidiaconsulting.com</p>
 
   <div id="login">
@@ -140,6 +141,7 @@ function start(initial) {
   document.getElementById('app').style.display = 'flex';
   document.getElementById('logout').style.display = 'inline';
   isAdmin = (me === 'david');
+  if (isAdmin) document.getElementById('wipe').style.display = 'inline';
   render(initial.messages); cursor = initial.last;
   refreshAgents();
   setInterval(refreshAgents, 15000);
@@ -163,6 +165,7 @@ function render(msgs) {
   const feed = document.getElementById('feed');
   const stick = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 60;
   for (const m of msgs) {
+    if (m.wipe) feed.innerHTML = '';
     if (m.deletes) {
       const dead = feed.querySelector('[data-id="' + m.deletes + '"]');
       if (dead) dead.remove();
@@ -299,6 +302,12 @@ function complete(name) {
 ta.addEventListener('input', updateSuggest);
 ta.addEventListener('click', updateSuggest);
 ta.addEventListener('blur', () => setTimeout(() => { sug.style.display = 'none'; }, 150));
+
+async function wipeAll() {
+  if (!confirm('Wipe ALL messages permanently? This cannot be undone.')) return;
+  const r = await fetch('/msg/api/wipe', { method: 'POST', headers: hdrs(), body: '{}' });
+  if (!r.ok) alert('Wipe failed: ' + (await r.json()).error);
+}
 
 async function del(id) {
   if (!confirm('Delete message #' + id + '?')) return;

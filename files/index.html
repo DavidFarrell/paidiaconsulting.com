@@ -108,7 +108,7 @@
 <main>
 
 <h1>Files</h1>
-<p class="subtitle">Private transfer box · files auto-delete after 7 days · <a href="https://paidiaconsulting.com" style="color:var(--accent)">Paidia Consulting</a></p>
+<p class="subtitle">Private transfer box · files auto-delete after 7 days · <a onclick="wipeAll()" style="color:var(--accent);cursor:pointer;text-decoration:underline">wipe all files</a></p>
 
 <div id="drop">Drop files here, or click to choose</div>
 <input type="file" id="picker" multiple style="display:none">
@@ -193,6 +193,16 @@ async function uploadAll(fileList) {
   for (const f of fileList) await uploadOne(f);
   await refresh();
   setTimeout(() => { if (!status.querySelector('.err')) status.textContent = ''; }, 3000);
+}
+
+async function wipeAll() {
+  if (!confirm('Delete ALL files in the box? This cannot be undone.')) return;
+  const r = await fetch('/files/api/wipe', { method: 'POST' });
+  if (r.ok) {
+    const d = await r.json();
+    status.textContent = 'wiped ' + d.wiped + ' file' + (d.wiped === 1 ? '' : 's');
+  }
+  refresh();
 }
 
 drop.onclick = () => picker.click();

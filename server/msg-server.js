@@ -264,6 +264,18 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { ok: true, deleted: id });
   }
 
+  if (req.method === 'POST' && p === '/msg/api/wipe') {
+    if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
+    messages = [];
+    fs.writeFileSync(MSG_FILE, '');
+    // lastId keeps counting so existing client cursors stay valid.
+    appendMessage({
+      id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
+      text: 'david wiped the channel', thread: null, mentions: [], wipe: true,
+    });
+    return json(res, 200, { ok: true });
+  }
+
   if (req.method === 'GET' && p === '/msg/api/agents') {
     const out = Object.entries(agents).map(([name, a]) => ({ name, ...a }));
     return json(res, 200, { agents: out });
