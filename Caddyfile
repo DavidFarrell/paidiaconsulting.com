@@ -32,6 +32,10 @@
 		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
 	}
 
+	# Infrastructure files aren't content - don't serve them.
+	@infra path /server/* /start.sh /Caddyfile /railpack.json /nixpacks.toml
+	respond @infra 404
+
 	# Private file transfer box: drag-drop UI at /files/, API proxied to the
 	# local Node file server. Same password as the GOSH decks (user: david).
 	header /files/* X-Robots-Tag "noindex, nofollow"
