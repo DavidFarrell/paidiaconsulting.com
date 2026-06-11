@@ -233,8 +233,8 @@
   }
   .quote-row { display: grid; grid-template-columns: repeat(2, 1fr); max-width: 56rem; gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
   @media (max-width: 900px) { .quote-row { grid-template-columns: 1fr; } }
-  /* Pearson card spans the full row as a closing testimonial, so the five quotes
-     read as 2 + 2 + 1-wide rather than leaving an orphaned half-width card. */
+  /* Pearson card spans the full row directly under the GOSH feature (placed
+     second overall), so the five quotes read as 1-wide + 2 + 2. */
   .quote-row .quote-card--wide { grid-column: 1 / -1; }
   .quote-card--wide .quote-foot { min-height: 0; }
   /* Pending testimonials shown as honest, visibly-empty slots - not faked. */
@@ -743,6 +743,26 @@
     </div>
 
     <div class="quote-row">
+      <!-- Pearson - Michelle Chu. Her own final wording, approved by email
+           10 Jun 2026 (she revised David's draft and sent this back). Placed
+           second overall (full-width, directly under the GOSH feature). -->
+      <div class="rz-plate rz-plate--paper quote-card quote-card--wide">
+        <span class="rz-chip rz-chip--pink">FTSE 100 education</span>
+        <blockquote class="quote-sm">
+          &ldquo;David combines deep AI expertise with a rare ability to
+          <span class="rz-mark">make the future feel practical</span>. He moves
+          effortlessly between board-level strategy and the technical detail of
+          how things actually get built. His workshops and materials helped us
+          understand not just what AI could do, but what it could change - in our
+          processes, our platform strategy and the way we work. I'd recommend
+          Paidia without hesitation.&rdquo;
+        </blockquote>
+        <div class="quote-foot">
+          <span class="card-logo"><img loading="lazy" decoding="async" src="assets/images/clients/pearson-ink.webp" alt="Pearson" data-no-zoom></span>
+          <p class="quote-attrib quote-attrib--ink"><strong>Michelle Chu</strong>, Principal, Programme Management, Pearson</p>
+        </div>
+      </div>
+
       <!-- ZINC RE - Gary Roberts. Fully approved, consented written testimonial. -->
       <div class="rz-plate rz-plate--paper quote-card">
         <span class="rz-chip rz-chip--pink">Real Estate Asset Management</span>
@@ -813,25 +833,6 @@
         <div class="quote-foot">
           <span class="card-logo"><svg class="logo-mark" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numerical Partners"><path d="M8 7 L20 7 M17.5 5 L20 7 L17.5 9" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="3" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">(</text><text x="9" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-style="italic" fill="currentColor">n</text><text x="18" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">)</text></svg></span>
           <p class="quote-attrib quote-attrib--ink"><strong>James Bentley</strong>, Founder, Numerical Partners</p>
-        </div>
-      </div>
-
-      <!-- Pearson - Michelle Chu. Her own final wording, approved by email
-           10 Jun 2026 (she revised David's draft and sent this back). -->
-      <div class="rz-plate rz-plate--paper quote-card quote-card--wide">
-        <span class="rz-chip rz-chip--pink">FTSE 100 education</span>
-        <blockquote class="quote-sm">
-          &ldquo;David combines deep AI expertise with a rare ability to
-          <span class="rz-mark">make the future feel practical</span>. He moves
-          effortlessly between board-level strategy and the technical detail of
-          how things actually get built. His workshops and materials helped us
-          understand not just what AI could do, but what it could change - in our
-          processes, our platform strategy and the way we work. I'd recommend
-          Paidia without hesitation.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo"><img loading="lazy" decoding="async" src="assets/images/clients/pearson-ink.webp" alt="Pearson" data-no-zoom></span>
-          <p class="quote-attrib quote-attrib--ink"><strong>Michelle Chu</strong>, Principal, Programme Management, Pearson</p>
         </div>
       </div>
     </div>
