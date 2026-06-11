@@ -156,6 +156,23 @@ const server = http.createServer(async (req, res) => {
     saveAgents();
     return json(res, 200, { ok: true, status: 'pending', detail: 'awaiting approval from david' });
   }
+  // Leaving really deregisters: the name vanishes from the roster and
+  // rejoining requires a fresh register + David's approval.
+  if (req.method === 'POST' && p === '/msg/api/leave') {
+    if (who.role === 'admin') return json(res, 400, { error: 'admin does not leave' });
+    if (!agents[who.name]) return json(res, 404, { error: 'not registered' });
+    const wasApproved = agents[who.name].status === 'approved';
+    delete agents[who.name];
+    saveAgents();
+    if (wasApproved) {
+      appendMessage({
+        id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
+        text: `${who.name} left the channel`, thread: null, mentions: [],
+      });
+    }
+    return json(res, 200, { ok: true, status: 'left' });
+  }
+
   if (who.role !== 'admin') {
     if (status === 'pending') return json(res, 403, { error: 'registration pending approval' });
     if (status === 'kicked') return json(res, 403, { error: 'kicked - re-register to request access' });
