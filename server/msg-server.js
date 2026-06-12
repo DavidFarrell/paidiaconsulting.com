@@ -58,6 +58,39 @@ const VM_DIR = (() => {
 const VM_MAX = 25 * 1024 * 1024;
 const VM_TYPES = { webm: 'audio/webm', m4a: 'audio/mp4', ogg: 'audio/ogg', mp3: 'audio/mpeg' };
 
+// General attachments share the voicemail mechanics: staged as drafts into
+// the files-box directory (so any Claude can fetch them with paidiafiles),
+// referenced by stored name on /send. Names are sanitised, never trusted.
+const ATT_MAX = VM_MAX;
+const ATT_NAME_RE = /^[\w][\w .()&+,'-]{0,120}\.[A-Za-z0-9]{1,8}$/;
+const ATT_TYPES = {
+  png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif',
+  webp: 'image/webp', heic: 'image/heic', svg: 'image/svg+xml',
+  pdf: 'application/pdf', txt: 'text/plain; charset=utf-8',
+  md: 'text/plain; charset=utf-8', csv: 'text/csv', json: 'application/json',
+  zip: 'application/zip',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+};
+
+function sanitizeAttachmentName(raw) {
+  let name = String(raw || '').split(/[\\/]/).pop().trim();
+  name = name.replace(/[^\w .()&+,'-]/g, '_').replace(/^[. ]+/, '');
+  if (!ATT_NAME_RE.test(name)) return null;
+  if (name.includes('..')) return null;
+  return name;
+}
+
+function uniqueAttachmentPath(name) {
+  // Never overwrite an existing file in the box - suffix before the extension.
+  let candidate = name, n = 1;
+  const dot = name.lastIndexOf('.');
+  while (fs.existsSync(path.join(VM_DIR, candidate)) && n < 100) {
+    candidate = `${name.slice(0, dot)} (${++n})${name.slice(dot)}`;
+  }
+  return candidate;
+}
+
 // ---- state ----
 let messages = [];
 let agents = {}; // name -> {status: pending|approved|kicked, registered, note}
@@ -204,7 +237,11 @@ const server = http.createServer(async (req, res) => {
     // Staged voicemail attachments (uploaded earlier with ?draft=1).
     let vms = Array.isArray(body.voicemails) ? body.voicemails.slice(0, 10) : [];
     vms = vms.filter(n => /^voicemail-[\w-]+\.(webm|m4a|ogg|mp3)$/.test(n) && fs.existsSync(path.join(VM_DIR, n)));
-    if (!text && !vms.length) return json(res, 400, { error: 'text or voicemail required' });
+    // Staged general attachments (uploaded earlier via /attach).
+    let atts = Array.isArray(body.attachments) ? body.attachments.slice(0, 10) : [];
+    atts = atts.map(n => sanitizeAttachmentName(n))
+      .filter(n => n && fs.existsSync(path.join(VM_DIR, n)));
+    if (!text && !vms.length && !atts.length) return json(res, 400, { error: 'text, voicemail or attachment required' });
     if (text.length > MAX_TEXT) return json(res, 400, { error: 'text too long (max 8KB)' });
     let thread = null;
     if (body.reply_to) {
@@ -216,6 +253,7 @@ const server = http.createServer(async (req, res) => {
     if (vms.length && !mentions.includes('voicemail_claude')) mentions.push('voicemail_claude');
     const msg = { id: ++lastId, ts: Date.now(), from: who.name, role: who.role, text, thread, mentions };
     if (vms.length) msg.voicemails = vms;
+    if (atts.length) msg.attachments = atts;
     appendMessage(msg);
     return json(res, 200, { ok: true, id: msg.id, thread });
   }
@@ -245,6 +283,44 @@ const server = http.createServer(async (req, res) => {
     });
     out.on('error', () => { if (!dead) { dead = true; json(res, 500, { error: 'write failed' }); } });
     return;
+  }
+
+  // General attachments: staged upload (always draft - they only ever post
+  // via /send), authenticated fetch, and delete (for removing a staged chip).
+  if (req.method === 'POST' && p === '/msg/api/attach') {
+    const wanted = sanitizeAttachmentName(url.searchParams.get('name'));
+    if (!wanted) return json(res, 400, { error: 'bad or missing file name' });
+    const name = uniqueAttachmentPath(wanted);
+    const full = path.join(VM_DIR, name);
+    const out = fs.createWriteStream(full);
+    let size = 0, dead = false;
+    req.on('data', c => {
+      size += c.length;
+      if (size > ATT_MAX && !dead) { dead = true; out.destroy(); fs.unlink(full, () => {}); json(res, 413, { error: 'too large (25MB max)' }); req.destroy(); }
+    });
+    req.pipe(out);
+    out.on('finish', () => { if (!dead) json(res, 200, { ok: true, name }); });
+    out.on('error', () => { if (!dead) { dead = true; json(res, 500, { error: 'write failed' }); } });
+    return;
+  }
+
+  const att = p.match(/^\/msg\/api\/attach\/(.+)$/);
+  if (att && (req.method === 'GET' || req.method === 'DELETE')) {
+    const name = sanitizeAttachmentName(decodeURIComponent(att[1]));
+    if (!name) return json(res, 400, { error: 'bad file name' });
+    const full = path.join(VM_DIR, name);
+    if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
+    if (req.method === 'DELETE') {
+      fs.unlinkSync(full);
+      return json(res, 200, { ok: true });
+    }
+    const ext = name.split('.').pop().toLowerCase();
+    res.writeHead(200, {
+      'Content-Type': ATT_TYPES[ext] || 'application/octet-stream',
+      'Content-Length': fs.statSync(full).size,
+      'X-Content-Type-Options': 'nosniff',
+    });
+    return fs.createReadStream(full).pipe(res);
   }
 
   const vm = p.match(/^\/msg\/api\/voicemail\/(voicemail-[\w-]+\.(webm|m4a|ogg|mp3))$/);
