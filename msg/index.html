@@ -60,8 +60,10 @@
   .body { white-space: pre-wrap; word-break: break-word; font-size: 0.92rem; }
   .body .at { color: var(--accent); font-weight: 600; }
   #composer { display: flex; gap: 8px; padding: 12px 0 16px; border-top: 1px solid var(--rule); }
-  #mic { padding: 9px 12px; border: 1px solid var(--rule); border-radius: 4px;
+  #mic, #clip { padding: 9px 12px; border: 1px solid var(--rule); border-radius: 4px;
     background: #f5f1ea; font-size: 1rem; cursor: pointer; }
+  .msg img.att { display: block; max-width: min(360px, 100%); max-height: 260px;
+    border-radius: 6px; border: 1px solid var(--rule); margin-top: 6px; cursor: pointer; }
   #mic.rec { background: var(--accent); animation: pulse 1.2s infinite; }
   @keyframes pulse { 50% { opacity: 0.55; } }
   .play { color: var(--accent); cursor: pointer; text-decoration: underline; }
@@ -103,8 +105,10 @@
     <div id="suggest"></div>
     <div id="vmPending"></div>
     <div id="composer">
-      <textarea id="text" placeholder="Message... (@name to mention)" autocomplete="off"
+      <textarea id="text" placeholder="Message... (@name to mention, paste files/screenshots)" autocomplete="off"
         data-bwignore data-lpignore="true" data-1p-ignore data-form-type="other"></textarea>
+      <input type="file" id="filein" multiple style="display:none">
+      <button id="clip" onclick="document.getElementById('filein').click()" title="attach files or photos">📎</button>
       <button id="mic" onclick="toggleRec()" title="record a voicemail">🎙️</button>
       <button onclick="send()">Send</button>
     </div>
@@ -223,6 +227,12 @@ function render(msgs) {
         '🎙️ <span class="play" onclick="playVm(\'' + v + '\', this)">play voicemail</span>' +
         ' <span style="color:var(--muted);font-size:0.78rem">' + esc(v) + '</span>';
     }
+    for (const a of (m.attachments || [])) {
+      const isImg = /\.(png|jpe?g|gif|webp|heic|svg)$/i.test(a);
+      body += (body ? '<br>' : '') + (isImg
+        ? '<span data-att="' + esc(a) + '" data-attimg="1">🖼️ <span class="play">' + esc(a) + '</span></span>'
+        : '📎 <span class="play" data-att="' + esc(a) + '" data-attdl="1">' + esc(a) + '</span>');
+    }
     const delLink = isAdmin ? '<span class="del" onclick="del(' + m.id + ')">delete</span>' : '';
     div.innerHTML = m.role === 'system' ? body + (delLink ? ' ' + delLink : '') :
       '<div class="meta"><b>' + esc(m.from) + '</b><span>' + when + '</span>' +
@@ -230,6 +240,10 @@ function render(msgs) {
       '<span class="reply" onclick="setReply(' + m.id + ')">reply</span>' + delLink + '</div>' +
       '<div class="body">' + body + '</div>';
     feed.appendChild(div);
+    div.querySelectorAll('[data-attimg]').forEach(loadAttImage);
+    div.querySelectorAll('[data-attdl]').forEach(el => {
+      el.onclick = () => downloadAtt(el.dataset.att);
+    });
   }
   if (stick) feed.scrollTop = feed.scrollHeight;
 }
@@ -246,17 +260,17 @@ async function send() {
   if (rec) { sendAfterStop = true; rec.stop(); return; }  // live clip joins the send
   const box = document.getElementById('text');
   const text = box.value.trim();
-  if (!text && !pendingVms.length) return;
+  if (!text && !pendingVms.length && !pendingAtts.length) return;
   const r = await fetch('/msg/api/send', {
     method: 'POST', headers: hdrs(),
-    body: JSON.stringify({ text, reply_to: replyTo, voicemails: pendingVms }),
+    body: JSON.stringify({ text, reply_to: replyTo, voicemails: pendingVms, attachments: pendingAtts }),
   });
-  if (r.ok) { box.value = ''; clearReply(); pendingVms = []; drawPending(); }
+  if (r.ok) { box.value = ''; clearReply(); pendingVms = []; pendingAtts = []; drawPending(); }
   else alert('Send failed: ' + (await r.json()).error);
 }
-// ---- voicemail recording: Stop stages the clip as a composer attachment;
-// ---- Send fires text + all staged clips (+ the live recording) at once ----
-let rec = null, sendAfterStop = false, pendingVms = [];
+// ---- staged composer attachments: voicemails (record->Stop) and general
+// ---- files (paperclip or paste). Send fires text + everything staged. ----
+let rec = null, sendAfterStop = false, pendingVms = [], pendingAtts = [];
 
 function drawPending() {
   const box = document.getElementById('vmPending');
@@ -272,6 +286,64 @@ function drawPending() {
     };
     box.appendChild(chip);
   });
+  pendingAtts.forEach(name => {
+    const chip = document.createElement('span');
+    chip.className = 'vmchip';
+    const isImg = /\.(png|jpe?g|gif|webp|heic|svg)$/i.test(name);
+    chip.innerHTML = (isImg ? '🖼️ ' : '📎 ') + esc(name) + ' <b title="remove">✕</b>';
+    chip.querySelector('b').onclick = async () => {
+      pendingAtts = pendingAtts.filter(n => n !== name);
+      drawPending();
+      fetch('/msg/api/attach/' + encodeURIComponent(name), { method: 'DELETE', headers: hdrs() });
+    };
+    box.appendChild(chip);
+  });
+}
+
+// ---- general attachments: paperclip picker + paste-to-attach ----
+async function stageFiles(files) {
+  for (const f of files) {
+    if (pendingVms.length + pendingAtts.length >= 10) { alert('Max 10 attachments per message'); break; }
+    // Pasted screenshots arrive as a generic "image.png" - give them a real name.
+    let name = f.name || 'pasted.png';
+    if (/^image\.\w+$/i.test(name)) {
+      const ext = name.split('.').pop();
+      name = 'pasted-' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '.' + ext;
+    }
+    const r = await fetch('/msg/api/attach?name=' + encodeURIComponent(name), {
+      method: 'POST', headers: { 'Authorization': 'Basic ' + auth }, body: f,
+    });
+    if (!r.ok) { alert('Upload failed: ' + (await r.json()).error); continue; }
+    pendingAtts.push((await r.json()).name);  // server may have de-duplicated the name
+  }
+  drawPending();
+}
+
+document.getElementById('filein').addEventListener('change', e => {
+  stageFiles([...e.target.files]);
+  e.target.value = '';
+});
+
+async function downloadAtt(name) {
+  const r = await fetch('/msg/api/attach/' + encodeURIComponent(name), { headers: hdrs() });
+  if (!r.ok) { alert('Could not load attachment (it may have been deleted)'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(await r.blob());
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 30000);
+}
+
+async function loadAttImage(el) {
+  const name = el.dataset.att;
+  const r = await fetch('/msg/api/attach/' + encodeURIComponent(name), { headers: hdrs() });
+  if (!r.ok) { el.textContent = '🖼️ ' + name + ' (unavailable)'; return; }
+  const img = document.createElement('img');
+  img.className = 'att';
+  img.src = URL.createObjectURL(await r.blob());
+  img.title = name + ' (click to download)';
+  img.onclick = () => downloadAtt(name);
+  el.replaceWith(img);
 }
 
 async function toggleRec() {
@@ -358,6 +430,10 @@ function complete(name) {
 
 ta.addEventListener('input', updateSuggest);
 ta.addEventListener('click', updateSuggest);
+ta.addEventListener('paste', e => {
+  const files = [...((e.clipboardData || {}).files || [])];
+  if (files.length) { e.preventDefault(); stageFiles(files); }
+});
 ta.addEventListener('blur', () => setTimeout(() => { sug.style.display = 'none'; }, 150));
 
 async function wipeAll() {
