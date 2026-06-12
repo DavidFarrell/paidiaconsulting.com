@@ -116,6 +116,7 @@ let me = sessionStorage.getItem('msgname') || '';
 let cursor = 0, replyTo = null, isAdmin = false, polling = false;
 let colors = JSON.parse(localStorage.getItem('msgcolors') || '{}');
 let saveTimer = null;
+let acked = null;  // roster statuses David has acknowledged (chip-pulse)
 
 function saveColors() {
   localStorage.setItem('msgcolors', JSON.stringify(colors));
@@ -165,7 +166,10 @@ function doLogout() {
 }
 
 function start(initial) {
-  document.getElementById('login').style.display = 'none';
+  // Remove the login form outright (not just hide it): a password field left
+  // in the DOM with a value makes Bitwarden offer "update login" on every send.
+  document.getElementById('pass').value = '';
+  document.getElementById('login').remove();
   document.getElementById('app').style.display = 'flex';
   document.getElementById('logout').style.display = 'inline';
   isAdmin = (me === 'david');
