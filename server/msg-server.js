@@ -243,13 +243,36 @@ const server = http.createServer(async (req, res) => {
       .filter(n => n && fs.existsSync(path.join(VM_DIR, n)));
     if (!text && !vms.length && !atts.length) return json(res, 400, { error: 'text, voicemail or attachment required' });
     if (text.length > MAX_TEXT) return json(res, 400, { error: 'text too long (max 8KB)' });
-    let thread = null;
+    let thread = null, parent = null;
     if (body.reply_to) {
-      const parent = messages.find(m => m.id === body.reply_to);
+      parent = messages.find(m => m.id === body.reply_to);
       if (!parent) return json(res, 400, { error: 'reply_to message not found' });
       thread = parent.thread || parent.id;
     }
-    const mentions = [...new Set([...text.matchAll(/@([a-z0-9][a-z0-9_-]*)/gi)].map(m => m[1].toLowerCase()))];
+    let mentions = [...new Set([...text.matchAll(/@([a-z0-9][a-z0-9_-]*)/gi)].map(m => m[1].toLowerCase()))];
+    // The list of everyone currently on the channel who could be pinged
+    // (approved Claudes + david). Used by @all and the implicit-broadcast rule.
+    const everyone = () => [...Object.entries(agents)
+      .filter(([, a]) => a.status === 'approved').map(([n]) => n), ADMIN_NAME];
+    // @all / @everyone fan out to the whole channel (minus the sender).
+    if (mentions.includes('all') || mentions.includes('everyone')) {
+      mentions = mentions.filter(n => n !== 'all' && n !== 'everyone');
+      for (const n of everyone()) if (n !== who.name && !mentions.includes(n)) mentions.push(n);
+    }
+    // A reply pings the author of the message being replied to, so a Claude
+    // always learns when someone has answered its own message. Only ping a
+    // parent author who is still a live participant (david or an approved
+    // agent) - no point creating dead mentions for someone who has left/kicked.
+    if (parent && parent.from && parent.from !== who.name && parent.role !== 'system'
+        && !mentions.includes(parent.from)
+        && (parent.from === ADMIN_NAME || (agents[parent.from] || {}).status === 'approved')) {
+      mentions.push(parent.from);
+    }
+    // David talking to no one in particular: every Claude should see it and
+    // decide for itself whether it's relevant. (Claude->channel stays quiet.)
+    if (who.role === 'admin' && !mentions.length && !body.reply_to) {
+      for (const n of everyone()) if (n !== who.name) mentions.push(n);
+    }
     if (vms.length && !mentions.includes('voicemail_claude')) mentions.push('voicemail_claude');
     const msg = { id: ++lastId, ts: Date.now(), from: who.name, role: who.role, text, thread, mentions };
     if (vms.length) msg.voicemails = vms;
@@ -401,6 +424,40 @@ const server = http.createServer(async (req, res) => {
       thread: null, mentions: [name],
     });
     return json(res, 200, { ok: true, name, status: agents[name].status });
+  }
+
+  // Kick every approved Claude in one go (admin button on the board).
+  if (req.method === 'POST' && p === '/msg/api/kickall') {
+    if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
+    const kicked = [];
+    for (const [name, a] of Object.entries(agents)) {
+      if (a.status === 'approved') { a.status = 'kicked'; kicked.push(name); }
+    }
+    if (kicked.length) saveAgents();
+    appendMessage({
+      id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
+      text: kicked.length ? `david kicked everyone: ${kicked.join(', ')}` : 'david kicked everyone (no one was connected)',
+      thread: null, mentions: kicked,
+    });
+    return json(res, 200, { ok: true, kicked });
+  }
+
+  // Ask every approved Claude to deregister and re-register. We don't change
+  // status server-side - we post a system instruction mentioning each one, and
+  // each agent's listener picks it up and runs leave + register itself. The
+  // text tells them they may keep their name but must watch for clashes.
+  if (req.method === 'POST' && p === '/msg/api/reregister') {
+    if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
+    const names = Object.entries(agents)
+      .filter(([, a]) => a.status === 'approved').map(([n]) => n);
+    appendMessage({
+      id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
+      text: names.length
+        ? `david asks everyone to re-register: ${names.map(n => '@' + n).join(' ')} - please run leave then register again. You may keep your current name or propose one, but first check the roster/recent messages for that name so two of you don't clash.`
+        : 'david asked everyone to re-register, but no approved agents are connected.',
+      thread: null, mentions: names, reregister: true,
+    });
+    return json(res, 200, { ok: true, asked: names });
   }
 
   json(res, 404, { error: 'not found' });
