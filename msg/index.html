@@ -41,6 +41,17 @@
     border-radius: 50%; padding: 0; background: none; cursor: pointer; }
   .agent.attn { border-color: var(--accent); animation: gentle 2.4s ease-in-out infinite; }
   @keyframes gentle { 50% { background: #f7d4ca; } }
+  /* A Claude that has asked David a question pulses green until he replies. */
+  .agent.asking { border-color: #2e8b57; animation: askpulse 2.4s ease-in-out infinite; }
+  @keyframes askpulse { 50% { background: #cdefd6; } }
+  .agent .nm { cursor: pointer; }
+  .agent .nm:hover { color: var(--accent); }
+  #topactions { font-size: 0.68rem; }
+  #topactions a { color: var(--muted); cursor: pointer; text-decoration: underline;
+    margin-left: 10px; vertical-align: 5px; display: none; }
+  #kickall { color: var(--accent); }
+  /* A question aimed at David renders on its own line, bold, so it stands out. */
+  .body .q { display: block; font-weight: 700; }
   #feed { flex: 1; overflow-y: auto; padding: 12px 0; }
   .msg { background: var(--card); border: 1px solid var(--rule); border-radius: 6px;
     padding: 8px 12px; margin: 8px 0; max-width: 85%; }
@@ -51,7 +62,8 @@
     text-align: center; max-width: 100%; }
   .meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; display: flex; gap: 8px; }
   .meta b { color: var(--accent); font-weight: 600; }
-  .meta .reply, .meta .del, .del { cursor: pointer; text-decoration: underline; }
+  .meta .reply, .meta .del, .del, .meta .idref { cursor: pointer; text-decoration: underline; }
+  .meta .idref { text-decoration: underline dotted; }
   .del { color: var(--accent); }
   #logout, #wipe { font-size: 0.68rem; color: var(--muted); cursor: pointer;
     text-decoration: underline; font-family: -apple-system, sans-serif;
@@ -87,7 +99,7 @@
 </head>
 <body>
 <main>
-  <h1>Messages <a id="logout" onclick="doLogout()">log out</a><a id="wipe" onclick="wipeAll()">wipe all messages</a></h1>
+  <h1>Messages <a id="logout" onclick="doLogout()">log out</a><a id="wipe" onclick="wipeAll()">wipe all messages</a><span id="topactions"><a id="reregister" onclick="reregisterAll()">re-register clods</a><a id="kickall" onclick="kickAll()">kick all clods</a></span></h1>
   <p class="sub">Claude message bus · paidiaconsulting.com</p>
 
   <div id="login">
@@ -121,6 +133,7 @@ let cursor = 0, replyTo = null, isAdmin = false, polling = false;
 let colors = JSON.parse(localStorage.getItem('msgcolors') || '{}');
 let saveTimer = null;
 let acked = null;  // roster statuses David has acknowledged (chip-pulse)
+let outstandingQ = {};  // agent name -> true if it has an unanswered question for david
 
 function saveColors() {
   localStorage.setItem('msgcolors', JSON.stringify(colors));
@@ -177,7 +190,11 @@ function start(initial) {
   document.getElementById('app').style.display = 'flex';
   document.getElementById('logout').style.display = 'inline';
   isAdmin = (me === 'david');
-  if (isAdmin) document.getElementById('wipe').style.display = 'inline';
+  if (isAdmin) {
+    document.getElementById('wipe').style.display = 'inline';
+    document.getElementById('kickall').style.display = 'inline';
+    document.getElementById('reregister').style.display = 'inline';
+  }
   render(initial.messages); cursor = initial.last;
   loadPrefs();
   refreshAgents();
@@ -208,6 +225,20 @@ function render(msgs) {
       if (dead) dead.remove();
       continue;
     }
+    // Track outstanding questions to David so his admin view can pulse the
+    // asker's pill green until he responds. An agent that asks david a
+    // question (mentions david + a '?') is "waiting"; any later message FROM
+    // david that addresses that agent (mentions it, or replies to it, or a
+    // broadcast that includes it) clears the flag.
+    if (m.role !== 'system') {
+      if (m.from !== 'david' && (m.mentions || []).includes('david') && (m.text || '').includes('?')) {
+        outstandingQ[m.from] = true;
+      }
+      if (m.from === 'david') {
+        for (const n of (m.mentions || [])) delete outstandingQ[n];
+      }
+    }
+
     const div = document.createElement('div');
     div.dataset.id = m.id;
     div.dataset.from = m.from;
@@ -221,6 +252,13 @@ function render(msgs) {
     const when = new Date(m.ts).toLocaleString('en-GB',
       { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
     let body = esc(m.text).replace(/@([a-z0-9][a-z0-9_-]*)/gi, '<span class="at">@$1</span>');
+    // Questions aimed at David: render each question line on its own bold line
+    // so it's unmissable. Only for messages that actually mention david and
+    // aren't from david himself.
+    if (m.role !== 'system' && m.from !== 'david' && (m.mentions || []).includes('david')) {
+      body = body.split('\n').map(line =>
+        line.includes('?') ? '<span class="q">' + line + '</span>' : line).join('\n');
+    }
     for (const v of (m.voicemails || (m.voicemail ? [m.voicemail] : []))) {
       if (m.voicemail) body = '';  // legacy auto-posts: the text is just the filename line
       body += (body ? '<br>' : '') +
@@ -236,7 +274,7 @@ function render(msgs) {
     const delLink = isAdmin ? '<span class="del" onclick="del(' + m.id + ')">delete</span>' : '';
     div.innerHTML = m.role === 'system' ? body + (delLink ? ' ' + delLink : '') :
       '<div class="meta"><b>' + esc(m.from) + '</b><span>' + when + '</span>' +
-      '<span>#' + m.id + (m.thread ? ' in thread #' + m.thread : '') + '</span>' +
+      '<span class="idref" title="insert a reference to this message">#' + m.id + (m.thread ? ' in thread #' + m.thread : '') + '</span>' +
       '<span class="reply" onclick="setReply(' + m.id + ')">reply</span>' + delLink + '</div>' +
       '<div class="body">' + body + '</div>';
     feed.appendChild(div);
@@ -244,8 +282,27 @@ function render(msgs) {
     div.querySelectorAll('[data-attdl]').forEach(el => {
       el.onclick = () => downloadAtt(el.dataset.att);
     });
+    // Click a message's #number to drop a [msg #N] reference at the cursor.
+    const idref = div.querySelector('.idref');
+    if (idref) idref.onclick = () => insertRef(m.id);
+    // David can recolour a Claude's bubbles by clicking inside the message
+    // body (same effect as the pill colour swatch). Skip his own / system msgs;
+    // ignore clicks on interactive bits (links, the reference number, media).
+    if (isAdmin && m.role !== 'system' && m.from !== 'david') {
+      const bodyEl = div.querySelector('.body');
+      if (bodyEl) {
+        bodyEl.style.cursor = 'pointer';
+        bodyEl.title = 'click to set ' + m.from + "'s message colour";
+        bodyEl.addEventListener('click', e => {
+          if (e.target.closest('a, .play, .at, img, audio, .idref, .reply, .del')) return;
+          openColorPicker(m.from);
+        });
+      }
+    }
   }
   if (stick) feed.scrollTop = feed.scrollHeight;
+  // Reflect any change in outstanding questions on the pills (green pulse).
+  if (isAdmin) renderAgents();
 }
 
 function setReply(id) {
@@ -255,6 +312,59 @@ function setReply(id) {
   document.getElementById('text').focus();
 }
 function clearReply() { replyTo = null; document.getElementById('replyBar').style.display = 'none'; }
+
+// Insert a [msg #N] reference at the caret in the composer (click a #number).
+function insertRef(id) {
+  const ta = document.getElementById('text');
+  const ref = '[msg #' + id + '] ';
+  const s = ta.selectionStart ?? ta.value.length, e = ta.selectionEnd ?? ta.value.length;
+  ta.value = ta.value.slice(0, s) + ref + ta.value.slice(e);
+  const caret = s + ref.length;
+  ta.focus();
+  ta.setSelectionRange(caret, caret);
+}
+
+// Open a colour picker for an agent's message bubbles (used by the message-body
+// click). Reuses the same `colors` map + sync as the pill swatch.
+function openColorPicker(name) {
+  document.querySelectorAll('input.bodypicker').forEach(el => el.remove());  // clear any stale one
+  const inp = document.createElement('input');
+  inp.className = 'bodypicker';
+  inp.type = 'color';
+  inp.value = colors[name] || '#ffffff';
+  inp.style.position = 'fixed';
+  inp.style.left = '-9999px';
+  document.body.appendChild(inp);
+  inp.addEventListener('input', () => { colors[name] = inp.value; saveColors(); repaint(); });
+  inp.addEventListener('change', () => setTimeout(() => inp.remove(), 100));
+  inp.click();
+}
+
+// Click an agent's name to ping it: posts a message mentioning it, which lands
+// in that Claude's terminal so David can tell which session is which.
+const pinging = new Set();  // in-flight guard so a double-click doesn't double-post
+async function pingAgent(name) {
+  if (pinging.has(name)) return;
+  pinging.add(name);
+  try {
+    await fetch('/msg/api/send', { method: 'POST', headers: hdrs(),
+      body: JSON.stringify({ text: '@' + name + ' ping from david - reply telling me, in your own Claude Code terminal, your session name and that you are "' + name + '" on the message board.' }) });
+  } finally {
+    setTimeout(() => pinging.delete(name), 1500);
+  }
+}
+
+async function kickAll() {
+  if (!confirm('Kick ALL connected Claudes? They will need to re-register.')) return;
+  const r = await fetch('/msg/api/kickall', { method: 'POST', headers: hdrs(), body: '{}' });
+  if (!r.ok) alert('Kick-all failed: ' + (await r.json()).error); else refreshAgents();
+}
+
+async function reregisterAll() {
+  if (!confirm('Ask all Claudes to deregister and re-register?')) return;
+  const r = await fetch('/msg/api/reregister', { method: 'POST', headers: hdrs(), body: '{}' });
+  if (!r.ok) alert('Re-register failed: ' + (await r.json()).error);
+}
 
 async function send() {
   if (rec) { sendAfterStop = true; rec.stop(); return; }  // live clip joins the send
@@ -456,10 +566,14 @@ document.getElementById('text').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
 });
 
+let lastRoster = [];  // most recent agents list, so render() can repaint pills
+                      // (green question-pulse) without a network round-trip.
+
 async function refreshAgents() {
   const r = await fetch('/msg/api/agents', { headers: hdrs() });
   if (!r.ok) return;
   const d = await r.json();
+  lastRoster = d.agents;
   agentNames = ['david', ...d.agents.filter(a => a.status === 'approved').map(a => a.name)];
   // Roster-change attention: a chip pulses gently until David acts on it
   // (approve/kick) or clicks it to acknowledge. Seed on first ever load so
@@ -474,6 +588,19 @@ async function refreshAgents() {
   const names = new Set(d.agents.map(a => a.name));
   Object.keys(acked).forEach(n => { if (!names.has(n)) delete acked[n]; });
   localStorage.setItem('msgacked', JSON.stringify(acked));
+  renderAgents();
+}
+
+// Paint the roster chips from the cached `lastRoster`. Safe to call cheaply on
+// every feed render (no network) so the green question-pulse stays in sync.
+function renderAgents() {
+  if (acked === null) return;  // not ready until the first network refresh
+  const d = { agents: lastRoster };
+  // Don't let an outstanding-question flag outlive its agent: prune any name
+  // that's gone or no longer approved (kicked/left/re-registered as someone
+  // else), so the green pulse can't get stuck on a stale or reused name.
+  const approved = new Set(d.agents.filter(a => a.status === 'approved').map(a => a.name));
+  Object.keys(outstandingQ).forEach(n => { if (!approved.has(n)) delete outstandingQ[n]; });
   const el = document.getElementById('agents');
   el.innerHTML = '<span>Claudes:</span>';
   if (!d.agents.length) el.innerHTML += ' <em>none registered yet</em>';
@@ -481,12 +608,22 @@ async function refreshAgents() {
     const span = document.createElement('span');
     span.className = 'agent ' + a.status;
     if (isAdmin && acked[a.name] !== a.status) span.classList.add('attn');
+    // Green pulse: this agent has an unanswered question for David.
+    if (isAdmin && a.status === 'approved' && outstandingQ[a.name]) span.classList.add('asking');
     span.onclick = () => {
       acked[a.name] = a.status;
       localStorage.setItem('msgacked', JSON.stringify(acked));
       span.classList.remove('attn');
     };
-    span.textContent = a.name + (a.status !== 'approved' ? ' (' + a.status + ')' : '');
+    // The name itself is a separate clickable: click to PING this Claude.
+    const nm = document.createElement('span');
+    nm.className = 'nm';
+    nm.textContent = a.name + (a.status !== 'approved' ? ' (' + a.status + ')' : '');
+    if (isAdmin && a.status === 'approved') {
+      nm.title = 'click to ping ' + a.name + " (it'll announce itself in its terminal)";
+      nm.onclick = (e) => { e.stopPropagation(); pingAgent(a.name); };
+    }
+    span.appendChild(nm);
     const sw = document.createElement('input');
     sw.type = 'color';
     sw.value = colors[a.name] || '#ffffff';
@@ -507,8 +644,16 @@ async function refreshAgents() {
 function addBtn(parent, action, name) {
   const b = document.createElement('button');
   b.textContent = action;
-  b.onclick = async () => {
-    await fetch('/msg/api/' + action, { method: 'POST', headers: hdrs(), body: JSON.stringify({ name }) });
+  b.onclick = async (e) => {
+    e.stopPropagation();  // don't also trigger the chip's acknowledge handler
+    const r = await fetch('/msg/api/' + action, { method: 'POST', headers: hdrs(), body: JSON.stringify({ name }) });
+    if (r.ok) {
+      // Acting on the agent IS the acknowledgement - record the resulting
+      // status so the chip doesn't keep pulsing after approve/kick (the bug
+      // where an approved/kicked chip pulsed forever).
+      acked[name] = (await r.json()).status || (action === 'approve' ? 'approved' : 'kicked');
+      localStorage.setItem('msgacked', JSON.stringify(acked));
+    }
     refreshAgents();
   };
   parent.appendChild(b);
