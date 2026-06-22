@@ -28,6 +28,11 @@ const PORT = process.env.MSG_PORT || 8485;
 const ADMIN_NAME = 'david';
 const MAX_TEXT = 8192;
 const HISTORY_CAP = 500;
+// Kicked agents are dropped from the roster this long after the kick, so the
+// board doesn't accumulate a graveyard of struck-through chips. A purged name
+// reverts to "unknown" - the same end-state as `leave` - so that Claude must
+// register again (David approves) to come back, exactly as a kick intends.
+const KICK_TTL = 10 * 60 * 1000;
 
 function pickStore() {
   for (const dir of ['/data/msg', path.join(__dirname, 'msgstore'), '/tmp/msgstore']) {
@@ -106,6 +111,21 @@ try {
 try { agents = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8')); } catch (_) { /* first boot */ }
 
 function saveAgents() { fs.writeFileSync(AGENTS_FILE, JSON.stringify(agents, null, 1)); }
+// Drop kicked agents once they've been kicked longer than KICK_TTL. Legacy
+// kicked rows have no kickedAt (treated as 0), so they're swept on first pass.
+// Returns the names removed.
+function purgeKicked() {
+  const now = Date.now();
+  const gone = [];
+  for (const [name, a] of Object.entries(agents)) {
+    if (a.status === 'kicked' && now - (a.kickedAt || 0) > KICK_TTL) {
+      delete agents[name];
+      gone.push(name);
+    }
+  }
+  if (gone.length) saveAgents();
+  return gone;
+}
 function appendMessage(m) {
   messages.push(m);
   fs.appendFileSync(MSG_FILE, JSON.stringify(m) + '\n');
@@ -204,6 +224,13 @@ const server = http.createServer(async (req, res) => {
       });
     }
     return json(res, 200, { ok: true, status: 'left' });
+  }
+
+  // Lightweight self-status check, reachable while pending/kicked/unknown so a
+  // freshly-registered agent can poll in the background until David approves it
+  // (without spamming /register, which would keep rewriting its record).
+  if (req.method === 'GET' && p === '/msg/api/whoami') {
+    return json(res, 200, { name: who.name, role: who.role, status: status || 'unknown' });
   }
 
   if (who.role !== 'admin') {
@@ -406,6 +433,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && p === '/msg/api/agents') {
+    purgeKicked();
     const out = Object.entries(agents).map(([name, a]) => ({ name, ...a }));
     return json(res, 200, { agents: out });
   }
@@ -416,7 +444,12 @@ const server = http.createServer(async (req, res) => {
     try { body = await readBody(req); } catch (e) { return json(res, 400, { error: e.message }); }
     const name = String(body.name || '').toLowerCase();
     if (!agents[name]) return json(res, 404, { error: 'unknown agent' });
-    agents[name].status = p.endsWith('approve') ? 'approved' : 'kicked';
+    const approving = p.endsWith('approve');
+    agents[name].status = approving ? 'approved' : 'kicked';
+    // Stamp the kick time so the purge can drop it after KICK_TTL; clear it on
+    // (re-)approval so a returning agent never carries a stale expiry.
+    if (approving) delete agents[name].kickedAt;
+    else agents[name].kickedAt = Date.now();
     saveAgents();
     appendMessage({
       id: ++lastId, ts: Date.now(), from: 'system', role: 'system',
@@ -430,8 +463,9 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && p === '/msg/api/kickall') {
     if (who.role !== 'admin') return json(res, 403, { error: 'admin only' });
     const kicked = [];
+    const now = Date.now();
     for (const [name, a] of Object.entries(agents)) {
-      if (a.status === 'approved') { a.status = 'kicked'; kicked.push(name); }
+      if (a.status === 'approved') { a.status = 'kicked'; a.kickedAt = now; kicked.push(name); }
     }
     if (kicked.length) saveAgents();
     appendMessage({
@@ -462,6 +496,10 @@ const server = http.createServer(async (req, res) => {
 
   json(res, 404, { error: 'not found' });
 });
+
+// Sweep expired kicks even when no one loads the board. Cheap, and unref'd so
+// it never holds the process open on its own.
+setInterval(purgeKicked, 60 * 1000).unref();
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`msg-server on 127.0.0.1:${PORT}, store=${STORE}, ${messages.length} messages loaded`);
