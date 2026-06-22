@@ -607,6 +607,11 @@ function renderAgents() {
   for (const a of d.agents) {
     const span = document.createElement('span');
     span.className = 'agent ' + a.status;
+    // Tint the chip with this agent's assigned colour, so the roster pill
+    // matches the colour of that Claude's message bubbles (obsidian purple,
+    // awin orange, etc). Only when a colour has actually been chosen - an
+    // un-coloured agent keeps the default chip / pending tint.
+    if (colors[a.name]) span.style.background = colors[a.name];
     // Pulse for David's attention while a status he hasn't acknowledged stands -
     // but never for kicked chips: he already acted on those, and they purge
     // themselves after 10 min, so pulsing them is just noise (the bug where a
@@ -635,6 +640,7 @@ function renderAgents() {
     sw.oninput = () => {
       colors[a.name] = sw.value;
       saveColors();
+      span.style.background = sw.value;  // live-tint this chip too, not just messages
       repaint();
     };
     span.appendChild(sw);
