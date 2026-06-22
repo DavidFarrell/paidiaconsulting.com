@@ -607,7 +607,11 @@ function renderAgents() {
   for (const a of d.agents) {
     const span = document.createElement('span');
     span.className = 'agent ' + a.status;
-    if (isAdmin && acked[a.name] !== a.status) span.classList.add('attn');
+    // Pulse for David's attention while a status he hasn't acknowledged stands -
+    // but never for kicked chips: he already acted on those, and they purge
+    // themselves after 10 min, so pulsing them is just noise (the bug where a
+    // kicked chip pulsed forever because he'd never click to acknowledge it).
+    if (isAdmin && a.status !== 'kicked' && acked[a.name] !== a.status) span.classList.add('attn');
     // Green pulse: this agent has an unanswered question for David.
     if (isAdmin && a.status === 'approved' && outstandingQ[a.name]) span.classList.add('asking');
     span.onclick = () => {
