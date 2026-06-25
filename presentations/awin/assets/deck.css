@@ -617,6 +617,18 @@ image-slot {
 }
 /* Slide 6 reads as a section reset: give its label a touch more air. */
 .aw-loop__section { letter-spacing: 0.08em; margin-bottom: 4px; }
+/* Slide 5 legibility (David flagged it): the standard ink surface is a bright,
+   saturated violet, so the smaller / opacity-muted white text washed out.
+   This deep-ink variant deepens + desaturates the surface so white and near-
+   white text pops, and lifts every secondary line toward full white. Scoped to
+   slide 5 only; the other ink slides keep the brighter surface. */
+.aw-slide--ink-deep { background: #271a5e; }
+.aw-slide--ink-deep .aw-sub { color: rgba(255,255,255,0.92); }
+.aw-slide--ink-deep .aw-card--ink { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.20); }
+.aw-slide--ink-deep .aw-card--ink p { color: rgba(255,255,255,0.96); }
+.aw-slide--ink-deep .aw-flow__name { color: #fff; }
+.aw-slide--ink-deep .aw-loop__points ul li { color: rgba(255,255,255,0.84); }
+.aw-slide--ink-deep .aw-loop__points ul li::before { color: rgba(255,255,255,0.72); }
 
 /* Slide 7 - How I'd actually run it. The method as an ordered sequence with an
    arc (the arrow hands each step to the next), then the model/cost discipline
