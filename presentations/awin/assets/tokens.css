@@ -1,0 +1,168 @@
+/* ==========================================================================
+   Awin - Design Tokens
+   Audited from the live Tailwind v4 stylesheet bundle on 5 May 2026.
+   Source: awin.com/assets/global2.css
+
+   Awin's source CSS uses OKLCH throughout. The OKLCH values below are
+   copied verbatim. Approximate sRGB hex equivalents are noted in comments
+   so designers and tools that don't yet speak OKLCH have a fallback to
+   eyeball - the OKLCH values are canonical.
+   ========================================================================== */
+
+:root {
+  /* ---- Type families ----------------------------------------------------- */
+  --awn-font: "Inter", inter-fallback, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --awn-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* ---- Palette - canonical OKLCH (audited from the source) -------------- */
+
+  /* Surface (paper, off-whites, lilac washes) */
+  --awn-white:           oklch(1 0 0);                          /* #ffffff */
+  --awn-cool-grey:       oklch(.97614 0 0);                     /* ~#f6f6f6 - hover surface */
+  --awn-grey-100:        oklch(.96115 0 0);                     /* ~#f1f1f1 - surface */
+  --awn-grey-200:        oklch(.91583 0 0);                     /* ~#e6e6e6 */
+  --awn-grey-light:      oklch(.93403 0 0);                     /* ~#ebebeb */
+  --awn-american-silver: oklch(.85451 0 0);                     /* ~#c5c5c5 - rules / disabled chips */
+  --awn-soft-orange:     oklch(.96917 .01767 53.97978);         /* ~#fbf2e9 - warm cream tint */
+  --awn-sky-blue:        oklch(.95356 .0172 248.01303);         /* ~#e7eef5 */
+  --awn-lilac-50:        oklch(.97695 .01078 297.63477);        /* ~#f8f4fa - default tertiary surface */
+  --awn-lilac:           oklch(.95386 .02172 297.41451);        /* ~#f1eaf5 - hover lilac */
+  --awn-lilac-alt:       oklch(.90758 .04406 296.95473);        /* ~#dfd1ea - active lilac */
+  --awn-vodka:           oklch(.81007 .06508 295.87212);        /* ~#bba2cb - lilac on dark / chips */
+
+  /* Ink (warm dark grey, never pure black) */
+  --awn-text:            oklch(.38665 0 0);                     /* ~#525252 - body, headings */
+  --awn-foreground:      oklch(.38665 0 0);                     /* alias of --awn-text */
+  --awn-medium:          oklch(.56241 0 0);                     /* ~#7a7a7a - secondary copy */
+  --awn-disabled:        oklch(.69926 0 0);                     /* ~#9f9f9f */
+  --awn-grey-300:        oklch(.80466 0 0);                     /* ~#b9b9b9 */
+  --awn-grey-400:        oklch(.64009 0 0);                     /* ~#909090 */
+  --awn-black:           oklch(0 0 0);                          /* #000000 - reserved, see notes */
+
+  /* Brand - the orange-to-purple Awin pair */
+  --awn-orange-default:  oklch(.69579 .20426 43.49042);         /* ~#ff5d2b - signature orange (PRIMARY) */
+  --awn-orange-400:      oklch(.68563 .2011 43.54122);          /* ~#fc5a2a */
+  --awn-orange-600:      oklch(.60797 .21898 33.93607);         /* ~#e1411b - active / pressed */
+  --awn-red-primary:     oklch(.57057 .2273 22.05792);          /* ~#d3290e - data-theme=red variant */
+
+  --awn-purple-solid:    oklch(.4223 .19732 286.29319);         /* ~#3a1d8b - deep brand violet */
+  --awn-purple:          oklch(.4223 .19732 286.29319);         /* alias for tokens that read 'purple' */
+  --awn-violet:          oklch(.3852 .1774 286.31718);          /* ~#321780 - darker violet */
+
+  /* Status / categorical */
+  --awn-green:           oklch(.57358 .13708 153.88918);        /* ~#3e8c52 - success */
+  --awn-red:             oklch(.62796 .25768 29.23494);         /* ~#ed3a17 - error */
+  --awn-amber-400:       oklch(.828 .189 84.429);               /* ~#f5b517 */
+
+  /* Categorical accents (used on plates, charts, illustrations) */
+  --awn-accent-blue:     oklch(.60946 .19596 260.82992);        /* ~#4669d6 */
+  --awn-accent-pink:     oklch(.78971 .19485 331.03565);        /* ~#f580c1 */
+  --awn-pink-300:        oklch(.823 .12 346.018);               /* ~#f4b1c8 */
+  --awn-pink-400:        oklch(.718 .202 349.761);              /* ~#ee7fa3 */
+  --awn-fuchsia-500:     oklch(.667 .295 322.15);               /* ~#dc28d3 */
+  --awn-yellow-400:      oklch(.852 .199 91.936);               /* ~#f0d11b */
+
+  /* Semantic role aliases */
+  --awn-primary:           var(--awn-orange-default);
+  --awn-primary-foreground: var(--awn-white);
+  --awn-secondary:         var(--awn-soft-orange);
+  --awn-tertiary:          var(--awn-lilac-50);
+  --awn-background:        var(--awn-white);
+  --awn-surface:           var(--awn-grey-100);
+  --awn-muted:             var(--awn-lilac-50);
+
+  /* ---- Signature gradients --------------------------------------------- */
+  --awn-gradient-orange:        linear-gradient(258.27deg, var(--awn-orange-default) 16.58%, oklch(.60386 .22625 28.74001) 66.52%, oklch(.59163 .22738 26.74648) 83.52%);
+  --awn-gradient-orange-hover:  linear-gradient(258.27deg, oklch(.66518 .19473 43.64543) 16.58%, oklch(.62921 .22019 28.67297) 51.87%, oklch(.54973 .20969 26.61515) 83.52%);
+  --awn-gradient-orange-active: linear-gradient(258.27deg, oklch(.66518 .19473 43.64543) 16.58%, oklch(.57716 .21529 28.77337) 51.87%, oklch(.54973 .20969 26.61515) 83.52%);
+  --awn-gradient-pulse:         linear-gradient(258deg, oklch(.69579 .20426 43.49042) 0%, oklch(.60386 .22625 28.74001) 75%, oklch(.59163 .22738 26.74648) 100%);
+  --awn-gradient-purple:        linear-gradient(24.02deg, oklch(.39147 .19282 285.41722) 0%, oklch(.42327 .19848 286.11471) 30.19%, oklch(.50211 .20495 287.69674) 58.58%, oklch(.53824 .19576 288.70244) 98.69%);
+  --awn-gradient-flow:          linear-gradient(24deg, oklch(.39147 .19282 285.41722) 0%, oklch(.42327 .19848 286.11471) 30%, oklch(.50211 .20495 287.69674) 60%, oklch(.53824 .19576 288.70244) 100%);
+  --awn-gradient-lilac:         linear-gradient(107.93deg, oklch(.77564 .13733 301.69934 / .33) 3.43%, oklch(.9568 .02503 303.49322 / .33) 98.93%);
+  --awn-gradient-ava-glow:      linear-gradient(266.38deg, var(--awn-orange-default) 12.57%, oklch(.57057 .2273 22.0579) 28.65%, oklch(.38394 .16311 287.806) 78.21%, oklch(.52796 .18992 278.033) 94.29%);
+
+  /* ---- Type scale (rem; root = 16px) - mirrors --text-* utilities ------ */
+  --awn-fs-base:    1rem;       --awn-lh-base:    1.5;          /* body */
+  --awn-fs-lg:      1.125rem;   --awn-lh-lg:      1.5;
+  --awn-fs-xl:      1.25rem;    --awn-lh-xl:      1.4;
+  --awn-fs-2xl:     1.5rem;     --awn-lh-2xl:     1.333;        /* card / sub-section header */
+  --awn-fs-2-5xl:   1.75rem;    --awn-lh-2-5xl:   1.234;        --awn-ls-2-5xl: -.28px;
+  --awn-fs-3xl:     2rem;       --awn-lh-3xl:     1.234;        --awn-ls-3xl:   -.32px;
+  --awn-fs-3-5xl:   2.375rem;   --awn-lh-3-5xl:   1.211;        --awn-ls-3-5xl: -.38px;
+  --awn-fs-4xl:     2.5rem;     --awn-lh-4xl:     1.111;
+  --awn-fs-5xl:     3rem;       --awn-lh-5xl:     1.208;        --awn-ls-5xl:   -.48px;
+  /* Hero - the source uses a clamp-style responsive H1; we expose the two endpoints. */
+  --awn-fs-hero-m:  2.5rem;     --awn-lh-hero-m:  1.1;          --awn-ls-hero-m: -.6px;
+  --awn-fs-hero-d:  4.5rem;     --awn-lh-hero-d:  1.05;         --awn-ls-hero-d: -1.6px;
+  --awn-fs-sm:      0.875rem;   --awn-lh-sm:      1.25rem;      /* label / footer */
+  --awn-fs-xs:      0.75rem;    --awn-lh-xs:      1rem;
+
+  /* ---- Weights --------------------------------------------------------- */
+  --awn-w-thin:        100;
+  --awn-w-extralight:  200;
+  --awn-w-light:       300;
+  --awn-w-normal:      400;
+  --awn-w-medium:      500;
+  --awn-w-semibold:    600;     /* body emphasis, button labels, nav */
+  --awn-w-bold:        700;     /* headings */
+
+  /* ---- Spacing (4-px base; the Tailwind v4 --spacing scale) ------------ */
+  --awn-sp-1:  0.25rem;   /*  4 */
+  --awn-sp-2:  0.5rem;    /*  8 */
+  --awn-sp-3:  0.75rem;   /* 12 */
+  --awn-sp-4:  1rem;      /* 16 */
+  --awn-sp-5:  1.25rem;   /* 20 */
+  --awn-sp-6:  1.5rem;    /* 24 - container side pad mobile */
+  --awn-sp-8:  2rem;      /* 32 */
+  --awn-sp-10: 2.5rem;    /* 40 */
+  --awn-sp-12: 3rem;      /* 48 */
+  --awn-sp-16: 4rem;      /* 64 */
+  --awn-sp-20: 5rem;      /* 80 */
+  --awn-sp-24: 6rem;      /* 96 */
+  --awn-sp-32: 8rem;      /* 128 */
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --awn-container-max:         1426px;     /* --container-xl in source */
+  --awn-container-pad-mobile:  1.5rem;
+  --awn-container-pad-desktop: 1.5rem;
+  --awn-grid-columns:          12;
+  --awn-grid-gap:              1.5rem;     /* the gap-gap / gap-6 utility */
+  --awn-prose-max:             68ch;
+  --awn-header-h:              60px;       /* lg:h-15 */
+  --awn-header-h-mobile:       70px;       /* h-17.5 */
+
+  /* ---- Radius ---------------------------------------------------------- */
+  --awn-radius-1:    0.25rem;
+  --awn-radius-2:    0.5rem;
+  --awn-radius-3:    0.75rem;
+  --awn-radius-lg:   0.5rem;
+  --awn-radius-xl:   0.75rem;
+  --awn-radius-2xl:  1rem;          /* the standard card / dropdown radius */
+  --awn-radius-3xl:  1.5rem;        /* feature plates, larger cards */
+  --awn-radius-pill: 9999px;        /* nav bar, primary CTA, all chips */
+
+  /* ---- Shadows --------------------------------------------------------- */
+  /* Awin uses one signature shadow on the floating header; almost no others. */
+  --awn-shadow-popover: 0 8px 24px -8px oklch(.4223 .19732 286.29319 / 0.12),
+                        0 2px 6px -2px oklch(.4223 .19732 286.29319 / 0.08);
+  --awn-shadow-card:    0 1px 2px oklch(.38665 0 0 / 0.04),
+                        0 4px 12px -4px oklch(.38665 0 0 / 0.06);
+
+  /* ---- Backdrop blur (used on the floating header bar) ----------------- */
+  --awn-blur-xxs: 4px;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --awn-dur-fast: 0.15s;
+  --awn-dur-base: 0.20s;
+  --awn-dur-slow: 0.40s;          /* hero orbit, gradient shift */
+  --awn-ease:     cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Underline distance for the system link style ------------------- */
+  --awn-link-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --awn-dur-fast: 0s; --awn-dur-base: 0s; --awn-dur-slow: 0s; }
+}

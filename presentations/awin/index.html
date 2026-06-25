@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AwinOS - initial planning</title>
+
+<!-- Vendored awn design system - all local, no CDN. Load order:
+     fonts -> tokens -> components -> semantic aliases -> deck skin. -->
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  /* Hide the stage until the web component upgrades (prevents a flash of the
+     first slide at authored size). Standard deck-stage boilerplate. */
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--awn-text);
+             font-family:var(--awn-font); overflow:hidden }
+  /* The stage background shows in the letterbox around the scaled slide. A dark
+     near-black charcoal (faint violet tint) so EVERY slide surface has a clear
+     edge - including the purple ink/hero slides, which previously merged into a
+     same-violet letterbox and looked like they had no background. Light slides
+     (lilac/cream) float against it; the purple slides get definition. Print/PDF
+     is unaffected (each page is the slide's own surface). */
+  deck-stage{ background:#16131f }
+
+  /* Click-to-zoom image lightbox. Images get a zoom-in cursor; the overlay
+     sits above everything (deck-stage uses up to ~2147483000) on a deep-violet
+     translucent backdrop (awn purple), excludes <video> by design. */
+  image-slot, img.aw-zoomable, .aw-slide img { cursor: zoom-in; }
+  #aw-lightbox {
+    position: fixed; inset: 0; z-index: 2147483600;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(58,29,139,0.92); cursor: zoom-out;   /* --awn-purple-solid @ .92 */
+  }
+  #aw-lightbox.is-open { display: flex; }
+  #aw-lightbox img {
+    max-width: 92vw; max-height: 92vh; width: auto; height: auto;
+    object-fit: contain; box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+    border-radius: 12px; cursor: zoom-out;
+  }
+  #aw-lightbox-svg {
+    display: none; background: var(--awn-white); border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45); box-sizing: border-box; cursor: zoom-out;
+  }
+  /* Presenter laser pointer (toggle with the L key). An awn-orange dot that
+     follows the mouse; the system cursor is hidden while it's on. */
+  #aw-laser {
+    position: fixed; z-index: 2147483647; width: 18px; height: 18px;
+    margin-left: -9px; margin-top: -9px; border-radius: 50%;
+    display: none; pointer-events: none;
+    background: radial-gradient(circle, #ff5d2b 0%, #ff5d2b 38%, rgba(255,93,43,0.55) 60%, rgba(255,93,43,0) 75%);
+    box-shadow: 0 0 14px 4px rgba(255,93,43,0.55);
+  }
+  body.aw-laser-on, body.aw-laser-on * { cursor: none !important; }
+</style>
+</head>
+<body class="awn">
+
+<!--
+  AwinOS - initial thoughts on planning. A 30-min 1-1 working argument to James
+  Skelland (VP Eng, Awin) about how to deliver AwinOS. Built on the vendored
+  <deck-stage> runtime (from CodeReviewApproachTalk), re-skinned to the awn
+  design system. Each <section> is one slide; the runtime auto-numbers nav,
+  drives the thumbnail rail, speaker-notes, click-to-zoom, the L-key laser, and
+  Print -> Save as PDF (one page per slide at 1920x1080). Speaker notes live in
+  the #speaker-notes JSON array below the stage, one entry per slide in order.
+
+  Footer chrome: section label bottom-left (orange), page number bottom-right.
+  Page numbers are authored as placeholders ("N / 18") and renumbered on load
+  (see the footer script) so they stay correct; divider slides carry no footer
+  and are excluded from the count - same mechanism as the reference deck.
+
+  SLICE 0 - Foundation: vendored runtime + awn theme, all 18 sections scaffolded
+  (14 main + 4 appendix) in document order, footer chrome, the 18-entry speaker-
+  notes scaffold, and TWO fully-styled reference slides that lock the visual
+  language: slide 1 (title) and slide 2 (the arc-overview). Slides 3-18 are
+  placeholder scaffolds filled in by later slices.
+-->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       SLIDE 1 - TITLE (styled reference slide) - outline §1
+       ════════════════════════════════════════════════════════════════════ -->
+  <!-- The title is the deck's COVER and deliberately carries no footer chrome /
+       page number (it is page 1, the un-footered cover - same convention as the
+       reference deck, and what the footer-renumber script assumes). This is a
+       cover, not a section divider; the doctrine's "every content slide gets
+       footer chrome" is read as excluding the cover. Flagged to the boss. -->
+  <section data-label="Title">
+    <div class="aw-slide aw-slide--hero">
+      <div class="aw-body aw-title__body">
+        <!-- David's steer (Feedback Round 1): a clean cover - no wordmark, no
+             eyebrow, no name/email, no last-word italic. Just the title + goal. -->
+        <div class="aw-title__lockup">
+          <h1 class="aw-h aw-h--hero aw-title__headline">
+            AwinOS - initial planning
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       SCAFFOLD - slides 3-18, placeholders filled by later slices
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- SLIDE 3 - How the plan frames it - outline §2A (tbx) - the agree-first
+       open. FOUR verbatim quotes from Adam's plan, in a 2x2 grid so the slide
+       breathes. The words are verbatim; only em/en dashes are normalised to
+       " - " for house style (no words changed). Quote 2's leading "Every" is
+       capitalised for a standalone display quote (acceptable typographic fix).
+       Eyebrow frames it as agreement; no commentary argues with the quotes. -->
+  <section data-label="What it is">
+    <div class="aw-slide">
+      <div class="aw-body aw-body--top">
+        <h2 class="aw-h aw-h--2" style="margin-bottom:6px">Adam's framing:</h2>
+        <div class="aw-quote-grid">
+          <div class="aw-quote">
+            <p>&ldquo;There is really only one thing to build: a Client Intelligence Record - a single, self-maintaining record for each advertiser and publisher &hellip; Every feature in the vision is a property of that one thing.&rdquo;</p>
+            <cite>Plan &sect;1</cite>
+          </div>
+          <div class="aw-quote">
+            <p>&ldquo;Every account manager walks into every client conversation already briefed - recent history, live performance, the right question to ask - in seconds, not half an hour of digging.&rdquo;</p>
+            <cite>Plan &sect;1</cite>
+          </div>
+          <div class="aw-quote">
+            <p>&ldquo;We are building a layer above it that does the thing a CRM structurally can't: stay current without anyone tending it.&rdquo; &ldquo;A CRM is a filing cabinet people have to keep tidy. This is a record that keeps itself.&rdquo;</p>
+            <cite>Plan &sect;3.1-3.2</cite>
+          </div>
+          <div class="aw-quote">
+            <p>&ldquo;A conversational interface, not another dashboard to learn.&rdquo;<br>&ldquo;a thin retrieval-with-citation layer over the record. The record does the work; the chat layer stays light.&rdquo;</p>
+            <cite>Plan &sect;2.2, &sect;5.2</cite>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">3 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 - I think there are two halves - outline §2B - David's sharpening,
+       offered WITH the grain (agreement-plus, NOT "I fixed the brief"). REDESIGN
+       per Feedback Round 1: two columns, each a designed mock-UI built in live
+       HTML/CSS (not raster, so it stays legible + click-zoom isn't needed).
+       LEFT = a brought-to-life Boohoo Client Intelligence Record, its three
+       data-types tagged in-line (STORED / CALCULATED LIVE / NARRATIVE) + the
+       half-1 text below it. RIGHT = a conversation mock-UI styled like Adam's
+       vision-deck mockup (client-intelligence.awin.internal chrome, purple AM
+       bubble, agent "calculating" reply) + the half-2 text below it. All record
+       values are ILLUSTRATIVE (plausible, not real). Eyebrow removed (G2),
+       footer = page number only (G1), headline plain (G3). Depth (Cowork stance,
+       the ad-hoc skill) lives in the speaker note. -->
+  <section data-label="What it is">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-body--top aw-th">
+        <h2 class="aw-h aw-h--2" style="margin-bottom:2px">I think there are two halves:</h2>
+        <p class="aw-sub" style="max-width:1320px">Whilst the Client Intelligence Record is the core of the piece, I think there are components to its shape.</p>
+        <div class="aw-th__cols">
+
+          <!-- LEFT - the record (half 1) -->
+          <div class="aw-th__col">
+            <div class="aw-rec">
+              <div class="aw-rec__chrome"><span class="aw-rec__dots"></span>client-intelligence.awin.internal</div>
+              <div class="aw-rec__head">
+                <p class="aw-rec__title">Boohoo Group PLC</p>
+                <span class="aw-rec__status">Live</span>
+              </div>
+
+              <div class="aw-rec__block">
+                <span class="aw-rec__tag aw-rec__tag--stored">Stored &middot; set at onboarding</span>
+                <p class="aw-rec__body">ID 8312 &middot; AM Sophie Reid &middot; Fashion / fast fashion &middot; Managed Services<br>Commission 6% default (4-10% by group) &middot; Renewal 28 Feb 2027</p>
+              </div>
+
+              <div class="aw-rec__block">
+                <span class="aw-rec__tag aw-rec__tag--calc">Calculated live &middot; nightly</span>
+                <p class="aw-rec__body">Revenue L30D &pound;284,500 <span class="aw-rec__down">&darr; 12% YoY</span> &middot; Approval 73% &middot; EPC &pound;0.42<br>Top publisher TopCashback &pound;38,200 &middot; 138 active publishers</p>
+              </div>
+
+              <div class="aw-rec__block">
+                <span class="aw-rec__tag aw-rec__tag--narr">Narrative &middot; AI-extracted from calls</span>
+                <p class="aw-rec__body aw-rec__narr">15 Apr - Q1 review: commission-rate dispute outstanding<br>3 Mar - 3 content publishers reviewing strategy, activity down ~40%<br>18 Jan - CSS decline-rate concern raised</p>
+              </div>
+            </div>
+            <p class="aw-th__text"><span class="aw-emph">The record is half the battle</span> - some stored, some calculated (deterministically) live, some inferred or summarised from prior data using LLMs.</p>
+          </div>
+
+          <!-- RIGHT - the interface (half 2) -->
+          <div class="aw-th__col">
+            <div class="aw-conv">
+              <div class="aw-conv__chrome"><span class="aw-rec__dots"></span>client-intelligence.awin.internal</div>
+              <div class="aw-conv__thread">
+                <p class="aw-conv__who aw-conv__who--am">Account manager</p>
+                <div class="aw-conv__ask">To what extent is this year's Easter performance better or worse than last year's - and how does that compare to competitors?</div>
+                <p class="aw-conv__who">Account Advisor</p>
+                <div class="aw-conv__reply">
+                  <p class="aw-conv__replyline">Hold on, calculating<span class="aw-conv__dots"><span></span><span></span><span></span></span></p>
+                  <p class="aw-conv__hint">running L30D vs last year, benchmarking against sector</p>
+                </div>
+              </div>
+            </div>
+            <div class="aw-th__text">
+              <p style="margin:0">The interface is a smaller component than the Client Intelligence Record, but there's still some work to be done here.</p>
+              <p style="margin:16px 0 8px"><span class="aw-emph">Working assumption:</span></p>
+              <ul class="aw-run__bullets">
+                <li>Skills to guide agents on how to interpret live data</li>
+                <li>MCPs to surface various data sets</li>
+                <li>Sandboxed environment for code execution</li>
+              </ul>
+              <p style="margin:16px 0 0">The path of least resistance is to build on an approved, all-inclusive agent - e.g. Copilot Cowork.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">4 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 - The briefing, made concrete - outline §3 (core)
+       The mockup is the hero: the ~60-second "this is the value loop we're
+       proving" artefact. Left rail is spare on purpose (eyebrow + short headline
+       + ONE terse technical bullet "MCP app? / Dynamic UX?" verbatim from the
+       outline + one quiet Copilot->Cowork pointer); the depth lives in notes.
+       The mockup is an <image-slot fit="contain"> so it gets click-to-zoom and
+       is never stretched. Asymmetric grid, centred so it fills the stage. -->
+  <section data-label="The briefing">
+    <div class="aw-slide">
+      <div class="aw-body aw-briefing__body">
+        <div class="aw-grid-asym aw-briefing__grid">
+          <div class="aw-briefing__rail">
+            <h2 class="aw-h aw-h--1 aw-briefing__headline">Additional interface considerations.</h2>
+            <p class="aw-sub aw-briefing__lede">Here you can see the speculative on-demand interface from the original deck. Finding the sweet spot between zero designed interface (i.e. pure chat) and fully designed dashboards will be a process rather than a single decision.</p>
+            <div class="aw-briefing__prompt" style="max-width:46ch">
+              <span class="aw-card__label">For example</span>
+              <p class="aw-briefing__note">This looks like a minimum template populated at runtime - a good use for MCP Apps.</p>
+              <ul class="aw-run__bullets" style="margin-top:4px">
+                <li>We could create a few nicely designed layouts and let the AI choose which to use on demand.</li>
+                <li>We could design standard features - a consistent way to show source verification, etc.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="aw-figure aw-briefing__figure">
+            <image-slot src="assets/briefing-mockup.png" fit="contain" alt="A Boohoo pre-call briefing on client-intelligence.awin.internal: LAST, RISK and OPENING tags, sourced from D365, Gong and the Awin Platform."></image-slot>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">5 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 - The smallest valuable loop - outline §4 (core)
+       The one loop, built as a clean awn HTML flow (NOT a raster): three stages
+       with the awn orange "->" connector between them. The flow is the visual
+       centrepiece, centred on the stage. A short framing line names it as the
+       minimum loop worth proving (value an AM actually uses). Ink surface; the
+       three stages are ink cards so the hue stays single (awn rule 3). -->
+  <section data-label="The smallest loop">
+    <div class="aw-slide aw-slide--ink">
+      <div class="aw-body aw-loop__body">
+        <div class="aw-loop__head">
+          <h2 class="aw-h aw-h--1">The smallest valuable loop (sprint one?)</h2>
+          <p class="aw-sub aw-loop__lede">What's the smallest thing we can build that an account manager actually uses and gets value from?</p>
+        </div>
+        <div class="aw-flow">
+          <div class="aw-card aw-card--ink aw-flow__stage">
+            <p class="aw-card__label">01 &middot; Capture</p>
+            <p class="aw-flow__name">Capture the call</p>
+            <p class="aw-flow__desc">Auto-pull the meeting transcript - no manual logging.</p>
+          </div>
+          <span class="aw-flow__arrow" aria-hidden="true">&rarr;</span>
+          <div class="aw-card aw-card--ink aw-flow__stage">
+            <p class="aw-card__label">02 &middot; Extract</p>
+            <p class="aw-flow__name">Extract the signal</p>
+            <p class="aw-flow__desc">Pull the commitments, risks and updates into the record.</p>
+          </div>
+          <span class="aw-flow__arrow" aria-hidden="true">&rarr;</span>
+          <div class="aw-card aw-card--ink aw-flow__stage">
+            <p class="aw-card__label">03 &middot; Brief</p>
+            <p class="aw-flow__name">Pre-call briefing</p>
+            <p class="aw-flow__desc">Surface it before the next call, every line source-cited.</p>
+          </div>
+        </div>
+        <ul class="aw-loop__points">
+          <li>Ideally, getting feedback from the account manager by the end of the sprint.</li>
+          <li>Adam's instinct is to not surface without a user request - but we could explore this.
+            <ul>
+              <li>e.g. attaching information to the meeting invite</li>
+              <li>a standardized start to the conversation</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">6 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 - How I'd actually run it - outline §4 (core)
+       David's delivery method - a credibility / de-risk beat. Rendered as an
+       ordered sequence with an arc (shadow -> research -> capture -> agree the
+       minimum -> provide it, semi-manual first), NOT a flat bullet dump: each
+       step carries forward to the next, with the orange arrow on the line that
+       hands off. The model/cost discipline is a DISTINCT beat below the
+       sequence (a separate boxed plate), so the two ideas don't blur. The
+       tracing tools + the honest "not sure of the path in Copilot" aside live
+       in the speaker notes. Cream surface, white cards (awn rule 3). -->
+  <section data-label="How I'd run it">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-method__body">
+        <div class="aw-method__head">
+          <h2 class="aw-h aw-h--2">Sprint one thoughts.</h2>
+        </div>
+        <ol class="aw-list aw-list--tight aw-method__steps">
+          <li><span>Shadow an account manager on a real client call.</span></li>
+          <li><span>Interview them - light user research.</span></li>
+          <li><span>Record in Copilot, or transcribe live.</span></li>
+          <li><span>Find the <span class="aw-emph">minimum useful data</span> and get the AMs to agree it.</span></li>
+          <li><span>Provide it for specific calls - <span class="aw-emph">semi-manual first</span>, automate as we go.</span></li>
+        </ol>
+        <div class="aw-method__cost">
+          <span class="aw-bullet">&bull;</span>
+          <span><span class="aw-emph">Fat models first</span> - don't sweat tokens on a pilot. Capture tracing from day one, then <span class="aw-emph">swap in cheaper models</span> once it's optimised.</span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">7 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 - Who builds it - outline §5 (core)
+       Feedback R1: dropped the illustrative pod image; built as a proper
+       org-chart / role-definition spec ("boxes with small boxes inside"). The
+       headline reads the slide as the pod DEFINITION (product / delivery / AI
+       ownership). The core pod = three role boxes, each with sub-boxes naming
+       what's inside it; David (lead) is the wider box. A clearly-lighter outer
+       band below carries the supporting / advisory functions + leadership
+       backing, marked "part-time / advisory" - no fabricated percentages.
+       Eyebrow + footer section label removed (G1/G2). Cream surface; the pod is
+       a lilac plate, role boxes white, the outer band a quiet hairline set. -->
+  <section data-label="Who builds it">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-org__body">
+        <div class="aw-org__head">
+          <h2 class="aw-h aw-h--2 aw-org__headline">The pod: product, delivery and AI ownership.</h2>
+          <p class="aw-sub aw-org__sub">Three core roles, stood up together in the pilot.</p>
+        </div>
+
+        <!-- The core pod: a lilac plate holding the three role boxes. -->
+        <div class="aw-org__pod">
+          <span class="aw-org__pod-tag">The pod &middot; core, full-time</span>
+          <div class="aw-org__roles">
+
+            <!-- David - lead. The wider box; sub-boxes name what's inside the role. -->
+            <div class="aw-org__role aw-org__role--lead">
+              <p class="aw-org__role-name">David <span class="aw-org__role-kind">&middot; lead</span></p>
+              <p class="aw-org__role-line">Owns overall delivery and AI quality - not an individual-contributor seat.</p>
+              <div class="aw-org__subs">
+                <span class="aw-org__sub-box">Hybrid: user researcher + stakeholder work + AI experimentation and quality</span>
+                <span class="aw-org__sub-box">Owns alignment between stakeholders and the team</span>
+                <span class="aw-org__sub-box">Works in scripts, notebooks and small demo apps - hill-climbing and testing prompts</span>
+              </div>
+              <p class="aw-org__role-note">Good AI taste. Honest that the software taste is the architect's - not mine.</p>
+            </div>
+
+            <!-- Data engineer. -->
+            <div class="aw-org__role">
+              <p class="aw-org__role-name">Data engineer</p>
+              <p class="aw-org__role-line">The performance plane.</p>
+              <div class="aw-org__subs">
+                <span class="aw-org__sub-box">Knows the Awin data and the warehouse</span>
+                <span class="aw-org__sub-box">Text-to-SQL - questions answered straight off the data in plain English</span>
+                <span class="aw-org__sub-box">Turns live performance into something the record can use</span>
+              </div>
+            </div>
+
+            <!-- Software architect. -->
+            <div class="aw-org__role">
+              <p class="aw-org__role-name">Software architect</p>
+              <p class="aw-org__role-line">Durability, integration and the long-term build.</p>
+              <div class="aw-org__subs">
+                <span class="aw-org__sub-box">The plumbing - moving data around, firing events as things happen</span>
+                <span class="aw-org__sub-box">Gets data to where the AI can process it</span>
+                <span class="aw-org__sub-box">Owns the integration boundary the next phase inherits</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- The connector + outer perimeter: a lighter advisory band the pod
+             sits inside. Part-time / advisory - never core. -->
+        <div class="aw-org__connector"></div>
+        <div class="aw-org__outer">
+          <div class="aw-org__outer-head">
+            <span class="aw-org__outer-tag">Supporting and advisory</span>
+            <span class="aw-org__outer-weight">part-time / advisory, not core</span>
+          </div>
+          <div class="aw-org__outer-boxes">
+            <span class="aw-org__outer-box">CRM oversight</span>
+            <span class="aw-org__outer-box">DPA and policy</span>
+            <span class="aw-org__outer-box">Works council</span>
+            <span class="aw-org__outer-box">Bought-in account managers</span>
+            <span class="aw-org__outer-box aw-org__outer-box--backing">Leadership backing &middot; VP Eng + VP Prod</span>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">8 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 - It fits Adam's timeline - outline §6A (core)
+       Adam's four-phase timeline image is the evidence (reused as-is, its raster
+       em dashes stay). Framing: value not feature - prove value on a short loop
+       before the big build. The key argument is the front-load-both-engineers
+       beat, rendered as the slide's payoff below the timeline so it reads as
+       "agreeing with Adam's phases and adding staffing emphasis", not rewriting
+       his plan. Lilac surface. -->
+  <section data-label="Fits the timeline">
+    <div class="aw-slide">
+      <div class="aw-body aw-tl__body">
+        <div class="aw-tl__head">
+          <h2 class="aw-h aw-h--2 aw-tl__headline">Adam's timeline.</h2>
+          <p class="aw-sub aw-tl__lede">Orient around value as opposed to features, and at each stage identify the most viable next experiment - prove the value on the short loop before committing. Emphasise actual use and meaningful impact throughout, not just ticking boxes.</p>
+        </div>
+        <div class="aw-figure aw-tl__figure">
+          <image-slot src="assets/adam-timeline.png" fit="contain" alt="Adam's four-phase timeline: 01 Lighthouse pilot (now to month 6), 02 Architecture (months 6 to 12), 03 The build (months 12 to 24), 04 Scale (month 24+)."></image-slot>
+        </div>
+        <div class="aw-tl__payoff">
+          <span class="aw-bullet">&bull;</span>
+          <span>One staffing emphasis on top: <span class="aw-emph">front-load both engineers into the pilot (Phase 01).</span> The architecture and build run months 6-24 - but the pilot is where the people who'll own that architecture learn through experimentation, in order to have sufficient judgement that the architecture is well grounded. They live the learning; they don't inherit a finished spec.</span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">9 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 - Built to de-risk the big build - outline §6A' (core)
+       Three de-risk principles as three clean ink cards (ink surface -> ink
+       cards, awn rule 3). Each card is a top-line claim + a one-line "why this
+       de-risks your build". Top-line claims are CORE; the tooling/tracing detail
+       lives in notes. Body centred so the three cards fill the stage. -->
+  <section data-label="Built to de-risk">
+    <div class="aw-slide aw-slide--ink">
+      <div class="aw-body aw-derisk__body">
+        <div class="aw-derisk__head">
+          <h2 class="aw-h aw-h--2">Phase one in more detail.</h2>
+        </div>
+        <div class="aw-grid-3 aw-derisk__cards">
+          <div class="aw-card aw-card--ink">
+            <p class="aw-card__label">01 &middot; Nothing irreversible</p>
+            <p>The pilot uses conventional, replaceable parts. The real data-integration architecture stays at months 6-12 - the pilot de-risks it first, rather than committing to it early.</p>
+          </div>
+          <div class="aw-card aw-card--ink">
+            <p class="aw-card__label">02 &middot; Instrument from day one</p>
+            <p>Every LLM call is logged (using tracing systems such as LangSmith / Arize Phoenix / Braintrust). The goal is to give us a dataset to optimise prompts and model choices as we move from experimentation to implementation.</p>
+          </div>
+          <div class="aw-card aw-card--ink">
+            <p class="aw-card__label">03 &middot; The interface</p>
+            <p>Working assumption: a Cowork interface + skills + MCPs thrown together quickly for the initial stages, but firmed up from the midway point so it can survive rigorous architecture in the next phase.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">10 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 - The four planes, sequenced - outline §6B (compress)
+       Built as awn HTML (NOT a raster). Two phase bands from Adam's timeline -
+       Phase 01 (pilot) and Phase 04 (scale) - with the four planes positioned
+       against them, so the plane-sequencing visibly RIDES ON TOP of Adam's
+       phases and agrees with them. First two planes (relationship + performance)
+       sit under Phase 01, run in parallel, and each carries the engineer it maps
+       to; last two (market context + risk/opportunity) sit under Phase 04 where
+       Adam's deck puts them. Lilac surface, white plane cards. -->
+  <section data-label="The four planes">
+    <div class="aw-slide">
+      <div class="aw-body aw-tl__body">
+        <div class="aw-tl__head">
+          <h2 class="aw-h aw-h--2">The four planes.</h2>
+        </div>
+        <div class="aw-figure aw-tl__figure">
+          <image-slot src="assets/adam-four-planes.png" fit="contain" alt="Adam's four planes: relationship history, performance intelligence, market context, risk and opportunity flags."></image-slot>
+        </div>
+        <p class="aw-tl__payoff">
+          <span class="aw-bullet">&bull;</span>
+          <span>The first two are the pilot. The last two come at Scale.</span>
+        </p>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">11 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 12 - How we run it - outline §7 (core/compress)
+       Governance + cadence as part of "safe hands". Three beats, three white
+       cards on the cream surface (awn rule 3): the recurring show-and-tell (the
+       key thing - given the first, widest card); governance mapped early
+       (privacy / works council / retention - a CORE safe-hands beat, not an
+       afterthought); a trusted works-council bridge person (framed as TRUST, not
+       authority - "open to your steer on who", NOT "find a pro-AI member"; that
+       preference is speaker-notes only). The pod-owns-its-success-measures point
+       is verbal (notes), not on the slide. Body centred so it fills the stage. -->
+  <section data-label="How we run it">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-run__body">
+        <div class="aw-run__head">
+          <h2 class="aw-h aw-h--2">Governance.</h2>
+          <p class="aw-sub">Open to input here, but assumption of something like the following:</p>
+        </div>
+        <div class="aw-grid-3 aw-run__cards">
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Start with 1-1s for alignment</p>
+            <ul class="aw-run__bullets">
+              <li>David + JS (tech)</li>
+              <li>David + SS (product)</li>
+              <li>David + Works Council (alignment, concerns, relationship, buy-in)</li>
+              <li>David + AM</li>
+            </ul>
+            <p class="aw-run__cadence">Cadence that makes sense - weekly / fortnightly / monthly etc.</p>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Fortnightly show-and-tells</p>
+            <p>At the end of each sprint, a 30-minute meeting where we demonstrate progress since last time, surface challenges, and give a broader group of stakeholders a chance to weigh in.</p>
+            <ul class="aw-run__bullets">
+              <li>Unsure who these stakeholders are - could be other AMs, works council in general, DPIA, anyone relevant who doesn't need to be deeply involved day-to-day but could weigh in on overall progress.</li>
+            </ul>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">The next sprint</p>
+            <p>Sprint planning the day after the show-and-tell (usually) - to incorporate feedback and focus on the next most valuable contributions.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">12 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 13 - What I'm looking for - outline §8 (asks 1-4) (core)
+       The ask, part 1. The four asks rendered plainly and IN ORDER (do not
+       soften, embellish or reorder - these are David's actual asks). Ink surface.
+       Built as a numbered sequence; #4 (the nod to stand up the pod and lead the
+       pilot) is the core ask of the whole deck, so it is elevated to a contained
+       orange-accented plate below the first three - given the most weight. The
+       arc is James's engineering nod now, Stephen alignment next (asks 2 + 4).
+       Body centred so it fills the stage. -->
+  <section data-label="What I'm looking for">
+    <div class="aw-slide aw-slide--ink">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">What I'm looking for.</h2>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span><span class="aw-emph">Feedback</span> on this.</span></li>
+          <li><span><span class="aw-emph">Support (JS + Stephen) thinking in advance about names</span> who could be freed up, part-time if not full-time - the two engineering roles, the account managers, the various governance types.</span></li>
+        </ol>
+        <div class="aw-ask__nod">
+          <span class="aw-ask__nod-num">03</span>
+          <span class="aw-ask__nod-text"><span class="aw-emph">The nod (from JS and Stephen)</span> to stand up the pod and lead the pilot.<br><span class="aw-ask__nod-note">(current contract ends end of June)</span></span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">13 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 14 - Two practical notes - outline §8 (asks 5-6) (core)
+       The ask, part 2 - given its own slide so the continuation ask gets a clean,
+       calm moment (it is EARNED by everything before it). Render plainly; do NOT
+       euphemise. Note 1 is the contract-extension ask, stated exactly as plainly
+       as the outline: "my contract ends at the end of this month - so if you want
+       me to lead this, it'll need extending." No self-justifying rationale on the
+       slide (the plan's-own-role supporting hook is speaker-notes only). Note 2 is
+       a plain heads-up, not a hard ask. Two white cards on the lilac surface; the
+       slide is deliberately calm and uncrowded. Body centred. -->
+  <section data-label="Two practical notes">
+    <div class="aw-slide">
+      <div class="aw-body aw-notes__body">
+        <div class="aw-notes__head">
+          <h2 class="aw-h aw-h--2">Two practical notes.</h2>
+        </div>
+        <div class="aw-grid-2 aw-notes__cards">
+          <div class="aw-card aw-notes__card">
+            <p class="aw-card__label">My contract</p>
+            <p>My contract ends at the end of this month - so if you want me to lead this, it'll need extending.</p>
+          </div>
+          <div class="aw-card aw-notes__card">
+            <p class="aw-card__label">Heads-up - the Cloud VM</p>
+            <p>My Cloud VM call is next. There's a budget cost, but I can't work on the Dell and my setup struggles with too many physical machines.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">14 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       APPENDIX - A1 divider then A2-A4. Mechanically marked: divider, then
+       each appendix content slide carries the "Appendix" footer label and is
+       excluded from the main count. The divider has no footer (excluded too).
+       ════════════════════════════════════════════════════════════════════ -->
+
+  <!-- A1 - APPENDIX divider - outline §9. A divider: purple holding plate, no
+       footer chrome, excluded from the page count. Spare on purpose - just the
+       "Appendix" mark and a one-line "here if we need it" so it reads as a clean
+       section break, not a built-up slide. -->
+  <section data-label="Appendix">
+    <div class="aw-divider">
+      <p class="aw-eyebrow">Appendix</p>
+      <h1 class="aw-h aw-h--hero" style="max-width:1400px">Appendix.</h1>
+      <p class="aw-lead" style="color:rgba(255,255,255,0.85); margin-top:20px; max-width:1100px">
+        Here if we need it.
+      </p>
+    </div>
+  </section>
+
+  <!-- A2 - Push the briefing - outline §9 (evidence). Backup point David opens
+       only if asked. Spare: lilac surface, a short headline + a one-line setup +
+       a single consequence line (reusing the .aw-consequence vocabulary). It's a
+       small reframe offered with the grain - pull as well as push, not a rewrite.
+       Body centred for sensible balance; deliberately text-light. -->
+  <section data-label="Appendix">
+    <div class="aw-slide">
+      <div class="aw-body aw-body--center">
+        <div style="max-width:1200px; text-align:left">
+          <h2 class="aw-h aw-h--1" style="margin-bottom:24px">Push the briefing.</h2>
+          <p class="aw-sub" style="max-width:1200px; text-align:left">The plan has the briefing arrive when an account manager asks for it. We could also <span class="aw-emph">push</span> it - have it land ahead of a scheduled call, triggered from the calendar, before anyone thinks to pull it.</p>
+          <div class="aw-consequence" style="margin-top:28px; max-width:1200px; text-align:left">
+            <span class="aw-bullet">&bull;</span>
+            <span>Same record, same loop - just a second trigger. Worth doing once the on-demand briefing has proven itself, not before.</span>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__section">Appendix</span>
+        <span class="aw-foot__page">A2</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- A3 - Raw transcripts aren't mostly noise - outline §9 (evidence). Backup
+       point. Spare: lilac surface, headline + a one-line claim + a single
+       consequence line proposing the A/B as the way to settle it (not a claim
+       asserted, a test offered). Body centred; text-light. -->
+  <section data-label="Appendix">
+    <div class="aw-slide">
+      <div class="aw-body aw-body--center">
+        <div style="max-width:1200px; text-align:left">
+          <h2 class="aw-h aw-h--1" style="margin-bottom:24px">Raw transcripts aren't mostly <em>noise.</em></h2>
+          <p class="aw-sub" style="max-width:1200px; text-align:left">The instinct is to extract the signal and discard the transcript. I'd keep the raw transcript - redacted - rather than throw it away up front. The off-hand line that turns out to matter is usually in the raw text, not the summary.</p>
+          <div class="aw-consequence" style="margin-top:28px; max-width:1200px; text-align:left">
+            <span class="aw-bullet">&bull;</span>
+            <span>We don't have to argue it - prove it with an A/B: a briefing built with the raw-transcript signal against one built without, and see which an account manager prefers.</span>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__section">Appendix</span>
+        <span class="aw-foot__page">A3</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- A4 - A question on the data landscape - outline §9 (evidence). This is a
+       QUESTION FOR JAMES, not a claim - framed neutrally, an open question to
+       raise, not a correction. Spare: lilac surface, headline + the two facts
+       side by side + the question. Body centred; text-light. The two facts are
+       the deck mockup's "sourced from D365" vs David's notes (Salesforce +
+       Databricks); the slide just asks how they relate. -->
+  <section data-label="Appendix">
+    <div class="aw-slide">
+      <div class="aw-body aw-body--center">
+        <div style="max-width:1280px; text-align:left">
+          <h2 class="aw-h aw-h--1" style="margin-bottom:28px">A question on the data <em>landscape.</em></h2>
+          <div class="aw-grid-2" style="max-width:1100px; margin-bottom:28px">
+            <div class="aw-card aw-card--lilac">
+              <p class="aw-card__label">The vision-deck mockup</p>
+              <p>The briefing example is &ldquo;sourced from D365.&rdquo;</p>
+            </div>
+            <div class="aw-card aw-card--lilac">
+              <p class="aw-card__label">My notes</p>
+              <p>Awin's data sits on Salesforce, mirrored in Databricks.</p>
+            </div>
+          </div>
+          <div class="aw-consequence" style="max-width:1200px; text-align:left">
+            <span class="aw-bullet">&bull;</span>
+            <span>Not a contradiction I'm flagging - just something I'd want to understand: how do Salesforce, Databricks and D365 actually relate, and which is the source for the pilot?</span>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__section">Appendix</span>
+        <span class="aw-foot__page">A4</span>
+      </footer>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SPEAKER NOTES - one entry per slide, in document order (18 entries).
+     David's first-person voice. Real notes for the two styled slides (1, 2);
+     one-line placeholders for the scaffolds, filled in by later slices.
+     Must JSON.parse clean (validated by count = 18 and by parse).
+     ════════════════════════════════════════════════════════════════════════ -->
+<script type="application/json" id="speaker-notes">
+[
+  "Title. Keep it calm and short. James, thanks - I've had a proper read of Adam's plan and the vision deck, and I agree with most of it. What I want to do in the next half hour is make it concrete: how I'd actually deliver this, in a way that's achievable and de-risks the bigger build behind it. I'm not here to rewrite Adam's plan - I'm here to sharpen the delivery and, honestly, to put my hand up to lead it. So this is initial thinking on planning, not a finished spec.",
+  "Adam's framing. I want to start by agreeing, in Adam's own words, so we're on the same page before I add anything. This is the core of it. There's really one thing to build - the Client Intelligence Record, one self-maintaining record per advertiser and publisher, and everything else is a property of that. The value is that an AM walks in already briefed, in seconds, not half an hour of digging. It isn't a CRM - it stays current without anyone tending it. And the interface is conversational, a thin retrieval-with-citation layer, not another dashboard. I agree with all of that. Move through this fast - I don't want to dwell on quoting the plan back at you, just to ground us. (Timing: this and the next slide together are about two minutes. Don't read all four out loud - point at them, say 'I agree with the core of this', move on.)",
+  "I think there are two halves. The Client Intelligence Record is the core of the piece - I'm not arguing with that - but I think it has two components worth separating, and I'll show you both as concrete mockups. The left one is the record, brought to life. The point I want to land is that it isn't one flat thing: some of it is stored and slow-moving - the account owner, the commission structure, the renewal date, set at onboarding and changed when facts change. Some is calculated live - revenue, approval rate, EPC, top publishers - refreshed nightly off the Awin platform and the warehouse. And some is narrative, AI-extracted from prior calls and summarised - the commission dispute, the publishers reviewing strategy. The numbers on screen are illustrative, but that's the shape of it. So the record is half the battle, and most of the data work lives there. The right mockup is the other half - the interface. It's smaller than the record, but it still has to be designed and tested - it isn't nothing. Here an AM asks a real question - how's Easter doing versus last year, versus competitors - and the agent says 'hold on, calculating'. That's the bit I want to make concrete: a well-designed agent skill plus well-designed MCP connectors let the agent interrogate the data, write its own analysis in Python, and execute it safely in the Cowork environment. That's why my stance is to use Copilot Cowork rather than build our own agent - we want that ad-hoc, code-writing capability, not just a chat layer. If time is tight, I show both mockups, say 'record is the core but it has these components, and the interface still has to be built', and move on. If James engages, this is where I go deeper on the Cowork point.",
+  "Additional interface considerations. This is the speculative on-demand interface from the original deck - have a look at it for a moment. The point I want to make is that finding the right interface is a process, not a single decision. There's a spectrum: at one end, zero designed interface - pure chat, you just ask and it answers. At the other end, fully designed dashboards. The sweet spot is somewhere in between, and we'll find it by trying things, not by deciding up front. What this mockup looks like to me is a minimum template populated at runtime - so rather than building a fixed dashboard, the agent hydrates a lightweight view on the fly. That's a good use for MCP Apps. Technically the interface is skills plus MCP connectors injected into the agent. And the agency point matters here: an AM won't only ask the standard questions - one will say 'let me try a few scenarios for this client' - so we want the agent able to interrogate the data and write its own analysis on demand, which is why this really wants to be a Cowork situation rather than a plain chat agent. I'll talk to the open questions - MCP app, dynamic UX - rather than putting the detail on the slide.",
+  "The smallest valuable loop. This is where we start the exploration, so let me reset for a second and ask the simplest question: what's the smallest thing we can build that an account manager actually uses and gets value from? My answer is this loop - capture the call, extract the signal into the record, surface a pre-call briefing before the next one. That's it. The test of 'valuable' is simple: the account manager actually uses it on a real call. Everything else in the vision - market context, risk flags, the bigger architecture - layers on top once it's proven. One thing worth flagging: Adam's instinct is not to surface anything without the user asking for it, and I think that's a sensible default - but it's something we could explore. There may be a place for the briefing to land ahead of a call without being asked. I'd hold that lightly and test it rather than decide it now.",
+  "Sprint one thoughts. This is a rough plan for how I'd actually run the first sprint, and it's mostly old-fashioned product work. First I'd shadow an AM on a real call and take notes. Then light user research - interview them - and I can run that myself if there's no in-house researcher to lean on. Record it in Copilot, or transcribe live. Out of that I work out the minimum useful data - the few things that actually change how the call goes - and I get the AMs to agree it, because it's their tool and they have to want it. Then provide it for specific calls, semi-manual at first, automating as we go. On models: I'd use fat, capable models to begin with and not sweat the token cost on a pilot - the point is to learn fast, not optimise early. But I'd capture tracing from day one so we can see what's happening and later swap in cheaper models once we've optimised. I've used LangSmith, Arize Phoenix and Braintrust for that kind of tracing before. I'll be honest - I'm not yet certain what the path of least resistance is for tracing inside Copilot specifically; that's something I'd nail down early.",
+  "The pod. This is how I'd define the team - product, delivery and AI ownership, three core roles stood up together in the pilot, because the pilot is where the judgement that makes the later architecture right actually gets formed. I'll come back to that on the next slide. Me, leading: I own overall delivery and AI quality - I'm a hybrid, as comfortable doing the user research and the stakeholder work as the AI experimentation, and I own keeping the stakeholders and the team aligned. On the AI side I work in scripts, notebooks and little demo apps - a safe, isolated place to hill-climb and test prompts, separate from the durable build. I can provide good AI taste; I'm honest that the software taste is the architect's, not mine. Second, a data engineer who owns the performance plane: knows the Awin data and the warehouse, does the text-to-SQL, turns live performance into something the record can use. Third, a software architect who owns durability and integration and the long-term build - the plumbing, moving data around, firing events as things happen, getting data to where the AI can process it. He owns the integration boundary that Phase 02 inherits, which is exactly why I want him in the pilot from the start. Then a lighter outer band, part-time or advisory rather than core: CRM oversight, DPA and policy, the works council - with leadership backing from VP Eng and VP Prod. I'm deliberately not putting hard percentages on those - the point is they weigh in where they're needed, they're not full-time on the pod. (If time is short: the make-up and my leading it is the thing to protect - this is the core ask the whole deck builds to.)",
+  "Adam's timeline. I want to be clear that I'm not proposing a different plan - this is Adam's timeline, and I agree with it. Four phases: the lighthouse pilot now to month 6, the architecture from 6 to 12, the build from 12 to 24, scale from 24 on. The framing I'd hold onto is to orient around value rather than features - at each stage, identify the most viable next experiment and prove the value on the short loop before committing. And to keep emphasising actual use and meaningful impact all the way through, not just ticking boxes. The one emphasis I'd add on top of his phases - and it's an emphasis, not a change - is to front-load both engineers into the pilot, into Phase 01. The architecture and the build run months 6 to 24, but the pilot is where the people who'll own that architecture learn through experimentation, so that they have sufficient judgement that the architecture is well grounded. I don't want them inheriting a finished spec; I want them living the learning while it's happening, because that's what makes the months-6-12 design good. And the longer the build ahead of us is, the more that early judgement is worth. So: agree with Adam's shape, just put the architecture owners in the room while the evidence is being made.",
+  "Phase one in more detail. Three principles that make the pilot safe for the build that follows it - this is the heart of why I'd run it this way. One, nothing irreversible: everything in the pilot is conventional and replaceable, and the real data-integration architecture stays at months 6 to 12 - the pilot de-risks that decision rather than pre-committing to it. Two, instrument from day one: we log every LLM call, using tracing systems like LangSmith, Arize Phoenix or Braintrust. The goal isn't just observability for its own sake - it's to build up a dataset we can use to optimise prompts and model choices as we move from experimentation into implementation. Three, the interface is a working assumption, not a fixed commitment: a Cowork interface plus skills and MCPs thrown together quickly for the initial stages, then firmed up from the midway point so it can survive rigorous architecture in the next phase. The through-line is that each one keeps the expensive, hard-to-reverse decisions for when we have evidence, not before.",
+  "The four planes. This is Adam's own slide - the four planes the record has to cover: relationship history, performance intelligence, market context, and risk and opportunity flags. I'm showing it as he drew it because I agree with it and I'm building on top of it, not resequencing it. The point I want to make standing here is the split. The first two - relationship history and performance - are the pilot. They're the fastest to prove and the most independent, and they map cleanly onto the two people I'd stand up: relationship history is me on the AI side, performance is the data engineer. The last two - market context and risk and opportunity flags - come later, at Adam's Scale phase, which is exactly where his deck puts them. So this rides on top of Adam's plan and agrees with it: prove the first two first, layer the last two on once the foundation is solid. (Compress slide - I can land it in two sentences: first two planes are the pilot, mapping to me and the data engineer; the last two arrive at Scale, where Adam already puts them.)",
+  "Governance. A few words on how we'd run it, because part of making this feel safe is showing I've thought about the people and the cadence, not just the tech. I'm genuinely open to your input here - this is an assumption of something like the following, not a fixed scheme. First, I'd start with 1-1s for alignment: me with you on the tech, me with Stephen on the product, me with the works council on alignment, concerns, relationship and buy-in, and me with the account manager. The cadence is whatever makes sense - weekly, fortnightly, monthly. Second, fortnightly show-and-tells: at the end of each sprint, a 30-minute meeting to demonstrate progress, surface challenges, and give a broader group a chance to weigh in. I'm not sure exactly who that group is - could be other AMs, the works council more generally, DPIA, anyone relevant who doesn't need to be deep in it day-to-day but could comment on overall progress. Third, sprint planning the day after the show-and-tell, usually - so we incorporate the feedback and focus on the next most valuable contributions. On the works council specifically, the goal there is trust, not authority - I want to win them over rather than push something past them, and I'm open to your and Stephen's steer on who the right contact is.",
+  "What I'm looking for. So, what I'm actually after today. Three things. First, feedback on all of this - this is initial thinking and I want your read on it. Second, support from you and Stephen thinking in advance about names - people who could be freed up, part-time if not full-time. Not just the two engineering roles, but the account managers and the various governance types too, so we're not starting from scratch when we spin up. And third, the one that matters most: the nod from you and Stephen to stand up the pod and lead the pilot. That's really the ask. I'll touch the contract point on the next slide. (If time is short, this is the slide to protect - the nod to lead is the thing the whole deck builds to. Don't let the earlier detail eat the moment where I actually ask.)",
+  "Two practical notes. Two quick practical things, and I'll say them plainly. The first is just a fact: my contract ends at the end of this month. So if you want me to lead this, it'll need extending. I'm not going to dress that up - it's a dependency you should know about now rather than later. (If it's useful, the plan itself already names a lightweight external architecture input role meanwhile, before the CPTO hire - that's effectively the role I'm describing - but I'd only mention that lightly; I don't want to lean on it as the argument.) The second is just a heads-up: my Cloud VM call is coming up next. There's a budget cost to it, but I genuinely can't work on the Dell, and my setup struggles with too many physical machines. Not a hard ask today - I just want it on your radar so it isn't a surprise.",
+  "Appendix. I'll only get here if we've finished early or you've pulled on one of these. There are three things I had thoughts on but deliberately kept out of the main argument, because none of them changes the bet I'm asking you to make today - they're refinements for once we're actually building. So I'll only open them if you want to.",
+  "Push the briefing. One small thing on top of the plan. The vision has the briefing arrive when an AM asks for it, on demand - which is right. The extra idea is that we could also push it: have it land ahead of a call that's already in their calendar, before they think to ask. It's the same record and the same loop, just triggered by the diary as well as by a question. I wouldn't build it first - it's only worth doing once the on-demand briefing has proven it's useful - but it's a cheap, natural extension and worth having in mind when we design the loop, so we don't accidentally build something that can only ever be pulled.",
+  "Raw transcripts aren't mostly noise. There's a natural instinct, when you're extracting structured signal from a call, to treat the raw transcript as disposable - pull out the commitments and the decisions and discard the rest. I'd push back on that gently. The line that turns out to matter - the offhand thing a client said that becomes important three calls later - is usually in the raw text, not in the tidy summary. So I'd keep the raw transcript, redacted, rather than throw it away up front. And I wouldn't ask you to take that on faith - it's exactly the kind of thing we can settle with a quick A/B in the pilot: build a briefing using the raw-transcript signal, build one without it, and see which the AM actually finds more useful. Cheap to test, and it tells us how much to keep.",
+  "A question on the data landscape. This one really is just a question for you, not a point I'm making. The vision deck's briefing mockup says the data is 'sourced from D365' - that's Microsoft's CRM. But my notes from the work so far have Awin's data on Salesforce, mirrored into Databricks. I'm not flagging a contradiction or suggesting anything's wrong - I genuinely don't know how those fit together. So when we get into it, I'd want to understand how Salesforce, Databricks and D365 relate, and which one is actually the source we'd read from for the pilot. You'll know the real picture far better than I do - it's the kind of thing that's much faster to just ask than to reverse-engineer."
+]
+</script>
+
+<!-- Runtime: image-slot first (so slots upgrade), then the stage. -->
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<!-- Auto-number footer page numbers. Every footer-bearing slide carries a
+     .aw-foot__page span (authored inline in light DOM, so a top-level
+     querySelectorAll finds them in document order); we renumber on load so the
+     authored "N / 18" placeholders stay correct as slides move. Divider slides
+     have no footer and are correctly excluded from both count and numbering.
+     Appendix pages are labelled A1.. (A1 is the footer-less divider, so the
+     first appendix CONTENT slide is A2, matching the slide map). Dependency-
+     free; mirrors the reference deck's mechanism. -->
+<script>
+(function () {
+  function numberFooters() {
+    var pages = Array.prototype.slice.call(document.querySelectorAll('.aw-foot__page'));
+    // Appendix pages keep their authored Ax labels; only the main run (page
+    // numbers of the form "N / M") is renumbered. The title slide (slide 1)
+    // is a cover and carries no footer, so the first FOOTERED main slide is
+    // page 2. Number the main run as 2..14 of 14 so the page number matches
+    // the slide's actual position in the deck (and the slide map). Dividers
+    // have no footer and are excluded.
+    var main = pages.filter(function (p) { return !/^A\d/.test((p.textContent || '').trim()); });
+    var total = main.length + 1;   // +1 for the un-footered title cover
+    main.forEach(function (p, i) { p.textContent = (i + 2) + ' / ' + total; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+
+<!-- Click-to-zoom image lightbox (self-contained, dependency-free). Click any
+     image-slot or <img> to open it fullscreen; click / Esc / Space / any Arrow
+     closes it. Keys are intercepted at the capture phase so deck-stage's nav
+     handler never sees them. <video> is excluded. Re-skinned to awn (purple
+     backdrop); behaviour is unchanged from the reference deck. -->
+<script>
+(function () {
+  var overlay = null, overlayImg = null, svgWrap = null;
+  var group = [], idx = 0;
+
+  function ensureOverlay() {
+    if (overlay) return overlay;
+    overlay = document.createElement('div');
+    overlay.id = 'aw-lightbox';
+    overlayImg = document.createElement('img');
+    overlayImg.alt = '';
+    overlay.appendChild(overlayImg);
+    svgWrap = document.createElement('div');
+    svgWrap.id = 'aw-lightbox-svg';
+    overlay.appendChild(svgWrap);
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', function (e) { e.stopPropagation(); close(); });
+    return overlay;
+  }
+  function isOpen() { return overlay && overlay.classList.contains('is-open'); }
+  function render() {
+    var it = group[idx];
+    if (!it) return;
+    if (it.kind === 'svg') {
+      overlayImg.style.display = 'none';
+      svgWrap.style.display = 'block';
+      var el = it.el;
+      var vb = (el.getAttribute('viewBox') || '').split(/[\s,]+/).map(Number);
+      var w = vb[2] || el.clientWidth || 600, h = vb[3] || el.clientHeight || 400;
+      var pad = 28;
+      var availW = window.innerWidth * 0.92 - pad * 2;
+      var availH = window.innerHeight * 0.92 - pad * 2;
+      var scale = Math.min(availW / w, availH / h);
+      var dw = Math.round(w * scale), dh = Math.round(h * scale);
+      var clone = el.cloneNode(true);
+      clone.setAttribute('width', dw); clone.setAttribute('height', dh);
+      clone.style.width = dw + 'px'; clone.style.height = dh + 'px'; clone.style.display = 'block';
+      svgWrap.style.padding = pad + 'px';
+      svgWrap.innerHTML = ''; svgWrap.appendChild(clone);
+    } else {
+      svgWrap.style.display = 'none'; svgWrap.innerHTML = '';
+      overlayImg.style.display = 'block'; overlayImg.src = it.src;
+    }
+  }
+  function show(i) { if (!group.length) return; idx = (i + group.length) % group.length; render(); }
+  function open(node) {
+    var g = groupFor(node);
+    if (!g.items.length) return;
+    group = g.items; idx = g.idx;
+    ensureOverlay(); render(); overlay.classList.add('is-open');
+  }
+  function close() {
+    if (overlay) { overlay.classList.remove('is-open'); overlayImg.removeAttribute('src'); if (svgWrap) svgWrap.innerHTML = ''; }
+    group = []; idx = 0;
+  }
+  function resolve(raw) { if (!raw) return ''; try { return new URL(raw, document.baseURI).href; } catch (e) { return raw; } }
+  function srcFor(node) {
+    if (!node) return '';
+    var tag = (node.tagName || '').toLowerCase();
+    if (tag === 'image-slot') {
+      try { var inner = node.shadowRoot && node.shadowRoot.querySelector('img[part="image"]'); if (inner && inner.getAttribute('src')) return resolve(inner.getAttribute('src')); } catch (e) {}
+      return resolve(node.getAttribute('src'));
+    }
+    if (tag === 'img') return resolve(node.getAttribute('src') || node.currentSrc || node.src);
+    return '';
+  }
+  function itemFor(node) {
+    if (!node) return null;
+    var tag = (node.tagName || '').toLowerCase();
+    if (tag === 'svg') return { kind: 'svg', el: node };
+    var s = srcFor(node); return s ? { kind: 'img', src: s } : null;
+  }
+  function groupFor(node) {
+    var gal = node.closest ? node.closest('[data-gallery]') : null;
+    var items = [], idx0 = 0;
+    if (gal) {
+      var nodes = Array.prototype.slice.call(gal.querySelectorAll('image-slot, img, svg[data-zoom]'));
+      for (var i = 0; i < nodes.length; i++) {
+        if (overlay && overlay.contains(nodes[i])) continue;
+        var it = itemFor(nodes[i]); if (!it) continue;
+        if (nodes[i] === node) idx0 = items.length;
+        items.push(it);
+      }
+    }
+    if (!items.length) { var single = itemFor(node); if (single) items.push(single); }
+    return { items: items, idx: idx0 };
+  }
+  function findTarget(e) {
+    var path = (e.composedPath && e.composedPath()) || [];
+    if (!path.length && e.target) path = [e.target];
+    var imgFallback = null, svgFallback = null;
+    for (var i = 0; i < path.length; i++) {
+      var n = path[i]; if (!n || !n.tagName) continue;
+      var tag = n.tagName.toLowerCase();
+      if (tag === 'video') return null;
+      if (tag === 'image-slot') return n;
+      if (tag === 'img') { if (overlay && overlay.contains(n)) return null; if (!imgFallback) imgFallback = n; }
+      if (tag === 'svg') { if (overlay && overlay.contains(n)) return null; if (n.hasAttribute && n.hasAttribute('data-zoom') && !svgFallback) svgFallback = n; }
+    }
+    return imgFallback || svgFallback;
+  }
+  document.addEventListener('click', function (e) {
+    if (isOpen()) return; if (e.defaultPrevented) return;
+    var node = findTarget(e); if (!node) return;
+    e.preventDefault(); e.stopPropagation(); open(node);
+  });
+  window.addEventListener('keydown', function (e) {
+    if (!isOpen()) return;
+    var k = e.key, multi = group.length > 1;
+    if (k === 'Escape' || k === ' ' || k === 'Spacebar') { e.stopPropagation(); e.preventDefault(); close(); return; }
+    if (k === 'ArrowRight' || k === 'ArrowDown') { e.stopPropagation(); e.preventDefault(); if (multi) show(idx + 1); else close(); return; }
+    if (k === 'ArrowLeft' || k === 'ArrowUp') { e.stopPropagation(); e.preventDefault(); if (multi) show(idx - 1); else close(); return; }
+  }, true);
+})();
+</script>
+
+<!-- Presenter laser pointer. Press L to toggle: the mouse becomes an awn-orange
+     dot and the system cursor is hidden; press L (or Esc) again to turn it off.
+     Caught in the capture phase so deck-stage never sees it. -->
+<script>
+(function () {
+  var dot = null, on = false, x = -100, y = -100;
+  function ensureDot() { if (dot) return dot; dot = document.createElement('div'); dot.id = 'aw-laser'; document.body.appendChild(dot); return dot; }
+  function place() { if (dot) { dot.style.left = x + 'px'; dot.style.top = y + 'px'; } }
+  document.addEventListener('mousemove', function (e) { x = e.clientX; y = e.clientY; if (on) place(); }, true);
+  function setOn(v) {
+    on = v; ensureDot();
+    if (on) { document.body.classList.add('aw-laser-on'); dot.style.display = 'block'; place(); }
+    else { document.body.classList.remove('aw-laser-on'); dot.style.display = 'none'; }
+  }
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'l' || e.key === 'L') { if (e.metaKey || e.ctrlKey || e.altKey) return; e.stopImmediatePropagation(); e.preventDefault(); setOn(!on); return; }
+    if (on && e.key === 'Escape') { e.stopImmediatePropagation(); e.preventDefault(); setOn(false); }
+  }, true);
+})();
+</script>
+</body>
+</html>

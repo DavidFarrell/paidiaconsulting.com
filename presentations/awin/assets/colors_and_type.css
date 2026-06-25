@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Awin - Semantic aliases
+   Convenience layer mapping the audited Awin tokens onto the generic
+   role names used by the other Paidia design systems (fg1 / bg1 / accent).
+   Apply on the same root element as `.awn`.
+   ========================================================================== */
+
+@import url("./src/tokens.css");
+
+.awn {
+  /* Surfaces */
+  --bg1:        var(--awn-background);    /* page paper - white */
+  --bg2:        var(--awn-lilac-50);      /* secondary surface - lilac wash */
+  --bg3:        var(--awn-soft-orange);   /* tertiary surface - warm cream */
+  --bg-ink:     var(--awn-purple-solid);  /* dark plate (footer / hero alt) */
+
+  /* Foreground / ink */
+  --fg1:        var(--awn-text);          /* primary text - warm dark grey */
+  --fg2:        var(--awn-medium);        /* secondary text */
+  --fg-on-ink:  var(--awn-white);
+  --fg-on-accent: var(--awn-white);
+
+  /* Accents */
+  --accent:        var(--awn-orange-default);  /* signature orange */
+  --accent-hover:  var(--awn-orange-600);
+  --accent-soft:   var(--awn-soft-orange);
+  --accent-alt:    var(--awn-purple-solid);    /* deep violet - the second brand voice */
+  --accent-alt-2:  var(--awn-violet);
+
+  /* Rules / borders */
+  --rule-soft:    var(--awn-grey-100);
+  --rule:         var(--awn-grey-200);
+  --rule-strong:  var(--awn-american-silver);
+
+  /* Status */
+  --status-ok:    var(--awn-green);
+  --status-warn:  var(--awn-amber-400);
+  --status-err:   var(--awn-red);
+
+  /* Type */
+  --font-display: var(--awn-font);
+  --font-body:    var(--awn-font);
+  --font-mono:    var(--awn-font-mono);
+}

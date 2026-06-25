@@ -1,0 +1,978 @@
+/* ==========================================================================
+   AwinOS deck - slide + chrome stylesheet, skinned to the awn design system.
+   --------------------------------------------------------------------------
+   The slide vocabulary, namespaced .aw-*. Built for a 1920x1080 stage driven
+   by assets/deck-stage.js (a <deck-stage> web component that scales the
+   canvas to fit, handles keyboard nav, a thumbnail rail, and Print -> PDF).
+
+   Structure is modelled on the reference talk's deck.css (slide fills the
+   stage; surface plates; footer chrome bottom-left section label + bottom-
+   right page number; eyebrow; section divider) but every value is re-skinned
+   to awn tokens (tokens.css). The runtime is unchanged; only the skin is awn.
+
+   awn hard rules honoured here:
+     - one typeface, Inter (700 headings / 400 body / 600 emphasis)
+     - sentence-case headlines; italic second half of a two-part headline
+     - one plate hue per surface (lilac / cream / ink / purple-hero)
+     - orange is the only loud accent; purple is the holding colour
+     - no shadows except the soft hover lift; surface colour + 1px hairline
+     - three radii (1rem / 1.5rem / 9999px); no emoji / no icon set
+
+   Authoring shape:
+
+     <deck-stage width="1920" height="1080">
+       <section data-label="Title">
+         <div class="aw-slide aw-slide--lilac">
+           <div class="aw-body"> ... </div>
+           <footer class="aw-foot">
+             <span class="aw-foot__section">Title</span>
+             <span class="aw-foot__page">1 / 18</span>
+           </footer>
+         </div>
+       </section>
+       ...
+     </deck-stage>
+
+   Load order: fonts.css -> tokens.css -> components.css -> colors_and_type.css
+   -> deck.css.
+   ========================================================================== */
+
+/* ── Slide skeleton ─────────────────────────────────────────────────────── */
+/* Four surfaces, one plate hue each (awn rule 3). Default is the lilac wash;
+   --cream is the warm tier; --ink is the deep-violet plate (light type on
+   purple); --hero is the gradient-purple cover plate. */
+.aw-slide {
+  position: absolute; inset: 0;
+  padding: 96px 112px 72px;          /* top, sides, bottom - awn 4px rhythm */
+  box-sizing: border-box;
+  display: flex; flex-direction: column;
+  background: var(--awn-lilac-50);
+  color: var(--awn-text);
+  font-family: var(--awn-font);
+  overflow: hidden;
+}
+.aw-slide--cream { background: var(--awn-soft-orange); }
+.aw-slide--ink   { background: var(--awn-purple-solid); color: var(--awn-white); }
+.aw-slide--hero  { background-image: var(--awn-gradient-purple); color: var(--awn-white); }
+
+/* On a dark plate, secondary copy is white-at-opacity (never a grey token,
+   which would muddy on violet). */
+.aw-slide--ink .aw-sub,
+.aw-slide--hero .aw-sub { color: rgba(255,255,255,0.82); }
+
+/* The whole content block (eyebrow + headline + body + any closing line) is
+   centered AS ONE UNIT in the safe area between the top margin and the footer,
+   with symmetric top/bottom breathing room. `safe center` is the guardrail:
+   a content-heavy slide that would be taller than the area centres normally,
+   but never clips the TOP - it falls back to flex-start so the header stays at
+   or below the top safe-margin (the footer is pinned below this body, so the
+   bottom is bounded by layout). This single rule is the deck-wide vertical-
+   rhythm fix: text-light slides read deliberately centred (balanced top and
+   bottom, no floating mid-gap), content-heavy slides still fill and centre. */
+.aw-body {
+  flex: 1; display: flex; flex-direction: column; justify-content: safe center;
+  gap: 28px; min-height: 0;
+}
+/* --top previously pinned the whole block to the top, which is what created
+   the abandoned lower band on text-light slides. It now centres like the
+   default; kept as a class so existing markup needn't change. */
+.aw-body--top    { justify-content: safe center; }
+.aw-body--center { justify-content: safe center; align-items: center; text-align: center; }
+.aw-body--end    { justify-content: flex-end; }
+
+/* ── Footer chrome (section label left, page number right) ───────────────── */
+/* Mirrors the reference structure. Page numbers are AUTHORED as placeholders
+   ("N / 18") and renumbered on load by the footer script in index.html, so
+   they stay correct as slides move. Divider slides carry no .aw-foot and are
+   excluded from the count, exactly like the reference. */
+.aw-foot {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-family: var(--awn-font);
+  font-size: var(--awn-fs-sm);
+  font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.02em;
+  color: var(--awn-medium);
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--awn-grey-200);   /* hairline, not a shadow */
+}
+/* On dark plates the hairline + ink invert to white-at-opacity. */
+.aw-slide--ink .aw-foot,
+.aw-slide--hero .aw-foot {
+  color: rgba(255,255,255,0.72);
+  border-top-color: rgba(255,255,255,0.20);
+}
+.aw-foot__section { color: var(--awn-orange-default); }   /* orange = the accent */
+.aw-slide--ink .aw-foot__section,
+.aw-slide--hero .aw-foot__section { color: var(--awn-orange-default); }
+/* Page numbers stay bottom-right. margin-left:auto keeps the number on the
+   right even when it is the only footer child (David's steer: footers carry
+   page numbers only, no section label). Harmless on two-span footers, where
+   space-between already separates the spans. */
+.aw-foot__page { font-variant-numeric: tabular-nums; margin-left: auto; }
+
+/* ── Eyebrow (ALL CAPS, lightly tracked, semibold - awn convention) ──────── */
+.aw-eyebrow {
+  font-family: var(--awn-font);
+  font-size: var(--awn-fs-sm);
+  font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--awn-orange-default);
+  margin: 0;
+}
+.aw-slide--ink .aw-eyebrow,
+.aw-slide--hero .aw-eyebrow { color: var(--awn-orange-default); }
+
+/* ── Headline + display type (Inter 700, sentence case) ──────────────────── */
+.aw-h {
+  font-family: var(--awn-font);
+  font-weight: var(--awn-w-bold);
+  line-height: var(--awn-lh-5xl);
+  margin: 0;
+  /* No base letter-spacing: each size sets its own awn token below, so we
+     never quietly tighten a heading the token didn't ask to tighten. */
+}
+.aw-h--hero { font-size: var(--awn-fs-hero-d); line-height: var(--awn-lh-hero-d); letter-spacing: var(--awn-ls-hero-d); }
+.aw-h--1    { font-size: var(--awn-fs-5xl);    line-height: var(--awn-lh-5xl); letter-spacing: var(--awn-ls-5xl); }
+.aw-h--2    { font-size: var(--awn-fs-3-5xl);  line-height: var(--awn-lh-3-5xl); letter-spacing: var(--awn-ls-3-5xl); }
+.aw-h--3    { font-size: var(--awn-fs-2-5xl);  line-height: var(--awn-lh-2-5xl); }
+
+/* Italic accent on the second half of a two-part headline (awn signature). */
+.aw-h em { font-style: italic; font-weight: inherit; }
+
+/* Lead / body / supporting copy. */
+.aw-lead { font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl); font-weight: var(--awn-w-normal); max-width: 1100px; margin: 0; }
+.aw-body-text { font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg); max-width: 1000px; margin: 0; }
+.aw-sub { font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg); color: var(--awn-medium); max-width: 1000px; margin: 0; }
+.aw-emph { font-weight: var(--awn-w-semibold); }       /* body emphasis = semibold, not colour */
+.aw-accent { color: var(--awn-orange-default); }       /* the one loud accent, used sparingly */
+
+/* ── Cards / plates (filled, 1rem radius, hairline border, no shadow) ─────── */
+.aw-card {
+  background: var(--awn-white);
+  border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-2xl);
+  padding: 32px 36px;
+  box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 14px;
+}
+/* SURFACE PAIRING (awn rule 3 - one plate hue per surface). The legal
+   compositions, so later slices don't mix hues:
+     - lilac surface  -> white or lilac-local cards
+     - cream surface  -> white cards only (a lilac card on cream mixes hues)
+     - ink surface    -> ink cards only
+   --lilac is therefore for use ONLY on a lilac (or white) surface; on a cream
+   slide use plain .aw-card (white). */
+.aw-card--lilac { background: var(--awn-lilac-50); border-color: var(--awn-lilac-alt); }
+/* (.aw-card--cream is intentionally NOT defined yet: a cream card only ever
+   belongs on a lilac/white surface, and no slice needs it. Add it when a slide
+   does, so the class can't be misused on a cream plate in the meantime.) */
+/* On a dark plate, a card reads as a slightly-lighter violet with a faint rule. */
+.aw-card--ink {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.16);
+  color: var(--awn-white);
+}
+.aw-card__label {
+  font-size: var(--awn-fs-sm); font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--awn-orange-default); margin: 0;
+}
+.aw-card p { font-size: var(--awn-fs-base); line-height: var(--awn-lh-base); margin: 0; }
+.aw-card--ink p { color: rgba(255,255,255,0.88); }
+
+/* Larger feature plate (1.5rem radius) for a single boxed beat. */
+.aw-plate {
+  border-radius: var(--awn-radius-3xl);
+  padding: 40px 48px;
+  box-sizing: border-box;
+}
+.aw-plate--lilac { background: var(--awn-lilac-50); border: 1px solid var(--awn-lilac-alt); }
+.aw-plate--ink   { background: var(--awn-purple-solid); color: var(--awn-white); }
+
+/* ── Quote card (a verbatim source quote + attribution) ──────────────────── */
+/* Used on the agree-first quote slide: the source's own words, not paraphrased.
+   The quote reads as body emphasis (semibold, no colour wash - awn rule:
+   emphasis is weight, not colour); the attribution is the small orange label
+   the deck uses everywhere for provenance. A thin orange left rule marks it as
+   a quotation without an icon set (awn rule 8). No glyph quotation marks - the
+   left rule is the marker. */
+.aw-quote {
+  background: var(--awn-white);
+  border: 1px solid var(--awn-grey-200);
+  border-left: 3px solid var(--awn-orange-default);
+  border-radius: var(--awn-radius-2xl);
+  padding: 26px 30px;
+  box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 14px;
+  justify-content: space-between;
+}
+.aw-quote p {
+  font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl);
+  font-weight: var(--awn-w-semibold); margin: 0;
+}
+.aw-quote cite {
+  font-style: normal;
+  font-size: var(--awn-fs-sm); font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--awn-orange-default);
+}
+/* The 2x2 quote grid breathes more than a dense card grid. */
+.aw-quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+
+/* ── Two-halves reframe (the §2B columns) ────────────────────────────────── */
+/* Two columns, each a white card on the cream surface; a numbered orange label
+   (half 1 / half 2), a short body, then the slide closes with one consequence
+   line and one stance kicker below the columns. */
+.aw-halves { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch; }
+.aw-halves .aw-card { gap: 12px; }
+.aw-halves .aw-card p:not(.aw-card__label) { font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg); }
+/* The half-card labels are STRUCTURE, not accent: ink, not orange (orange is
+   reserved for the eyebrow, the arrow and the stance, so the slide doesn't
+   over-fire the one loud accent - awn rule). */
+.aw-halves .aw-card__label { color: var(--awn-text); }
+.aw-consequence {
+  display: flex; align-items: baseline; gap: 18px;
+  font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl);
+  padding-top: 22px; border-top: 1px solid var(--awn-grey-200);
+}
+.aw-consequence .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-semibold); }
+/* Plain bullet marker that replaced the old orange "arrow-as-bullet" in single-
+   line callouts (cost beat, timeline payoffs, appendix consequences). David:
+   arrows used as bullets look daft - use a normal bullet. Inherits the line's
+   own colour so it stays quiet on every surface; nudged up to sit on the text
+   baseline, and pulled tighter than the old arrow's gap. */
+.aw-bullet { color: currentColor; font-weight: var(--awn-w-bold); line-height: 1; position: relative; top: -0.12em; margin-right: -6px; }
+/* The stance is subordinate to the consequence: the slide lands on the pilot
+   consequence first, then the stance reads as a quieter footnote-weight kicker. */
+.aw-stance {
+  font-size: var(--awn-fs-base); font-weight: var(--awn-w-semibold);
+  color: var(--awn-orange-600); margin: 8px 0 0; opacity: 0.92;
+}
+.aw-stance .aw-stance__lead { color: var(--awn-medium); font-weight: var(--awn-w-normal); }
+/* Quieter, smaller cites on the quote slide so the slide doesn't invite a
+   full read-through of all four (it's a fast agree-first pass). */
+.aw-quote cite { color: var(--awn-medium); font-size: 0.78rem; }
+
+/* ---- SLIDE 4 - "I think there are two halves" (Feedback Round 1 redesign) ----
+   Two columns, each a designed mock-UI (live HTML, not raster) with its half
+   text below. LEFT = the brought-to-life Client Intelligence Record with its
+   three data-types tagged in-line; RIGHT = a conversation mock-UI in Adam's
+   vision-deck style. Built on a cream plate, so the mock-UIs are white cards
+   with hairline borders (awn rule: cream surface -> white cards only). The
+   header + sub centre as one unit; the two columns fill the stage below them. */
+/* Centre the whole header+columns block as one unit (balanced top/bottom
+   breathing room) - the columns top-align to each other internally, so each
+   mock-UI sits under the header and each half-text sits directly below its own
+   card. The earlier bottom-only empty band is gone because the block is centred
+   rather than pinned, and the cards below are sized to fill most of the stage. */
+.aw-th { justify-content: safe center; gap: 22px; }
+.aw-th__cols {
+  display: grid; grid-template-columns: 1.16fr 1fr; gap: 40px;
+  align-items: start; margin-top: 6px;
+}
+.aw-th__col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.aw-th__text {
+  font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg);
+  color: var(--awn-text); margin: 0;
+}
+.aw-th__text .aw-emph { font-weight: var(--awn-w-semibold); }
+
+/* Shared mock-UI browser chrome (mono URL bar, three dots) - matches the
+   established briefing mockup look. */
+.aw-rec__chrome, .aw-conv__chrome {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--awn-font-mono); font-size: 0.8rem; letter-spacing: 0.01em;
+  color: var(--awn-medium);
+  padding: 12px 18px; border-bottom: 1px solid var(--awn-grey-200);
+}
+.aw-rec__dots {
+  width: 38px; height: 8px; flex: none;
+  background:
+    radial-gradient(circle 4px at 4px 4px, var(--awn-american-silver) 99%, transparent 0) 0 0,
+    radial-gradient(circle 4px at 4px 4px, var(--awn-american-silver) 99%, transparent 0) 15px 0,
+    radial-gradient(circle 4px at 4px 4px, var(--awn-american-silver) 99%, transparent 0) 30px 0;
+  background-repeat: no-repeat;
+}
+
+/* LEFT - the record card */
+.aw-rec {
+  background: var(--awn-white); border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-2xl); overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.aw-rec__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 26px 12px;
+}
+.aw-rec__title {
+  font-size: var(--awn-fs-2xl); font-weight: var(--awn-w-bold);
+  color: var(--awn-purple-solid); margin: 0; letter-spacing: -0.01em;
+}
+.aw-rec__status {
+  font-size: var(--awn-fs-xs); font-weight: var(--awn-w-semibold);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--awn-green); background: oklch(.57358 .13708 153.88918 / .12);
+  padding: 3px 10px; border-radius: 9999px;
+}
+.aw-rec__block { padding: 17px 26px; border-top: 1px solid var(--awn-grey-light); }
+.aw-rec__block:first-of-type { border-top: 0; }
+/* Data-type tags are STRUCTURE, not accent. awn keeps orange as the only loud
+   accent, so the three tags share ONE quiet system - mono ink-grey text on a
+   lilac-tint pill - distinguished by their words plus a thin coloured left rule
+   (low-saturation, not a fill) so the three types stay scannable without three
+   competing accent systems on the cream plate. */
+.aw-rec__tag {
+  display: inline-block; font-family: var(--awn-font-mono);
+  font-size: 0.72rem; font-weight: var(--awn-w-semibold);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--awn-text); background: var(--awn-lilac-50);
+  padding: 4px 10px 4px 11px; border-radius: 6px; margin-bottom: 10px;
+  border-left: 3px solid var(--awn-american-silver);
+}
+.aw-rec__tag--stored { border-left-color: var(--awn-vodka); }
+.aw-rec__tag--calc   { border-left-color: var(--awn-orange-default); }
+.aw-rec__tag--narr   { border-left-color: var(--awn-accent-blue); }
+.aw-rec__body {
+  font-size: 0.98rem; line-height: 1.55; color: var(--awn-text); margin: 0;
+}
+.aw-rec__down { color: var(--awn-orange-600); font-weight: var(--awn-w-semibold); }
+.aw-rec__narr { color: var(--awn-medium); }
+
+/* RIGHT - the conversation card */
+.aw-conv {
+  background: var(--awn-white); border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-2xl); overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.aw-conv__thread {
+  padding: 28px 28px 30px; display: flex; flex-direction: column; gap: 6px;
+}
+/* Quiet speaker labels above each bubble - they give the thread substance (so
+   the right card isn't much shorter than the record) and read as a real
+   exchange, without adding loud colour. */
+.aw-conv__who {
+  font-size: var(--awn-fs-xs); font-weight: var(--awn-w-semibold);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--awn-medium); margin: 0 0 6px;
+}
+.aw-conv__who--am { text-align: right; }
+.aw-conv__who:not(.aw-conv__who--am) { margin-top: 18px; }
+.aw-conv__ask {
+  align-self: flex-end; max-width: 90%;
+  background: var(--awn-purple-solid); color: var(--awn-white);
+  font-size: var(--awn-fs-base); line-height: 1.5; font-weight: var(--awn-w-normal);
+  padding: 15px 20px; border-radius: 16px 16px 4px 16px;
+}
+.aw-conv__reply { align-self: flex-start; max-width: 82%; }
+.aw-conv__replyline {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--awn-grey-100); color: var(--awn-text);
+  font-size: var(--awn-fs-base); line-height: 1.5;
+  padding: 14px 20px; border-radius: 16px 16px 16px 4px; margin: 0;
+}
+/* Three faint pulsing dots - the agent "composing" indicator (no colour, awn
+   neutral). Animation is subtle and degrades to static dots in a PDF print. */
+.aw-conv__dots { display: inline-flex; gap: 4px; }
+.aw-conv__dots span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--awn-disabled); display: inline-block;
+  animation: aw-conv-pulse 1.2s infinite ease-in-out;
+}
+.aw-conv__dots span:nth-child(2) { animation-delay: 0.2s; }
+.aw-conv__dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes aw-conv-pulse { 0%,80%,100% { opacity: 0.3 } 40% { opacity: 1 } }
+.aw-conv__hint {
+  font-family: var(--awn-font-mono); font-size: 0.74rem; color: var(--awn-disabled);
+  margin: 10px 0 0 4px;
+}
+
+/* ── Tag / pill (9999px radius) ──────────────────────────────────────────── */
+.aw-tag {
+  display: inline-block;
+  font-size: var(--awn-fs-sm); font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.01em;
+  padding: 8px 18px; border-radius: var(--awn-radius-pill);
+  background: var(--awn-lilac-50); color: var(--awn-text);
+  border: 1px solid var(--awn-lilac-alt);
+}
+.aw-tag--orange { background: var(--awn-soft-orange); color: var(--awn-orange-600); border-color: rgba(225,65,27,0.18); }
+
+/* ── Build list (the workhorse bulleted slide) ──────────────────────────── */
+/* A list whose items are separated by hairline rules, with a trailing "->"
+   marker on the line that carries the argument forward. No bullet glyphs and
+   no icon set - the arrow is the only marker (awn rule 8). */
+.aw-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+.aw-list li {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 28px; align-items: baseline;
+  padding: 20px 0;
+  border-top: 1px solid var(--awn-grey-200);
+  font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl);
+}
+.aw-list li:first-child { border-top: none; }
+.aw-list strong { font-weight: var(--awn-w-semibold); }
+.aw-list .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-semibold); }
+.aw-list--tight li { font-size: var(--awn-fs-lg); padding: 14px 0; }
+.aw-slide--ink .aw-list li,
+.aw-slide--hero .aw-list li { border-top-color: rgba(255,255,255,0.18); }
+
+/* ── Grids ──────────────────────────────────────────────────────────────── */
+.aw-grid-asym { display: grid; grid-template-columns: 5fr 6fr; gap: 64px; align-items: center; }
+.aw-grid-asym--flip { grid-template-columns: 6fr 5fr; }
+.aw-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch; }
+.aw-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
+.aw-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: stretch; }
+
+/* ── Figure / image slot (a calm framed plate, no rotation, hairline only) ── */
+.aw-figure {
+  background: var(--awn-white);
+  border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-3xl);
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--awn-text);
+}
+.aw-figure__caption {
+  font-size: var(--awn-fs-sm); letter-spacing: 0.02em;
+  color: var(--awn-medium); margin-top: 12px; text-align: center;
+}
+/* <image-slot> default sizing on a figure plate (see assets/image-slot.js).
+   The empty-state vars are tuned to awn paper/lilac, not the reference's. */
+image-slot {
+  display: block; width: 100%; min-height: 360px;
+  --is-bg: var(--awn-lilac-50);
+  --is-border: var(--awn-lilac-alt);
+  --is-color: var(--awn-medium);
+}
+
+/* ── The brand wordmark (the awn "fire" lockup ships as the lowercase
+   wordmark; no generic icon set). Rendered as Inter 700, the way awn does. ── */
+.aw-wordmark {
+  font-family: var(--awn-font);
+  font-weight: var(--awn-w-bold);
+  letter-spacing: -0.01em;          /* the awn brand value (.awn-header__brand) */
+  line-height: 1;
+  color: var(--awn-white);
+}
+
+/* ── Section divider (a held purple-hero plate; spare on purpose) ─────────── */
+.aw-divider {
+  position: absolute; inset: 0;
+  padding: 96px 112px;
+  box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: center;
+  background-image: var(--awn-gradient-purple);
+  color: var(--awn-white);
+  overflow: hidden;
+}
+.aw-divider .aw-eyebrow { color: var(--awn-orange-default); margin-bottom: 22px; letter-spacing: 0.08em; }
+
+/* ── Styled-slide layout classes ─────────────────────────────────────────── */
+/* The two reference slides (title, arc) get named classes rather than ad-hoc
+   inline styles, so the layout values are reusable and don't drift as later
+   slices add denser slide types. */
+
+/* Title (slide 1) - centred cover, wordmark / eyebrow / hero / goal / signoff. */
+.aw-title__body  { justify-content: center; gap: 40px; }
+.aw-title__lockup { display: flex; flex-direction: column; gap: 26px; max-width: 1500px; }
+.aw-title__headline { max-width: 1500px; }
+.aw-title__wordmark { font-size: 34px; opacity: 0.92; }
+.aw-title__eyebrow { letter-spacing: 0.08em; }
+.aw-title__goal { color: rgba(255,255,255,0.88); max-width: 1200px; font-size: 28px; line-height: 1.35; }
+.aw-title__meta { margin-top: 30px; display: flex; flex-direction: column; gap: 6px; font-size: 22px; line-height: 1.5; }
+.aw-title__meta .aw-name { font-weight: var(--awn-w-semibold); }
+.aw-title__meta .aw-email { color: rgba(255,255,255,0.78); }
+
+/* Arc-overview (slide 2) - the head + four-up card row + closing line centre as
+   one unit (inherits .aw-body's safe centring); slightly larger inter-block gap
+   so the composition breathes. */
+.aw-arc__body { gap: 32px; }
+.aw-arc__head { display: flex; flex-direction: column; gap: 14px; }
+.aw-arc__headline { max-width: 1500px; }
+/* The four cards read as a SEQUENCE (01 Prove -> 04 Own), not four equal
+   feature tiles: a heavier numbered label set apart from the body by a hairline,
+   a contained body measure, and roomy internal rhythm. */
+.aw-arc__cards { align-items: stretch; }
+.aw-arc__cards .aw-card { padding: 28px 30px; gap: 16px; }
+.aw-arc__cards .aw-card__label {
+  font-size: var(--awn-fs-base); font-weight: var(--awn-w-bold);
+  padding-bottom: 14px; border-bottom: 1px solid var(--awn-grey-200);
+}
+.aw-arc__cards .aw-card p:not(.aw-card__label) { max-width: 30ch; }
+.aw-arc__close { max-width: 1400px; }
+
+/* ── Slice 2 layout classes ──────────────────────────────────────────────── */
+
+/* Slide 5 - The briefing, made concrete. The mockup is the hero; the left rail
+   is spare on purpose. The body is centred so the band fills the stage. The
+   grid is flipped (text 5 / mockup 6) and vertically centred; the figure plate
+   contains the mockup at its natural ratio without stretching. */
+.aw-briefing__body { justify-content: center; }
+/* Mockup is the hero - give it the larger column (text 5 / mockup 6). */
+.aw-briefing__grid { align-items: center; gap: 64px; }
+.aw-briefing__rail { display: flex; flex-direction: column; gap: 22px; }
+.aw-briefing__headline { max-width: 16ch; }
+.aw-briefing__lede { max-width: 38ch; }
+/* The terse technical prompt - the one on-slide bullet, deliberately bare. The
+   questions read as display weight (not a sentence) so they look like a prompt
+   to talk to, not a claim. Lilac-local plate on the (lilac) default surface. */
+.aw-briefing__prompt {
+  background: var(--awn-lilac-50);
+  border: 1px solid var(--awn-lilac-alt);
+  border-radius: var(--awn-radius-2xl);
+  padding: 22px 26px;
+  display: flex; flex-direction: column; gap: 8px;
+  max-width: 30ch;
+}
+.aw-briefing__qs {
+  font-size: var(--awn-fs-2-5xl); font-weight: var(--awn-w-bold);
+  letter-spacing: var(--awn-ls-2-5xl); color: var(--awn-text); margin: 0;
+}
+/* A plain body note inside the prompt plate (slide 5's "for example" line is a
+   sentence, not a display prompt). Body weight, normal measure. */
+.aw-briefing__prompt:has(.aw-briefing__note) { max-width: 38ch; }
+.aw-briefing__note {
+  font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg);
+  color: var(--awn-text); margin: 0;
+}
+/* The figure holds the mockup at its own aspect ratio - contain, never stretch.
+   The mockup raster is ~600x410 (~1.46:1). The slot is sized to that ratio at
+   the column's full width so the mockup renders LARGE (it is the hero). The
+   frame is a tight 1px-hairline plate with a small radius - it reads as an
+   existing artefact under inspection, not a polished product demo (no glow, no
+   shadow, awn rule). */
+.aw-briefing__figure { padding: 12px; border-radius: var(--awn-radius-2xl); }
+.aw-briefing__figure image-slot {
+  display: block; width: 100%; aspect-ratio: 600 / 410; height: auto;
+  min-height: 0;
+  --is-bg: var(--awn-white);
+}
+
+/* Slide 6 - The smallest valuable loop. The three-stage flow is the centrepiece,
+   centred between header and footer. Stages are equal columns; the orange arrow
+   sits between them as the only connector. On an ink surface the arrow keeps the
+   one loud accent (orange) even on dark. */
+/* The band (head + flow + proof line) is centred between header and footer so
+   the slide doesn't cling to the top - the flow is the centrepiece. */
+.aw-loop__body { justify-content: center; gap: 48px; }
+.aw-loop__head { display: flex; flex-direction: column; gap: 14px; }
+.aw-loop__lede { max-width: none; }
+/* The flow is the hard centrepiece: taller stages, a contained measure (not
+   three wide sparse boxes), and a larger connector so the loop reads as one
+   left-to-right argument. The whole flow is centred on the stage. */
+.aw-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 24px;
+  max-width: 1500px; margin: 0 auto; width: 100%;
+}
+.aw-flow__stage { padding: 40px 36px; gap: 16px; justify-content: flex-start; }
+.aw-flow__name {
+  font-size: var(--awn-fs-2xl); font-weight: var(--awn-w-bold);
+  color: var(--awn-white) !important; margin: 0;
+}
+.aw-flow__desc { font-size: var(--awn-fs-lg) !important; line-height: var(--awn-lh-lg); max-width: 28ch; }
+.aw-flow__arrow {
+  align-self: center;
+  font-size: var(--awn-fs-5xl); font-weight: var(--awn-w-bold);
+  color: var(--awn-orange-default); line-height: 1;
+}
+/* The proof line is the slide's payoff - the value test, on-slide (not buried
+   in notes). Sits below the flow as a quiet orange-arrow kicker. */
+.aw-loop__proof {
+  display: flex; align-items: baseline; gap: 16px;
+  font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl);
+  color: var(--awn-white); margin: 0;
+}
+.aw-loop__proof .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-semibold); }
+/* A quieter secondary line under the proof (the Adam's-instinct exploration
+   note) - same arrow vocabulary, muted ink so the proof stays the lead. */
+.aw-loop__note {
+  display: flex; align-items: baseline; gap: 16px;
+  font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg);
+  color: rgba(255,255,255,0.72); margin: 6px 0 0;
+}
+.aw-loop__note .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-semibold); }
+/* Slide 5 payoff + exploration as a plain bulleted list (replaces the orange
+   arrows, per David - arrows-as-bullets read as daft). Top-level white discs;
+   the Adam's-instinct sub-points nest under it as a muted hollow-bullet list.
+   Ink surface, so markers are light. */
+.aw-loop__points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.aw-loop__points > li {
+  position: relative; padding-left: 26px;
+  font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl); color: var(--awn-white);
+}
+.aw-loop__points > li::before {
+  content: "\2022"; position: absolute; left: 4px; top: -0.02em; color: var(--awn-white);
+}
+.aw-loop__points ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.aw-loop__points ul li {
+  position: relative; padding-left: 24px;
+  font-size: var(--awn-fs-base); line-height: 1.4; color: rgba(255,255,255,0.72);
+}
+.aw-loop__points ul li::before {
+  content: "\25E6"; position: absolute; left: 4px; top: 0; color: rgba(255,255,255,0.6);
+}
+/* Slide 6 reads as a section reset: give its label a touch more air. */
+.aw-loop__section { letter-spacing: 0.08em; margin-bottom: 4px; }
+
+/* Slide 7 - How I'd actually run it. The method as an ordered sequence with an
+   arc (the arrow hands each step to the next), then the model/cost discipline
+   as a distinct boxed beat below. Body centred so it fills the stage. */
+.aw-method__body { justify-content: center; gap: 36px; }
+.aw-method__head { display: flex; flex-direction: column; gap: 12px; }
+/* The numbered method reads as a progression, not a flat bullet list: roomier
+   rows so each step has presence, the leading-zero counter set in orange as the
+   step marker, and the hand-off arrow on the right of each step. It is the main
+   read on the slide. */
+.aw-method__steps { counter-reset: step; max-width: 1500px; }
+.aw-method__steps li { counter-increment: step; padding: 26px 0; font-size: var(--awn-fs-2xl); }
+.aw-method__steps li > span:first-child::before {
+  content: counter(step, decimal-leading-zero);
+  font-weight: var(--awn-w-bold); color: var(--awn-orange-default);
+  margin-right: 22px; font-variant-numeric: tabular-nums;
+}
+/* The cost beat is a SUPPORTING note, deliberately quieter than the numbered
+   sequence: no card surface (it would compete), just an orange-arrow line set
+   off by a hairline above it - subordinate to the method that is the main read. */
+.aw-method__cost {
+  display: flex; align-items: baseline; gap: 18px;
+  padding-top: 26px; border-top: 1px solid var(--awn-grey-200);
+  font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg);
+  color: var(--awn-medium);
+  max-width: 1500px;
+}
+.aw-method__cost .aw-emph { color: var(--awn-text); }
+.aw-method__cost .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-semibold); }
+
+/* ── Slice 3 layout classes ──────────────────────────────────────────────── */
+
+/* Slide 8 - Who builds it. Feedback R1: an org-chart / role-definition spec,
+   not an illustration. The slide reads top-down as "the pod = product /
+   delivery / AI ownership". The core pod is a lilac plate carrying three role
+   boxes side by side; each box has sub-boxes naming what's inside the role
+   (the "boxes with small boxes inside" David asked for). David (lead) is the
+   wider box. A clearly-lighter outer band below carries the supporting /
+   advisory functions and leadership backing - marked "part-time / advisory",
+   no fabricated percentages. Body fills the stage. */
+.aw-org__body { justify-content: center; gap: 0; padding-top: 8px; }
+.aw-org__head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 26px; }
+.aw-org__headline { max-width: 1600px; }
+.aw-org__sub { max-width: 110ch; }
+
+/* The pod plate - a labelled container so the three boxes read as one unit.
+   This is the org-chart's CORE tier; the advisory band below is the perimeter,
+   joined by a short bracket so the relationship (core / surrounding) reads.
+   Plate is NEUTRAL (white) with a purple holding hairline so the slide keeps
+   ONE plate hue (cream) - no lilac-on-cream mix (awn rule 3). */
+.aw-org__pod {
+  position: relative;
+  background: var(--awn-white); border: 1px solid var(--awn-grey-200);
+  border-top: 2px solid var(--awn-purple-solid);
+  border-radius: var(--awn-radius-3xl); padding: 38px 32px 34px;
+}
+/* A tab on the plate naming the unit ("The pod"). Quiet: dark 600 text on a
+   white tab with a thin purple hairline + a small orange dot as the only accent
+   (orange stays a thin accent, not a loud badge - awn rule). */
+.aw-org__pod-tag {
+  position: absolute; top: -15px; left: 32px;
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: var(--awn-fs-sm); font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.03em; text-transform: uppercase; color: var(--awn-text);
+  background: var(--awn-white); border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-pill); padding: 6px 18px;
+}
+.aw-org__pod-tag::before {
+  content: ""; width: 8px; height: 8px; border-radius: 9999px;
+  background: var(--awn-orange-default);
+}
+/* Three role boxes; David's box is a touch wider (it carries the most inside),
+   but kept modest so the slide reads "three core roles", not "David + 2". */
+.aw-org__roles { display: grid; grid-template-columns: 1.18fr 1fr 1fr; gap: 24px; align-items: stretch; }
+.aw-org__role {
+  display: flex; flex-direction: column; gap: 13px;
+  background: var(--awn-grey-100); border: 1px solid var(--awn-grey-300);
+  border-radius: var(--awn-radius-2xl); padding: 28px 30px;
+}
+/* The lead box reads as the pod's spine via a quiet orange top accent bar -
+   an accent, not a full loud outline (orange stays a thin accent, awn rule). */
+.aw-org__role--lead { border-top: 3px solid var(--awn-orange-default); }
+.aw-org__role-name { font-size: var(--awn-fs-2xl); font-weight: var(--awn-w-bold); color: var(--awn-text); margin: 0; }
+.aw-org__role-kind { font-weight: var(--awn-w-normal); color: var(--awn-medium); }
+.aw-org__role-line { font-size: var(--awn-fs-base); color: var(--awn-medium); margin: 0; }
+/* The sub-boxes - the "small boxes inside the box" naming what the role owns.
+   White on the grey role box so each owned item reads as a discrete node. */
+.aw-org__subs { display: flex; flex-direction: column; gap: 10px; margin-top: 2px; }
+.aw-org__sub-box {
+  font-size: var(--awn-fs-base); line-height: 1.4; color: var(--awn-text);
+  background: var(--awn-white); border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-lg); padding: 12px 15px;
+}
+.aw-org__role-note {
+  font-size: var(--awn-fs-sm); color: var(--awn-medium); margin: auto 0 0;
+  padding-top: 13px; border-top: 1px solid var(--awn-grey-200);
+}
+
+/* The connector - a clean, continuous purple spine joining the core pod tier
+   to the advisory perimeter, so the slide reads as one org structure (core
+   above, advisory below), not two stacked blocks. Purple = the holding colour
+   (awn rule) - it reads as deliberate org-chart logic, not a layout artefact. */
+.aw-org__connector {
+  width: 1px; height: 32px; margin: 0 auto;
+  background: var(--awn-purple-solid);
+}
+
+/* The outer band - a real, lighter advisory perimeter the pod sits inside.
+   The members are small boxed NODES (like the core sub-boxes, lighter), not
+   filter chips. Its "advisory / not core" weight comes from tone and placement
+   (quiet grey surface, a solid lighter hairline, below the spine), NOT a dashed
+   construction look. Sized to carry weight in the lower stage. */
+.aw-org__outer {
+  display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+  background: var(--awn-grey-100); border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-3xl); padding: 26px 32px; margin-top: 0;
+}
+.aw-org__outer-head { display: flex; flex-direction: column; gap: 4px; white-space: nowrap; }
+.aw-org__outer-tag {
+  font-size: var(--awn-fs-xl); font-weight: var(--awn-w-bold); color: var(--awn-text);
+}
+.aw-org__outer-weight {
+  font-size: var(--awn-fs-xs); font-weight: var(--awn-w-normal); color: var(--awn-medium);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.aw-org__outer-boxes { display: flex; gap: 14px; flex-wrap: wrap; flex: 1; }
+.aw-org__outer-box {
+  font-size: var(--awn-fs-base); color: var(--awn-medium);
+  background: var(--awn-white); border: 1px solid var(--awn-grey-200);
+  border-radius: var(--awn-radius-lg); padding: 14px 20px;
+}
+.aw-org__outer-box--backing { color: var(--awn-text); font-weight: var(--awn-w-semibold); }
+
+/* Slide 9 - It fits Adam's timeline. The timeline image is the evidence band;
+   the head frames value-not-feature; the front-load argument is the payoff
+   below, set off by a hairline as the one emphasis David adds. Body centred. */
+.aw-tl__body { justify-content: center; gap: 28px; }
+.aw-tl__head { display: flex; flex-direction: column; gap: 12px; }
+.aw-tl__headline { max-width: 1500px; }
+.aw-tl__lede { max-width: 90ch; }
+/* The timeline is a clean 4-phase band (~800x256, ~3.125:1). Contain, never
+   stretch; a tight hairline plate so it reads as Adam's own slide. */
+.aw-tl__figure { padding: 16px 20px; border-radius: var(--awn-radius-2xl); }
+.aw-tl__figure image-slot {
+  display: block; width: 100%; aspect-ratio: 800 / 256; height: auto;
+  min-height: 0; --is-bg: var(--awn-white);
+}
+/* The front-load argument is the slide's real payoff (the timeline is just the
+   evidence it rides on). Render it as a framed lilac band, larger than body, so
+   the staffing emphasis carries weight - not a quiet footnote under the image. */
+.aw-tl__payoff {
+  display: flex; align-items: baseline; gap: 20px;
+  font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl);
+  background: var(--awn-lilac-50); border: 1px solid var(--awn-lilac-alt);
+  border-radius: var(--awn-radius-2xl); padding: 28px 32px;
+  max-width: 1600px;
+}
+.aw-tl__payoff .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-bold); font-size: var(--awn-fs-2xl); }
+
+/* Slide 10 - Built to de-risk. Three ink cards on an ink surface, centred.
+   Each card is a top-line de-risk claim + a one-line "why this de-risks the
+   build". */
+.aw-derisk__body { justify-content: center; gap: 56px; }
+.aw-derisk__head { display: flex; flex-direction: column; gap: 14px; }
+/* Taller cards with the label set apart by a hairline, so the three principles
+   read as a deliberate staged set that fills the dark plate - not three small
+   boxes clinging to the middle. */
+.aw-derisk__cards { align-items: stretch; }
+.aw-derisk__cards .aw-card { padding: 40px 40px; gap: 20px; min-height: 320px; justify-content: flex-start; }
+.aw-derisk__cards .aw-card__label {
+  font-size: var(--awn-fs-base); font-weight: var(--awn-w-bold);
+  padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.aw-derisk__cards .aw-card p:not(.aw-card__label) { font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl); }
+
+/* Slide 11 - The four planes, sequenced. Two phase columns (Phase 01 pilot /
+   Phase 04 scale) with the planes positioned against them, so the sequencing
+   visibly rides on top of Adam's phases. An orange arrow between the columns
+   carries "now -> later". Body centred; lilac surface, white plane cards. */
+.aw-planes__body { justify-content: center; gap: 28px; }
+.aw-planes__head { display: flex; flex-direction: column; gap: 12px; }
+.aw-planes__grid {
+  display: grid; grid-template-columns: 1fr 1.4fr 1fr;
+  gap: 20px; align-items: start;
+}
+.aw-planes__col { display: flex; flex-direction: column; gap: 16px; }
+/* The phase header sits above each column's planes - a pill-like band naming
+   the Adam phase the planes ride on. */
+.aw-planes__phase {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 20px; border-radius: var(--awn-radius-2xl);
+  background: var(--awn-soft-orange); border: 1px solid rgba(225,65,27,0.18);
+}
+.aw-planes__phase--later { background: var(--awn-lilac-50); border-color: var(--awn-lilac-alt); }
+.aw-planes__phase-tag {
+  font-size: var(--awn-fs-sm); font-weight: var(--awn-w-bold);
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--awn-orange-600);
+}
+.aw-planes__phase--later .aw-planes__phase-tag { color: var(--awn-text); }
+.aw-planes__phase-when { font-size: var(--awn-fs-sm); color: var(--awn-medium); }
+.aw-planes__plane { padding: 18px 24px; gap: 6px; }
+.aw-planes__plane p:not(.aw-card__label) { font-size: var(--awn-fs-base); line-height: 1.45; }
+/* The later planes are quieter - they're agreed-deferred, not the pilot focus. */
+.aw-planes__plane--later { background: var(--awn-lilac-50); border-color: var(--awn-lilac-alt); }
+.aw-planes__owner { color: var(--awn-medium); font-size: var(--awn-fs-sm) !important; }
+.aw-planes__owner .aw-emph { color: var(--awn-text); }
+/* The bridge between the two phase columns: a HORIZONTAL connector naming the
+   skipped Phases 02-03 (architecture + build) so the slide visibly shows the
+   planes ride on top of ALL of Adam's phases - the line runs left-to-right out
+   of the pilot column, through the label, into the Scale column. The label is
+   quiet (medium ink) - it's context, not a claim; the orange arrow keeps the
+   one loud accent. Vertically centred against the plane-cards row. */
+.aw-planes__bridge {
+  align-self: center;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.aw-planes__bridge-label {
+  font-size: var(--awn-fs-xs); font-weight: var(--awn-w-semibold);
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--awn-medium);
+  white-space: nowrap; text-align: center;
+}
+/* The connector: a hairline rule that runs full width with the orange arrowhead
+   on its right, so it reads as "now flows through 02-03 into later". */
+.aw-planes__connector {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  width: 100%; gap: 0;
+}
+.aw-planes__connector .aw-planes__line {
+  height: 2px; background: var(--awn-grey-200); width: 100%;
+}
+.aw-planes__arrow {
+  font-size: var(--awn-fs-3xl); font-weight: var(--awn-w-bold);
+  color: var(--awn-orange-default); line-height: 1; margin-left: -4px;
+}
+.aw-planes__close {
+  display: flex; align-items: baseline; gap: 16px;
+  font-size: var(--awn-fs-lg); line-height: var(--awn-lh-lg);
+  margin: 0; max-width: 1600px;
+}
+.aw-planes__close .aw-arrow { color: var(--awn-orange-default); font-weight: var(--awn-w-semibold); }
+
+/* ── Slice 4 layout classes (governance + the ask) ───────────────────────── */
+
+/* Slide 12 - How we run it. Three white cards on the cream surface (awn rule 3):
+   the show-and-tell, governance-mapped-early, the works-council bridge person.
+   The body is centred between header and footer so the three cards fill the
+   stage rather than clinging to the top. The cards are roomier than a default
+   card so the governance beat reads as a CORE safe-hands beat, not a footnote. */
+/* Head + card row centre as ONE unit (inherits .aw-body's safe centring) with a
+   real inter-block gap, so the band sits balanced between header and footer
+   rather than the head clinging to the top and the cards floating mid-stage.
+   The cards size to content and equalise via align-items:stretch. The
+   show-and-tell is the KEY beat, so it leads the row with a wider column
+   (1.25fr vs 1fr). The governance card's lead phrase is body-emphasis (in HTML)
+   so it reads as a core safe-hands beat, not a hygiene note. */
+.aw-run__body { gap: 44px; }
+.aw-run__head { display: flex; flex-direction: column; gap: 12px; }
+.aw-run__cards {
+  grid-template-columns: 1.25fr 1fr 1fr;
+  align-items: stretch;
+}
+.aw-run__card { padding: 40px 40px; gap: 18px; justify-content: flex-start; }
+.aw-run__card .aw-card__label {
+  font-size: var(--awn-fs-base); font-weight: var(--awn-w-bold);
+  padding-bottom: 18px; border-bottom: 1px solid var(--awn-grey-200);
+}
+.aw-run__card p:not(.aw-card__label) { font-size: var(--awn-fs-xl); line-height: var(--awn-lh-xl); }
+/* The leading show-and-tell card reads as the primary beat: slightly heavier
+   body so the wider column doesn't just look like more whitespace. */
+.aw-run__cards .aw-run__card:first-child p:not(.aw-card__label) { font-weight: var(--awn-w-semibold); }
+/* Governance bullets inside a run card (slide 12). Smaller than the card body
+   so a multi-item list stays calm; an orange marker matches the deck idiom. */
+.aw-run__bullets {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.aw-run__bullets li {
+  position: relative; padding-left: 22px;
+  font-size: var(--awn-fs-base); line-height: 1.4; font-weight: var(--awn-w-normal);
+}
+.aw-run__bullets li::before {
+  content: "\2192"; position: absolute; left: 0; top: 0;
+  color: var(--awn-orange-default); font-weight: var(--awn-w-semibold);
+}
+.aw-run__cadence {
+  font-size: var(--awn-fs-sm); color: var(--awn-medium);
+  font-weight: var(--awn-w-semibold); margin: 0;
+}
+
+/* Slide 13 - What I'm looking for (asks 1-4). Asks 1-3 as a numbered sequence on
+   the ink surface; ask 4 (the nod) elevated to a contained orange-bordered plate
+   below, so the core ask of the whole deck carries the most weight. Body centred.
+   The list inherits the ink-surface hairline rules from .aw-slide--ink .aw-list. */
+.aw-ask__body { justify-content: center; gap: 40px; }
+.aw-ask__head { display: flex; flex-direction: column; gap: 12px; }
+.aw-ask__list { counter-reset: ask; max-width: 1500px; }
+/* The three asks read as a numbered progression; the leading-zero counter is the
+   orange step marker, matching the method slide's idiom. No hand-off arrow here -
+   these are a list of asks, not a flow. */
+.aw-ask__list li {
+  counter-increment: ask; grid-template-columns: 1fr;
+  padding: 22px 0; font-size: var(--awn-fs-2xl); line-height: var(--awn-lh-2xl);
+}
+.aw-ask__list li > span:first-child::before {
+  content: counter(ask, decimal-leading-zero);
+  font-weight: var(--awn-w-bold); color: var(--awn-orange-default);
+  margin-right: 22px; font-variant-numeric: tabular-nums;
+}
+/* The nod is the deck's core ask - elevated to its own plate, set apart from the
+   numbered three, with an orange hairline so it reads as the thing being asked
+   for. It keeps the "04" counter so it stays in sequence, just weightier. */
+.aw-ask__nod {
+  display: flex; align-items: baseline; gap: 22px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--awn-orange-default);
+  border-radius: var(--awn-radius-3xl);
+  padding: 36px 44px; max-width: 1500px;
+}
+.aw-ask__nod-num {
+  font-size: var(--awn-fs-3-5xl); font-weight: var(--awn-w-bold);
+  color: var(--awn-orange-default); line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/* The nod lands through WORDS, not just the orange border: the core ask reads at
+   a step larger than the numbered three above and slightly heavier, so it is the
+   weightiest line on the slide by its type, not only its plate. */
+.aw-ask__nod-text {
+  font-size: var(--awn-fs-3xl); line-height: var(--awn-lh-3xl);
+  font-weight: var(--awn-w-semibold);
+  color: var(--awn-white);
+}
+.aw-ask__nod-text .aw-emph { font-weight: var(--awn-w-bold); }
+/* The contract-end heads-up on the nod - quieter than the ask itself, so it
+   reads as a plain dependency, not a softener of the core ask. */
+.aw-ask__nod-note {
+  display: inline-block; margin-top: 8px;
+  font-size: var(--awn-fs-lg); font-weight: var(--awn-w-normal);
+  color: rgba(255,255,255,0.72);
+}
+
+/* Slide 14 - Two practical notes. Two white cards on the lilac surface, set
+   side by side. Deliberately calm and uncrowded - the continuation ask gets a
+   clean moment. Body centred; the cards are roomy but the slide stays spare on
+   purpose (doctrine: whitespace used for focus is good). */
+/* Head + the two cards centre as ONE unit (inherits .aw-body's safe centring)
+   with a real inter-block gap, so the slide sits balanced between header and
+   footer, not high and abandoned. Calm and uncrowded on purpose - the
+   continuation ask gets a clean moment - but the cards are given real vertical
+   presence (larger body, roomy padding) so they read as deliberate practical
+   notes, not leftover appendix. */
+.aw-notes__body { gap: 44px; }
+.aw-notes__head { display: flex; flex-direction: column; gap: 12px; }
+.aw-notes__cards { align-items: stretch; }
+.aw-notes__card { padding: 48px 48px; gap: 20px; justify-content: center; }
+.aw-notes__card .aw-card__label {
+  font-size: var(--awn-fs-base); font-weight: var(--awn-w-bold);
+  padding-bottom: 20px; border-bottom: 1px solid var(--awn-grey-200);
+}
+.aw-notes__card p:not(.aw-card__label) { font-size: var(--awn-fs-2xl); line-height: var(--awn-lh-2xl); }
