@@ -244,6 +244,11 @@
    own colour so it stays quiet on every surface; nudged up to sit on the text
    baseline, and pulled tighter than the old arrow's gap. */
 .aw-bullet { color: currentColor; font-weight: var(--awn-w-bold); line-height: 1; position: relative; top: -0.12em; margin-right: -6px; }
+/* Small plain-bullet list used inside a card (e.g. slide 9's "Nothing
+   irreversible" examples). Inherits the card's text colour; quiet disc marker. */
+.aw-mini-bullets { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.aw-mini-bullets li { position: relative; padding-left: 18px; font-size: var(--awn-fs-base); line-height: 1.4; }
+.aw-mini-bullets li::before { content: "\2022"; position: absolute; left: 3px; top: -0.04em; opacity: 0.7; }
 /* The stance is subordinate to the consequence: the slide lands on the pilot
    consequence first, then the stance reads as a quieter footnote-weight kicker. */
 .aw-stance {
@@ -906,12 +911,12 @@ image-slot {
   display: flex; flex-direction: column; gap: 10px;
 }
 .aw-run__bullets li {
-  position: relative; padding-left: 22px;
+  position: relative; padding-left: 18px;
   font-size: var(--awn-fs-base); line-height: 1.4; font-weight: var(--awn-w-normal);
 }
 .aw-run__bullets li::before {
-  content: "\2192"; position: absolute; left: 0; top: 0;
-  color: var(--awn-orange-default); font-weight: var(--awn-w-semibold);
+  content: "\2022"; position: absolute; left: 3px; top: -0.04em;
+  color: currentColor; opacity: 0.7; font-weight: var(--awn-w-bold);
 }
 .aw-run__cadence {
   font-size: var(--awn-fs-sm); color: var(--awn-medium);

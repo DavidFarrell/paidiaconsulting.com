@@ -442,7 +442,7 @@
         </div>
         <div class="aw-tl__payoff">
           <span class="aw-bullet">&bull;</span>
-          <span>One staffing emphasis on top: <span class="aw-emph">front-load both engineers into the pilot (Phase 01).</span> The architecture and build run months 6-24 - but the pilot is where the people who'll own that architecture learn through experimentation, in order to have sufficient judgement that the architecture is well grounded. They live the learning; they don't inherit a finished spec.</span>
+          <span>One staffing request: <span class="aw-emph">front-load both engineers into the pilot (phase one).</span><br>Whilst architecture and build is months 6 to 24, the engineers need to build up the mental model and alignment through the experimentation phase, in order to have sufficient judgement.</span>
         </div>
       </div>
       <footer class="aw-foot">
@@ -457,7 +457,7 @@
        de-risks your build". Top-line claims are CORE; the tooling/tracing detail
        lives in notes. Body centred so the three cards fill the stage. -->
   <section data-label="Built to de-risk">
-    <div class="aw-slide aw-slide--ink">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
       <div class="aw-body aw-derisk__body">
         <div class="aw-derisk__head">
           <h2 class="aw-h aw-h--2">Phase one in more detail</h2>
@@ -466,10 +466,24 @@
           <div class="aw-card aw-card--ink">
             <p class="aw-card__label">01 &middot; Nothing irreversible</p>
             <p>The pilot uses conventional, replaceable parts. The real data-integration architecture stays at months 6-12 - the pilot de-risks it first, rather than committing to it early.</p>
+            <ul class="aw-mini-bullets">
+              <li>Quick and dirty data grabs</li>
+              <li>Wizard of Oz where appropriate</li>
+              <li>Noticing where performance bottlenecks lie</li>
+            </ul>
           </div>
           <div class="aw-card aw-card--ink">
             <p class="aw-card__label">02 &middot; Instrument from day one</p>
-            <p>Every LLM call is logged (using tracing systems such as LangSmith / Arize Phoenix / Braintrust). The goal is to give us a dataset to optimise prompts and model choices as we move from experimentation to implementation.</p>
+            <p>Every LLM call is logged (using tracing systems):</p>
+            <ul class="aw-mini-bullets">
+              <li>LangSmith</li>
+              <li>Arize Phoenix</li>
+              <li>Braintrust</li>
+            </ul>
+            <p>The goal is to give us a dataset to optimise prompts and model choices as we move from experimentation to implementation.</p>
+            <ul class="aw-mini-bullets">
+              <li>This will allow us to move from fat models to cheap / open models</li>
+            </ul>
           </div>
           <div class="aw-card aw-card--ink">
             <p class="aw-card__label">03 &middot; The interface</p>
@@ -495,7 +509,7 @@
     <div class="aw-slide">
       <div class="aw-body aw-tl__body">
         <div class="aw-tl__head">
-          <h2 class="aw-h aw-h--2">The four planes</h2>
+          <h2 class="aw-h aw-h--2">Adam's four planes</h2>
         </div>
         <div class="aw-figure aw-tl__figure">
           <image-slot src="assets/adam-four-planes.png" fit="contain" alt="Adam's four planes: relationship history, performance intelligence, market context, risk and opportunity flags."></image-slot>
@@ -524,12 +538,12 @@
     <div class="aw-slide aw-slide--cream">
       <div class="aw-body aw-run__body">
         <div class="aw-run__head">
-          <h2 class="aw-h aw-h--2">Governance</h2>
-          <p class="aw-sub">Open to input here, but assumption of something like the following:</p>
+          <h2 class="aw-h aw-h--2">Governance and cadence</h2>
+          <p class="aw-sub">Feedback requested here, but assumption of something like the following:</p>
         </div>
         <div class="aw-grid-3 aw-run__cards">
           <div class="aw-card aw-run__card">
-            <p class="aw-card__label">Start with 1-1s for alignment</p>
+            <p class="aw-card__label">Initial 1-1s for alignment</p>
             <ul class="aw-run__bullets">
               <li>David + JS (tech)</li>
               <li>David + SS (product)</li>
@@ -566,19 +580,16 @@
        arc is James's engineering nod now, Stephen alignment next (asks 2 + 4).
        Body centred so it fills the stage. -->
   <section data-label="What I'm looking for">
-    <div class="aw-slide aw-slide--ink">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
       <div class="aw-body aw-ask__body">
         <div class="aw-ask__head">
           <h2 class="aw-h aw-h--2">What I'm looking for</h2>
         </div>
         <ol class="aw-list aw-ask__list">
           <li><span><span class="aw-emph">Feedback</span> on this.</span></li>
-          <li><span><span class="aw-emph">Support (JS + Stephen) thinking in advance about names</span> who could be freed up, part-time if not full-time - the two engineering roles, the account managers, the various governance types.</span></li>
+          <li><span><span class="aw-emph">Support (JS + SS) thinking in advance about names</span> who could be freed up, part-time if not full-time - the two engineering roles, the account managers, the various governance types.</span></li>
+          <li><span><span class="aw-emph">The nod (from JS and SS)</span> to stand up the pod and lead the pilot.</span></li>
         </ol>
-        <div class="aw-ask__nod">
-          <span class="aw-ask__nod-num">03</span>
-          <span class="aw-ask__nod-text"><span class="aw-emph">The nod (from JS and Stephen)</span> to stand up the pod and lead the pilot.<br><span class="aw-ask__nod-note">(current contract ends end of June)</span></span>
-        </div>
       </div>
       <footer class="aw-foot">
         <span class="aw-foot__page">13 / 18</span>
@@ -604,11 +615,11 @@
         <div class="aw-grid-2 aw-notes__cards">
           <div class="aw-card aw-notes__card">
             <p class="aw-card__label">My contract</p>
-            <p>My contract ends at the end of this month - so if you want me to lead this, it'll need extending.</p>
+            <p>My contract ends at the end of this month.</p>
           </div>
           <div class="aw-card aw-notes__card">
-            <p class="aw-card__label">Heads-up - the Cloud VM</p>
-            <p>My Cloud VM call is next. There's a budget cost, but I can't work on the Dell and my setup struggles with too many physical machines.</p>
+            <p class="aw-card__label">Cloud VM?</p>
+            <p>I have a call with IT today.<br>Request: a cloud virtual machine instead of Dell physical machine.</p>
           </div>
         </div>
       </div>
