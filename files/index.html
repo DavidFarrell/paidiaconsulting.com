@@ -110,7 +110,7 @@
 <h1>Files</h1>
 <p class="subtitle">Private transfer box · files auto-delete after 7 days · <a onclick="wipeAll()" style="color:var(--accent);cursor:pointer;text-decoration:underline">wipe all files</a></p>
 
-<div id="drop">Drop files here, or click to choose</div>
+<div id="drop">Drop files here, click to choose, or paste (⌘V / Ctrl+V) a screenshot or text</div>
 <input type="file" id="picker" multiple style="display:none">
 <p id="status"></p>
 <div id="ephemeral-warn" class="warn" style="display:none">
@@ -204,6 +204,43 @@ async function wipeAll() {
   }
   refresh();
 }
+
+function stampName() {
+  // Millisecond resolution so two pastes in the same second don't collide.
+  const d = new Date();
+  const p = (n, w = 2) => String(n).padStart(w, '0');
+  return 'clip-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) +
+         '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()) +
+         '-' + p(d.getMilliseconds(), 3);
+}
+
+const IMG_EXT = {
+  'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif',
+  'image/webp': 'webp', 'image/bmp': 'bmp', 'image/svg+xml': 'svg',
+  'image/tiff': 'tiff', 'image/heic': 'heic',
+};
+
+// Paste a screenshot or text straight onto the page. Image wins over text
+// (mirrors the CLI), so a screenshot that also carries text uploads as a PNG.
+document.addEventListener('paste', (e) => {
+  const items = [...(e.clipboardData ? e.clipboardData.items : [])];
+  const imageItem = items.find((it) => it.kind === 'file' && it.type.startsWith('image/'));
+  if (imageItem) {
+    const blob = imageItem.getAsFile();
+    if (blob) {  // getAsFile can return null; fall through to text if so
+      e.preventDefault();
+      const type = (blob.type || '').split(';')[0].trim();
+      const ext = IMG_EXT[type] || 'png';
+      uploadAll([new File([blob], stampName() + '.' + ext, { type: blob.type || 'image/png' })]);
+      return;
+    }
+  }
+  const text = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
+  if (text && text.trim()) {
+    e.preventDefault();
+    uploadAll([new File([text], stampName() + '.txt', { type: 'text/plain' })]);
+  }
+});
 
 drop.onclick = () => picker.click();
 picker.onchange = () => { uploadAll([...picker.files]); picker.value = ''; };
