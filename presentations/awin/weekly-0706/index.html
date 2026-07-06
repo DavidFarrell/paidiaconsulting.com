@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AwinOS weekly - 6 July</title>
+
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--awn-text);
+             font-family:var(--awn-font); overflow:hidden }
+  deck-stage{ background:#16131f }
+</style>
+</head>
+<body class="awn">
+
+<!-- AwinOS weekly with Stephen Short, Mon 6 Jul 2026 15:00. Four working
+     slides, thrown together fast between the kickoff and the weekly. -->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- SLIDE 1 - TITLE. No footer. -->
+  <section data-label="Title">
+    <div class="aw-slide aw-slide--hero">
+      <div class="aw-body aw-title__body">
+        <div class="aw-title__lockup">
+          <h1 class="aw-h aw-h--hero aw-title__headline">
+            AwinOS weekly
+          </h1>
+          <p class="aw-title__goal">Stephen + David &middot; 6 July 2026</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 - BUILDING AT SPEED. Two track cards, lilac. -->
+  <section data-label="Building at speed">
+    <div class="aw-slide">
+      <div class="aw-body aw-run__body">
+        <div class="aw-run__head">
+          <h2 class="aw-h aw-h--2">Building at speed</h2>
+        </div>
+        <div class="aw-grid-2 aw-run__cards">
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Track 1 &middot; Performance</p>
+            <p style="font-weight:var(--awn-w-semibold)">Text-to-SQL over the Databricks Salesforce mirror</p>
+            <ul class="aw-run__bullets">
+              <li>Needs the right data engineer (via Heiko)</li>
+              <li>DF to identify initial metrics to seek</li>
+              <li>Can work almost independently</li>
+            </ul>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Track 2 &middot; Relationship</p>
+            <p style="font-weight:var(--awn-w-semibold)">Capture &rarr; distil &rarr; pre-call briefing</p>
+            <ul class="aw-run__bullets">
+              <li>DF to start this week - collecting, curating, building the agent</li>
+              <li>DF confirmed telemetry possible with Copilot</li>
+              <li>DF asked Heiko for help getting access to Application Insights or LangSmith</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">2 / 5</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 - METRICS. Frame bullets then the named metrics. Cream. -->
+  <section data-label="Metrics">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-method__body">
+        <div class="aw-method__head">
+          <h2 class="aw-h aw-h--2">Metrics</h2>
+        </div>
+        <ul class="aw-run__bullets" style="gap:10px; max-width:1550px">
+          <li style="font-size:var(--awn-fs-lg)">Avoiding <span class="aw-emph">performative</span> metrics (number goes up without business value)</li>
+          <li style="font-size:var(--awn-fs-lg)">Focusing on <span class="aw-emph">meaningful</span> metrics (only move when real value goes up)</li>
+          <li style="font-size:var(--awn-fs-lg)">Thinking through <span class="aw-emph">leading</span> and <span class="aw-emph">lagging</span> indicators</li>
+        </ul>
+        <ul class="aw-list aw-list--tight" style="max-width:1650px">
+          <li><span><span class="aw-emph">Calls fed in</span> &middot; leading, performative - volume through the pipe; can be pumped without any value landing</span></li>
+          <li><span><span class="aw-emph">Briefings generated</span> &middot; leading, slightly performative - output count; says nothing about use</span></li>
+          <li><span><span class="aw-emph">Voluntary repeat use</span> &middot; leading, meaningful - an AM comes back to the briefing unprompted; hard to fake</span></li>
+          <li><span><span class="aw-emph">Briefing rated useful</span> &middot; leading, slightly meaningful - one-tap rating; qualitative (junior vs senior "why"?)</span></li>
+          <li><span><span class="aw-emph">Prep time saved / retention</span> &middot; lagging, meaningful - the true outcome, but reads late</span></li>
+          <li><span><span class="aw-emph">Capture pipeline running</span> &middot; a gate - binary, on or off; a precondition rather than a score</span></li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">3 / 5</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 - WAYS OF WORKING. Stephen's goal text verbatim. Lilac. -->
+  <section data-label="Ways of working">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Ways of working</h2>
+        <div class="aw-quote" style="max-width:1450px">
+          <p>Superhuman Staff: Applied AI @ Awin</p>
+          <p style="font-weight:var(--awn-w-normal)">&rarr; Client Intelligence Layer: Pre-Call Client Briefing</p>
+          <cite>AWIN-629 goal tree, as it stands</cite>
+        </div>
+        <div class="aw-consequence" style="max-width:1450px">
+          <span class="aw-bullet">&bull;</span>
+          <span>DGF to reuse Jira board?</span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">4 / 5</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 - NEED HELP WITH. Ink-deep close. -->
+  <section data-label="Need help with">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">Need help with</h2>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span><span class="aw-emph">Alex Taylor</span> - need help to get cloud VM</span></li>
+          <li><span><span class="aw-emph">Heiko</span> might need a nudge to get engineer (though I just asked him this morning)</span></li>
+        </ol>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">5 / 5</span>
+      </footer>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Title. Working session, not a presentation - these four slides are just the agenda.",
+  "Building at speed. Track 1 is un-gated and mostly independent of me once the right data engineer owns it - that's the Heiko ask. Track 2 I start this week myself; telemetry is confirmed possible in Copilot, access is the open question.",
+  "Metrics. Set the terms first - performative vs meaningful, leading vs lagging - then walk the named metrics. Calls fed in is the seductive one: early and pumpable. Voluntary repeat use is the honest early signal. The usefulness rating is where Emily's junior-vs-senior why gap lives: a briefing that carries the why is senior-grade. Pipeline running is a gate, never a score. These become the criteria I'm assessed against - pick numbers we'd both stand behind in six months.",
+  "Ways of working. The goal tree as Stephen created it - review together and fill the empty fields with the metrics we just agreed. And the practical question: do I reuse the existing Jira board or stand up something new?",
+  "Need help with. Two asks, both small: Alex Taylor for the cloud VM, and a nudge behind the Heiko engineer request if it stalls - though it only went in this morning."
+]
+</script>
+
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<script>
+(function () {
+  function numberFooters() {
+    var pages = Array.prototype.slice.call(document.querySelectorAll('.aw-foot__page'));
+    var main = pages.filter(function (p) { return !/^A\d/.test((p.textContent || '').trim()); });
+    var total = main.length + 1;
+    main.forEach(function (p, i) { p.textContent = (i + 2) + ' / ' + total; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+</body>
+</html>
