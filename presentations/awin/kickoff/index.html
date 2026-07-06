@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AwinOS pilot - kickoff</title>
+
+<!-- Vendored awn design system - all local, no CDN. Load order:
+     fonts -> tokens -> components -> semantic aliases -> deck skin.
+     tokens/components are the UPDATED design system (6 Jul 2026) carrying
+     --awn-ink-deep; deck.css is the proven AwinOS deck skin. -->
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--awn-text);
+             font-family:var(--awn-font); overflow:hidden }
+  /* Dark charcoal letterbox with a faint violet tint so every slide surface,
+     including the dark ink plates, keeps a visible edge (design-system
+     doctrine: same-violet on violet reads as no background at all). */
+  deck-stage{ background:#16131f }
+</style>
+</head>
+<body class="awn">
+
+<!--
+  AwinOS pilot - kickoff deck for the 11:30 Mon 6 Jul meeting with the pilot
+  AM team (Emily Matthews + Brendan Johnson, Stephen Short in the room).
+  v2, eight slides: the vision, how we'll build it, then a working agenda for
+  the three things to sort today (onboarding, deep-dives, where knowledge
+  lives), closing on the checklist to leave with. Discussion detail lives in
+  the speaker notes, not on the slides. v1 (six slides) is kept as
+  index-v1-sixslide.html in this folder.
+-->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- SLIDE 1 - TITLE. The project name is the title. No footer. -->
+  <section data-label="Title">
+    <div class="aw-slide aw-slide--hero">
+      <div class="aw-body aw-title__body">
+        <div class="aw-title__lockup">
+          <h1 class="aw-h aw-h--hero aw-title__headline">
+            Client Intelligence
+          </h1>
+          <p class="aw-title__goal">AwinOS pilot kickoff &middot; Emily, Brendan, Stephen + David</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 - THE VISION. Text rail left, Adam's briefing mockup right
+       (the fake-chat screenshot from Adam's own vision deck). Lilac. -->
+  <section data-label="The vision">
+    <div class="aw-slide">
+      <div class="aw-body aw-briefing__body">
+        <div class="aw-grid-asym aw-briefing__grid">
+          <div class="aw-briefing__rail">
+            <h2 class="aw-h aw-h--1 aw-briefing__headline">Superhuman account managers</h2>
+            <p class="aw-lead" style="max-width:44ch; font-size:var(--awn-fs-lg); line-height:var(--awn-lh-lg)">You walk into every client meeting already up to date: how the client is doing, how performance is trending, what opportunities are open, where the relationship stands, what was decided last time.</p>
+            <div class="aw-quote">
+              <p style="font-size:var(--awn-fs-lg); line-height:var(--awn-lh-lg)">&ldquo;Every account manager walks into every client conversation already briefed - recent history, live performance, the right question to ask - in seconds, not half an hour of digging.&rdquo;</p>
+              <cite>Managed Services AI plan</cite>
+            </div>
+          </div>
+          <div class="aw-figure aw-briefing__figure">
+            <image-slot src="assets/briefing-mockup.png" fit="contain" alt="A mock chat on client-intelligence.awin.internal: an account manager asks what they need to know before a Boohoo call and receives a pre-call briefing with LAST, RISK and OPENING items."></image-slot>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">2 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 - HOW WE'LL DO IT. Three plain steps, then the one printed
+       ground rule given real weight. Cream surface, white cards. -->
+  <section data-label="How we'll do it">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-run__body">
+        <div class="aw-run__head">
+          <h2 class="aw-h aw-h--2">How we'll do it</h2>
+          <p class="aw-sub">Prototype it with this team.</p>
+        </div>
+        <div class="aw-grid-3 aw-run__cards" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">01 &middot; Capture</p>
+            <p>With the clients' permission, client meetings get transcribed automatically.</p>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">02 &middot; Connect</p>
+            <p>The AI connects to where information already lives: Awin platform data, the CRM, email, Teams chats, wherever it is.</p>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">03 &middot; Distil</p>
+            <p>The AI is tailored to your needs and distils insights automatically.</p>
+            <p>You don't need to update it like a CRM.</p>
+          </div>
+        </div>
+        <div class="aw-consequence" style="max-width:1600px">
+          <span class="aw-bullet">&bull;</span>
+          <span class="aw-emph">This is a tool to help you - it won't be used for performance management of staff.</span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">3 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 - TODAY. Contents slide, three things to sort. Ink-deep. -->
+  <section data-label="Today">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">Today</h2>
+          <p class="aw-sub">Three things to sort in this meeting.</p>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span><span class="aw-emph">Client onboarding</span> - which client, transcription and diaries, next calls, consent.</span></li>
+          <li><span><span class="aw-emph">Account-manager deep-dives</span> - two sessions this week, one per AM.</span></li>
+          <li><span><span class="aw-emph">Where client knowledge lives</span> - the systems and the gaps.</span></li>
+        </ol>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">4 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 - CLIENT ONBOARDING. Section 1. Lilac. Last item deliberately
+       the open-floor prompt. -->
+  <section data-label="Client onboarding">
+    <div class="aw-slide">
+      <div class="aw-body aw-method__body">
+        <div class="aw-method__head">
+          <h2 class="aw-h aw-h--2">Client onboarding</h2>
+        </div>
+        <ul class="aw-list aw-list--tight" style="max-width:1550px">
+          <li><span><span class="aw-emph">Pick the client.</span> Samsung?</span></li>
+          <li><span><span class="aw-emph">Transcriptions and diaries.</span> Client meetings run as Teams meetings, transcription on by default, David added to all of them as an invitee. Make this a standing arrangement rather than a meeting-by-meeting decision.</span></li>
+          <li><span><span class="aw-emph">The next few calls.</span> The next two or three scheduled calls - should David join, or just watch the recording / read the transcript?</span></li>
+          <li><span><span class="aw-emph">Consent.</span> Can we agree on the wording for consent?</span></li>
+        </ul>
+        <div class="aw-consequence" style="max-width:1550px">
+          <span class="aw-bullet">&bull;</span>
+          <span class="aw-emph">Thoughts, concerns, queries?</span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">5 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 - ACCOUNT-MANAGER DEEP-DIVES. Section 2. Cream, white cards. -->
+  <section data-label="Deep-dives">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-run__body">
+        <div class="aw-run__head">
+          <h2 class="aw-h aw-h--2">Account-manager deep-dives</h2>
+          <p class="aw-sub">Two sessions, one per account manager - 45 minutes each.</p>
+        </div>
+        <ul class="aw-run__bullets" style="gap:16px; max-width:1550px">
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">What the work actually looks like, day to day.</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">How you prep for a client call today - what you look at, how long it takes, what you wish you could see.</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">The kinds of insights that would actually be useful to you.</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">How much of the engagement runs by email, calls, Teams chats, or anything else.</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">Which client meetings make sense for David to join live, and which to catch up on after.</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">What happens when an account changes hands - have you ever inherited one with no history?</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">6 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 - WHERE CLIENT KNOWLEDGE LIVES. Section 3. Lilac, tag row. -->
+  <section data-label="Where knowledge lives">
+    <div class="aw-slide">
+      <div class="aw-body aw-method__body">
+        <div class="aw-method__head">
+          <h2 class="aw-h aw-h--2">Where does client knowledge live right now?</h2>
+        </div>
+        <ul class="aw-run__bullets" style="gap:16px; max-width:1550px">
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">Heads</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">Inboxes</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">D365 notes</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">Salesforce</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">Gong</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)">Teams chats</li>
+          <li style="font-size:var(--awn-fs-xl); line-height:var(--awn-lh-xl)"><span class="aw-emph">?</span> - any others?</li>
+        </ul>
+        <div class="aw-consequence" style="max-width:1550px">
+          <span class="aw-bullet">&bull;</span>
+          <span>Does Gong / Teams already record any of these calls?</span>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">7 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 - CLOSE. What we'll have agreed by the end. Ink-deep. -->
+  <section data-label="Close">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">Takeaways</h2>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span><span class="aw-emph">Client picked</span></span></li>
+          <li><span><span class="aw-emph">Transcription default on</span>, with consent</span></li>
+          <li><span><span class="aw-emph">Two AM deep-dives booked</span></span></li>
+          <li><span><span class="aw-emph">Upcoming calls identified</span> (and David?)</span></li>
+          <li><span><span class="aw-emph">Group chat set up</span> - a Teams chat for the four of us, and who David bothers day to day</span></li>
+        </ol>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">8 / 8</span>
+      </footer>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- SPEAKER NOTES - one entry per slide, in document order (8 entries). -->
+<script type="application/json" id="speaker-notes">
+[
+  "Title. Keep it warm and quick - this is a first meeting with Emily and Brendan, not a boardroom. Thanks for making time at short notice. Today is mostly me listening and us agreeing some practical things.",
+  "The vision. Say the picture out loud before showing Adam's line: you walk into every client conversation already briefed, and behind that account manager sits an AI agent that understands their work and their client - a rocket engine behind the account manager. The mockup on the right is from Adam's own vision deck - point at it: you ask what you need to know before this afternoon's call, and the briefing comes back with the last conversation, the live risk, and the opening question. Read Adam's quote, or let them read it. This comes from the CEO's own plan, so there's real top-down backing and doors open when we ask. Land that the value is for them - less digging before calls, nothing extra to maintain. Foreshadow the ground rule coming up: this helps them do the job, it doesn't watch them doing it.",
+  "How we'll do it. Walk the three steps plainly. Capture: the call transcript lands automatically, with the client's permission - the only change they'll notice is meetings running as Teams meetings with transcription on. Connect: the AI reaches into wherever information already sits - platform data, CRM, email, Teams chats - rather than asking them to re-enter anything. Distil: it learns what they care about and keeps the record itself, so nobody has to tidy a CRM. Then say the ground rule plainly and mean it: this is a tool to help you, it will not be used for performance management. Off-record stays off-record - there's a redaction pass before anything lands in the record - I'll say more about that when it comes up.",
+  "Today. Just orient them: three things to get through, in this order - who the pilot client is, booking the two deep-dive sessions, and a first pass at where client knowledge actually lives today. Nothing to agree on this slide, just the map.",
+  "Client onboarding. We think Samsung, but it's genuinely their call - they know where the relationship is strongest, who's most open to experimenting, and which has more meetings coming up. On the standing arrangement: client meetings as Teams meetings, transcription on, me on the invite - not a one-off decision, the default going forward. Say the attend-versus-read-later trade-off out loud: I'd like to join some calls, but I don't want to disturb the client relationship, so I'm happy to be guided on when I'm in the room versus reading the transcript after. Consent: whoever owns the relationship asks, in their own words, before the first captured call - I never go around them to their client. Then genuinely open the floor: what would make this annoying or uncomfortable? Being recorded, feeling watched? Get it on the table now while everything is still changeable. If it comes up: off-record stays off-record, there's a redaction pass before anything is kept.",
+  "Deep-dives. Two 45-minute sessions, one per AM - say out loud that they're this week and I'll send the invites straight after this meeting. What each covers: today's prep time is the baseline any improvement gets measured against, so get the real detail - what they look at, how long it takes, what they wish they could see. The insights bullet is the heart of it: what would actually be useful to them is the spec for what a good briefing contains. The channel-mix answer tells us what capture has to cover beyond meetings. And the handover question is the pitch in miniature - if either of them has ever inherited an account with no history, let them tell that story, don't tell it for them.",
+  "Where knowledge lives. Run through the list - heads, inboxes, D365, Salesforce, Gong, Teams chats - and let them add what's missing at the question mark. The Gong question matters a lot: if Gong already records some of these calls, a corpus of client history exists before we've captured a single new one.",
+  "Takeaways. Run the checklist and try to leave with all five, or know exactly why not. Client picked, or at least the decision path. Transcription default agreed, with consent. Two AM deep-dives booked. The upcoming calls identified, and whether I join any of them - that's the first shadow and first-briefing target. Group chat set up before we leave the room - a Teams chat for the four of us, and agree who I bother day-to-day so I'm not interrupting the wrong person. The only measure that counts after today is whether they actually use what gets built before a real call."
+]
+</script>
+
+<!-- Runtime. -->
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<!-- Auto-number footer page numbers (same mechanism as the planning deck:
+     un-footered cover, main run renumbered 2..N of N). -->
+<script>
+(function () {
+  function numberFooters() {
+    var pages = Array.prototype.slice.call(document.querySelectorAll('.aw-foot__page'));
+    var main = pages.filter(function (p) { return !/^A\d/.test((p.textContent || '').trim()); });
+    var total = main.length + 1;
+    main.forEach(function (p, i) { p.textContent = (i + 2) + ' / ' + total; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+</body>
+</html>
