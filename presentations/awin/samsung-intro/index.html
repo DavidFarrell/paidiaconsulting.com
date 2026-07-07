@@ -26,15 +26,19 @@
   CLIENT-FACING deck: the short Samsung introduction Emily can use with Emma.
   Circulate to Stephen + Emily BEFORE anything goes to the client.
 
-  Three working slides after the title:
-    1. What we're doing, and why           (lilac)
-    2. What Samsung gets / what we're asking (cream)
-    3. A1 - How transcripts are handled     (ink-deep, IN RESERVE - only
-       shown if the transcription question needs more than reassurance.
-       The distil-and-discard compromise is deliberately NOT on the slide;
-       it stays in the speaker notes as a last resort.)
+  v2 after David's feedback (7 Jul): slide 2 sells the future (people-first /
+  superhuman framing, Samsung briefing mockup regenerated from Adam's Boohoo
+  original); slide 3 benefits reordered to lead with better service; the
+  transcript fallbacks are now an ESCALATING LADDER of separate reserve cards:
 
-  Speaker notes are written in Emily's voice - lines she can say to Emma.
+    A1  How transcripts are handled   (reassurance - the default position)
+    A2  Agreed redaction pass          (first concession)
+    A3  Fixed retention period         (second concession)
+    A4  Distil and discard             (last resort - Adam's original basis;
+                                        only if Emma requires it)
+
+  Play A-cards in order; stop at the first that lands. Speaker notes are
+  written in Emily's voice - lines she can say to Emma.
 -->
 
 <deck-stage width="1920" height="1080">
@@ -53,31 +57,25 @@
     </div>
   </section>
 
-  <!-- SLIDE 2 - WHAT WE'RE DOING, AND WHY. Lilac, three step cards. -->
+  <!-- SLIDE 2 - WHAT WE'RE DOING, AND WHY. Vision rail left, Samsung
+       briefing mockup right (regenerated from Adam's vision-deck original).
+       Lilac. -->
   <section data-label="What and why">
     <div class="aw-slide">
-      <div class="aw-body aw-run__body">
-        <div class="aw-run__head">
-          <h2 class="aw-h aw-h--2">What we're doing, and why</h2>
-          <p class="aw-sub" style="max-width:66ch">Awin is investing in AI so that everyone working on your account walks into every conversation already up to speed - the history, the performance, the open actions.</p>
-        </div>
-        <div class="aw-grid-3 aw-run__cards" style="grid-template-columns:1fr 1fr 1fr">
-          <div class="aw-card aw-run__card">
-            <p class="aw-card__label">01 &middot; Capture</p>
-            <p>With your permission, Samsung-Awin meetings are transcribed automatically.</p>
+      <div class="aw-body aw-briefing__body">
+        <div class="aw-grid-asym aw-briefing__grid">
+          <div class="aw-briefing__rail">
+            <h2 class="aw-h aw-h--1 aw-briefing__headline">Awin's greatest strength is its people</h2>
+            <p class="aw-lead" style="max-width:46ch; font-size:var(--awn-fs-lg); line-height:var(--awn-lh-lg)">We're building AI tools that help our people do an even better job for our clients: every account manager walking into every Samsung conversation already briefed - the history, the performance, the open opportunities - at the top of their game, every day.</p>
+            <p style="max-width:50ch; font-size:var(--awn-fs-md); line-height:var(--awn-lh-md)"><span class="aw-emph">How:</span> with your permission we capture our conversations, connect them with the data Awin already holds, and distil it all into one live picture of the account - kept up to date by the AI, not by anyone's admin.</p>
+            <div class="aw-consequence" style="max-width:50ch">
+              <span class="aw-bullet">&bull;</span>
+              <span><span class="aw-emph">This is a tool for Awin's own team.</span> Nothing changes in how you work with us, and nothing extra is asked of you day to day.</span>
+            </div>
           </div>
-          <div class="aw-card aw-run__card">
-            <p class="aw-card__label">02 &middot; Connect</p>
-            <p>The AI joins that up with what Awin already holds: platform performance, account records, agreed actions.</p>
+          <div class="aw-figure aw-briefing__figure">
+            <image-slot src="assets/samsung-briefing-mockup.png" fit="contain" alt="An illustrative mock-up: an account manager asks what they need to know before a Samsung call and receives a pre-call briefing with LAST, OPPORTUNITY and OPENING items."></image-slot>
           </div>
-          <div class="aw-card aw-run__card">
-            <p class="aw-card__label">03 &middot; Distil</p>
-            <p>It distils the signal into one live picture of the account, so knowledge stops living only in inboxes and heads.</p>
-          </div>
-        </div>
-        <div class="aw-consequence" style="max-width:1600px">
-          <span class="aw-bullet">&bull;</span>
-          <span><span class="aw-emph">This is a tool for Awin's own team.</span> Nothing changes in how you work with us, and nothing extra is asked of you day to day.</span>
         </div>
       </div>
       <footer class="aw-foot">
@@ -86,7 +84,8 @@
     </div>
   </section>
 
-  <!-- SLIDE 3 - WHAT SAMSUNG GETS / WHAT WE'RE ASKING. Cream, two columns. -->
+  <!-- SLIDE 3 - WHAT SAMSUNG GETS / WHAT WE'RE ASKING. Cream, two columns.
+       Benefits ordered: better service first, first-in-line last. -->
   <section data-label="Benefit and ask">
     <div class="aw-slide aw-slide--cream">
       <div class="aw-body aw-run__body">
@@ -96,18 +95,20 @@
         <div class="aw-grid-3 aw-run__cards" style="grid-template-columns:1.2fr 1fr">
           <div class="aw-card aw-run__card">
             <p class="aw-card__label">What you get</p>
-            <ul class="aw-run__bullets" style="gap:14px">
-              <li><span class="aw-emph">Continuity through change.</span> As the team around the account evolves, nothing gets lost - new people arrive already knowing the history.</li>
-              <li><span class="aw-emph">No more re-explaining.</span> Every call starts from full context; questions you've answered stay answered.</li>
+            <ul class="aw-run__bullets" style="gap:12px">
+              <li><span class="aw-emph">A better service.</span> Account managers who understand your account more deeply - your data and industry comparisons at their fingertips, every request remembered.</li>
+              <li><span class="aw-emph">Opportunities spotted sooner.</span> As the picture builds, the team gets better at surfacing what's next, not just what happened.</li>
               <li><span class="aw-emph">More strategy, less admin.</span> Time goes on the why behind the numbers, not on gathering data from scattered sources.</li>
+              <li><span class="aw-emph">Continuity through change.</span> As the team around the account evolves, nothing gets lost - new people arrive already knowing the history.</li>
               <li><span class="aw-emph">First in line.</span> Samsung shapes what gets built, and benefits from it first.</li>
             </ul>
           </div>
           <div class="aw-card aw-run__card">
             <p class="aw-card__label">What we're asking</p>
-            <ul class="aw-run__bullets" style="gap:14px">
-              <li>Your OK to transcribe our meetings together (Teams transcription on).</li>
-              <li>David, the AI specialist building this, joins some meetings - for example the daily stand-up - to learn how the account runs.</li>
+            <ul class="aw-run__bullets" style="gap:12px">
+              <li>Your OK to transcribe our meetings together, and to use those transcripts to power the AI.</li>
+              <li>David, the AI specialist building this, joins some of our meetings to learn how the account runs.</li>
+              <li>Down the line, a little feedback: is the service feeling sharper?</li>
               <li>That's it. No new process, no extra work on your side.</li>
             </ul>
           </div>
@@ -119,9 +120,10 @@
     </div>
   </section>
 
-  <!-- SLIDE A1 - HOW TRANSCRIPTS ARE HANDLED. Ink-deep. IN RESERVE - only
-       deployed if reassurance alone doesn't settle the transcription question.
-       Compromise 3 (distil-and-discard) deliberately absent: notes only. -->
+  <!-- ============ RESERVE CARDS - play in order, stop when it lands ============ -->
+
+  <!-- SLIDE A1 - HOW TRANSCRIPTS ARE HANDLED. The default position:
+       reassurance only, no concessions. Ink-deep. -->
   <section data-label="A1 - Transcripts">
     <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
       <div class="aw-body aw-ask__body">
@@ -130,16 +132,70 @@
         </div>
         <ol class="aw-list aw-ask__list">
           <li><span>Kept inside <span class="aw-emph">Awin's secure Microsoft 365 environment</span> - the same place our meeting recordings and files already live.</span></li>
-          <li><span>Access limited to <span class="aw-emph">the Samsung account team</span>. Used only to serve this account - nothing else.</span></li>
-          <li><span>A <span class="aw-emph">redaction pass</span> removes personal and off-record content before anything is kept.</span></li>
+          <li><span>Access limited to <span class="aw-emph">the Samsung account team and the small Awin AI team</span> building the system.</span></li>
+          <li><span>Used <span class="aw-emph">only to serve the Samsung account</span> - never shared with, or used for, any other client.</span></li>
         </ol>
-        <div class="aw-consequence" style="max-width:1550px">
-          <span class="aw-bullet">&bull;</span>
-          <span>If it helps, we can also agree <span class="aw-emph">a fixed retention period</span> (transcripts deleted at the end of the pilot, then we decide together what happens next) and <span class="aw-emph">the categories of content that are never kept</span>, with sight of what's held on request.</span>
-        </div>
       </div>
       <footer class="aw-foot">
         <span class="aw-foot__page">A1</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE A2 - AGREED REDACTION PASS. First concession. Ink-deep. -->
+  <section data-label="A2 - Redaction">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">If it helps: an agreed redaction pass</h2>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span>Together we agree <span class="aw-emph">the kinds of content that should never be kept</span> - personal anecdotes, candid asides, anything off-record.</span></li>
+          <li><span>Those are <span class="aw-emph">removed automatically</span> before a transcript is stored.</span></li>
+          <li><span>Samsung can <span class="aw-emph">see what's held</span>, on request.</span></li>
+        </ol>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">A2</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE A3 - FIXED RETENTION PERIOD. Second concession. Ink-deep. -->
+  <section data-label="A3 - Retention">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">If it helps: a fixed retention period</h2>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span>Transcripts are kept <span class="aw-emph">only for the development phase</span>.</span></li>
+          <li><span>At the end of it they're <span class="aw-emph">deleted</span>, and we agree together what - if anything - is kept longer.</span></li>
+          <li><span>By then we'll all know much more about what's useful: <span class="aw-emph">we decide with evidence</span>, not up front.</span></li>
+        </ol>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">A3</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE A4 - DISTIL AND DISCARD. Last resort - do not offer unprompted.
+       Ink-deep. -->
+  <section data-label="A4 - Distil and discard">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">If needed: distil and discard</h2>
+        </div>
+        <ol class="aw-list aw-ask__list">
+          <li><span>We keep <span class="aw-emph">only the extracted facts</span> - commitments, decisions, factual updates - and delete the transcript.</span></li>
+          <li><span>What's kept looks like: <span class="aw-emph">&ldquo;new campaign lead starts in September&rdquo;</span> &middot; <span class="aw-emph">&ldquo;agreed to revisit the publisher mix in Q4&rdquo;</span>.</span></li>
+          <li><span>The honest trade-off: the AI can never re-read the originals, so <span class="aw-emph">improvements can't reach past history</span>.</span></li>
+        </ol>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">A4</span>
       </footer>
     </div>
   </section>
@@ -151,16 +207,19 @@
 <script type="application/json" id="speaker-notes">
 [
   "Title. Keep it light - this is a heads-up about something Awin is doing to make the account team even better, not a product pitch. One line to open: we're investing in AI on our side so the team serving Samsung is the best-briefed it can be.",
-  "What and why. The problem this solves is one Emma will recognise instantly: account knowledge lives in people's heads and inboxes, so every handover or holiday loses something. The fix: with Samsung's permission our meetings get transcribed, the AI joins that up with the data Awin already holds, and it distils it into one live picture of the account. Land the scope line hard: this is an internal tool for Awin's own team. Samsung's experience of working with us doesn't change, and nobody at Samsung has to do anything.",
-  "Benefit and ask. Lead with continuity - with the changes coming on both sides this year and renewal on the horizon, this is exactly the moment to make sure nothing gets dropped: new people arrive already knowing the account, decisions and context carry forward, and Samsung never has to re-explain itself to us. Then the quality point: less time gathering data from scattered sources means more time on strategy and the why behind the numbers - insight, not just reporting. The ask is deliberately small: OK to transcribe our meetings, and David (the specialist building it) sitting in on some meetings like the stand-up to learn how the account runs. Nothing else changes.",
-  "IN RESERVE - only if the transcription question needs more than reassurance. First hold the default position: transcripts stay in Awin's secure Microsoft 365 environment (where recordings already live), only the Samsung account team can see them, and a redaction pass strips personal and off-record content before anything is kept. If Emma needs more comfort, play the two cards on the slide, in order: (1) time-boxed retention - we keep transcripts only for the pilot, delete them at the end, and use what we've learned to agree together what happens after; (2) agreed redaction categories - Samsung tells us the kinds of content that should never be captured (personal anecdotes, candid asides), we build that into the redaction pass, and they can see what's held on request. DO NOT offer unprompted: extracting the facts and deleting the transcripts entirely. It's the last resort - it would lock us out of improving how we process the history later. If Emma lands there anyway, take it away as something to look at rather than agreeing on the call."
+  "What and why. Sell the future before the mechanics. Awin's edge has always been its people - this programme (internally it's literally called Superhuman) is about giving those people superpowers, not replacing them. Paint the picture: an account manager walks into every Samsung conversation on their best day - everything at their fingertips, nothing forgotten, the right question ready. The mock-up on the right is illustrative - we're building it now, and Samsung would help shape it. Then the how, briefly: capture our conversations (with your permission), connect them with data Awin already holds, distil it into one live picture of the account that maintains itself. Land the scope line hard: an internal tool for Awin's own team - Samsung's experience of working with us doesn't change, and nobody at Samsung has to do anything.",
+  "Benefit and ask. Lead with the headline: a better service, full stop - account managers who understand the account more deeply, with Samsung's own data and industry comparisons at their fingertips, and every request remembered. Then: opportunities surfaced sooner as the picture builds. Then the quality point - less time gathering data from scattered sources means more time on strategy and the why behind the numbers. Continuity through change matters right now: with the changes coming on both sides this year and renewal on the horizon, this makes sure nothing gets lost and new people arrive already up to speed. Close warm: Samsung is first in line - they shape what gets built and benefit first. The ask is deliberately small: OK to transcribe our meetings and use the transcripts to power the AI; David sitting in on some meetings to learn how the account runs; down the line, a little feedback on whether the service feels sharper. Nothing else changes.",
+  "A1 - IN RESERVE. The reserve cards A1-A4 are an escalating ladder: play them in order and STOP at the first one that settles it. This one is the default position, not a concession: transcripts stay in Awin's secure Microsoft 365 environment (where recordings already live), only the Samsung account team and the small Awin AI team can see them, and they're used solely to serve the Samsung account - never shared with or used for any other client.",
+  "A2 - first concession, only if A1 doesn't settle it. We agree together the kinds of content that should never be kept - personal anecdotes, candid asides, anything off-record - and those are stripped automatically before a transcript is stored. Samsung can see what's held on request. Frame it as collaboration, not caveat: they define the line, we build to it.",
+  "A3 - second concession. Time-box it: transcripts kept only during the development phase, deleted at the end, and we decide together then - with evidence rather than guesswork - what if anything is worth keeping longer. This usually lands because it converts a forever-decision into a revisit-decision.",
+  "A4 - LAST RESORT. Do not offer this unprompted. Only if Emma genuinely requires it: we extract the facts (commitments, decisions, factual updates) and delete the transcript itself. If it comes to this, be honest about the trade-off - the AI can never re-read the original conversations, so improvements to how it works can't be applied to past history. Prefer to take it away as something to look at rather than agreeing it live on the call."
 ]
 </script>
 
 <script src="assets/image-slot.js"></script>
 <script src="assets/deck-stage.js"></script>
 
-<!-- Footer numbering: A-prefixed pages (the in-reserve card) are excluded
+<!-- Footer numbering: A-prefixed pages (the reserve cards) are excluded
      from the main 2..N run, same mechanism as the other AwinOS decks. -->
 <script>
 (function () {
