@@ -11,6 +11,10 @@ const path = require('path');
 
 const PORT = process.env.FILES_PORT || 8484;
 
+// Skill bootstrap zips live here permanently so other machines can always
+// fetch the newest one (see paidiamsg INSTALL.md) - never swept or wiped.
+const PROTECTED = /-skill-\d{8}\.zip$/;
+
 function pickStore() {
   for (const dir of ['/data/files', path.join(__dirname, 'filestore'), '/tmp/filestore']) {
     try {
@@ -30,7 +34,7 @@ const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 function sweep() {
   const cutoff = Date.now() - MAX_AGE_MS;
   for (const n of fs.readdirSync(STORE)) {
-    if (n.startsWith('.')) continue;
+    if (n.startsWith('.') || PROTECTED.test(n)) continue;
     try {
       const full = path.join(STORE, n);
       if (fs.statSync(full).mtimeMs < cutoff) {
@@ -76,12 +80,13 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'POST' && p === '/files/api/wipe') {
-    let n = 0;
+    let n = 0, kept = 0;
     for (const name of fs.readdirSync(STORE)) {
       if (name.startsWith('.')) continue;
+      if (PROTECTED.test(name)) { kept++; continue; }
       try { fs.unlinkSync(path.join(STORE, name)); n++; } catch (_) {}
     }
-    return json(res, 200, { ok: true, wiped: n });
+    return json(res, 200, { ok: true, wiped: n, kept });
   }
 
   const m = p.match(/^\/files\/api\/f\/(.+)$/);

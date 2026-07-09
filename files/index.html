@@ -200,7 +200,7 @@ async function wipeAll() {
   const r = await fetch('/files/api/wipe', { method: 'POST' });
   if (r.ok) {
     const d = await r.json();
-    status.textContent = 'wiped ' + d.wiped + ' file' + (d.wiped === 1 ? '' : 's');
+    status.textContent = 'wiped ' + d.wiped + ' file' + (d.wiped === 1 ? '' : 's') + (d.kept ? ' (kept ' + d.kept + ' skill zip' + (d.kept === 1 ? '' : 's') + ')' : '');
   }
   refresh();
 }
