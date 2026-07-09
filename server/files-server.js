@@ -15,6 +15,20 @@ const PORT = process.env.FILES_PORT || 8484;
 // fetch the newest one (see paidiamsg INSTALL.md) - never swept or wiped.
 const PROTECTED = /-skill-\d{8}\.zip$/;
 
+// Extensions the web UI's View button may render inline (?view=1). Text-like
+// files are forced to text/plain so nothing served from the box can ever
+// execute in the browser (html/svg included - they render as source).
+const VIEW_TYPES = {
+  txt: 'text/plain', md: 'text/plain', markdown: 'text/plain', log: 'text/plain',
+  json: 'application/json', jsonl: 'text/plain', csv: 'text/plain', tsv: 'text/plain',
+  yaml: 'text/plain', yml: 'text/plain', toml: 'text/plain', ini: 'text/plain',
+  xml: 'text/plain', html: 'text/plain', htm: 'text/plain', svg: 'text/plain',
+  js: 'text/plain', ts: 'text/plain', py: 'text/plain', sh: 'text/plain',
+  css: 'text/plain', sql: 'text/plain', diff: 'text/plain', patch: 'text/plain',
+  png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif',
+  webp: 'image/webp', bmp: 'image/bmp',
+};
+
 function pickStore() {
   for (const dir of ['/data/files', path.join(__dirname, 'filestore'), '/tmp/filestore']) {
     try {
@@ -111,10 +125,17 @@ const server = http.createServer((req, res) => {
     if (req.method === 'GET') {
       if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
       const st = fs.statSync(full);
+      // ?view=1 on a known-viewable extension renders inline instead of
+      // downloading; anything else keeps the attachment behaviour.
+      const ext = name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+      const viewType = url.searchParams.has('view') ? VIEW_TYPES[ext] : undefined;
+      const contentType = viewType
+        ? (viewType === 'text/plain' ? 'text/plain; charset=utf-8' : viewType)
+        : 'application/octet-stream';
       res.writeHead(200, {
-        'Content-Type': 'application/octet-stream',
+        'Content-Type': contentType,
         'Content-Length': st.size,
-        'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(name)}`,
+        'Content-Disposition': `${viewType ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(name)}`,
       });
       return fs.createReadStream(full).pipe(res);
     }
