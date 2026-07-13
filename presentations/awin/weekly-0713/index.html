@@ -43,6 +43,19 @@
      and the footer's top border on every slide. */
   .aw-slide .aw-list li { border-top: 0 !important; }
   .aw-foot { border-top: 0 !important; }
+
+  /* Readability bump (13 Jul) - David needs the text a bit bigger on-screen.
+     All type tokens are rem-based off the html root, and deck-stage scales the
+     whole 1920x1080 canvas with transform:scale(), so lifting the root size
+     scales every text element proportionally. ~12% up. Plus force word-wrap so
+     any line that now runs longer wraps instead of clipping at the slide edge. */
+  html { font-size: 18px; }
+  .aw-slide, .aw-slide p, .aw-slide li, .aw-slide .aw-lead, .aw-slide .aw-sub,
+  .aw-slide .aw-body-text, .aw-slide .aw-h {
+    overflow-wrap: break-word; word-break: break-word; white-space: normal;
+  }
+  /* keep intentionally-single-line chrome from wrapping (org heads, phase pills) */
+  .aw-org__outer-head, .aw-planes__phase, .aw-tl__phase { white-space: nowrap; }
 </style>
 </head>
 <body class="awn">
