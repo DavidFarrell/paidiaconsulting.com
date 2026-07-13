@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AwinOS - weekly update</title>
+
+<!-- Vendored awn design system - all local, no CDN. Load order:
+     fonts -> tokens -> components -> semantic aliases -> deck skin.
+     tokens/components are the UPDATED design system (6 Jul 2026) carrying
+     --awn-ink-deep; deck.css is the proven AwinOS deck skin. -->
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--awn-text);
+             font-family:var(--awn-font); overflow:hidden }
+  /* Dark charcoal letterbox with a faint violet tint so every slide surface,
+     including the dark ink plates, keeps a visible edge (design-system
+     doctrine: same-violet on violet reads as no background at all). */
+  deck-stage{ background:#16131f }
+
+  /* Revision 3 (13 Jul 2026) - clean bullets, no separators. .aw-list carried
+     a border-top hairline on every row after the first, and .aw-mini-bullets
+     had no left indent of its own so a nested sub-point read as a stray dot
+     floating above a full-width row. Both are retired from the bullet-content
+     slides in favour of ul.bul below: no hairlines, markers sit inline with
+     their own text, and nesting gets a real left indent. Markers are
+     currentColor, so they read light on the dark ink-deep plates too. */
+  .aw-slide ul.bul { list-style: none; margin: 0; padding: 0; }
+  .aw-slide ul.bul > li { position: relative; padding-left: 1.5em; margin: 0 0 .75em 0; border: 0; line-height: 1.42; }
+  .aw-slide ul.bul > li::before { content: ""; position: absolute; left: .25em; top: .58em; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .5; }
+  .aw-slide ul.bul ul.bul { margin-top: .5em; }
+  .aw-slide ul.bul ul.bul > li::before { opacity: .35; }
+  .aw-slide ul.bul li > .lead-line { font-weight: 600; }
+
+  /* No-hairline stance (13 Jul) - David wants zero divider hairlines deck-wide:
+     the row border on any remaining .aw-list (the Emily's-team Ellie/Beth pair)
+     and the footer's top border on every slide. */
+  .aw-slide .aw-list li { border-top: 0 !important; }
+  .aw-foot { border-top: 0 !important; }
+</style>
+</head>
+<body class="awn">
+
+<!--
+  AwinOS - weekly update deck for the 13 Jul 2026 Monday session with
+  Stephen Short (+ James Skelland). 18 slides: progress last week
+  (stakeholder + build), the shift in technical direction (four sub-shifts +
+  blockers), then this week (the research meetings before Thursday, Emily's
+  team once green-lit, and a divider into the Adam block: deviations from the
+  original vision, the shifting landscape, and the stakeholder update).
+  Discussion detail lives in the speaker notes, not on the slides.
+-->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- SLIDE 1 - TITLE. No footer. -->
+  <section data-label="Title">
+    <div class="aw-slide aw-slide--hero">
+      <div class="aw-body aw-title__body">
+        <div class="aw-title__lockup">
+          <h1 class="aw-h aw-h--hero aw-title__headline">AwinOS</h1>
+          <p class="aw-title__goal">Weekly update &middot; 13 July 2026</p>
+          <div class="aw-title__meta">
+            <span class="aw-name">David G&eacute;rouville-Farrell &middot; with Stephen Short (+ James Skelland)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 - AGENDA. Cream. -->
+  <section data-label="Agenda">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Agenda</h2>
+        <div class="aw-grid-3">
+          <div class="aw-card">
+            <p class="aw-card__label">01</p>
+            <p>Progress last week</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">02</p>
+            <p>Shift of technical direction</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">03</p>
+            <p>This week</p>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">2 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 - SECTION OPENER: Part one. Ink-deep. -->
+  <section data-label="Progress last week">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-body--center">
+        <p class="aw-eyebrow">Part one</p>
+        <h2 class="aw-h aw-h--hero">Progress last week</h2>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">3 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 - STAKEHOLDER. Lilac (default surface). -->
+  <section data-label="Stakeholder">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Stakeholder</h2>
+        <ul class="bul">
+          <li>Emily spoke with Samsung, who raised concern around transcriptions</li>
+          <li>I gave Emily compromise positions to use with Samsung - lead with retention, redaction only if needed
+            <ul class="bul">
+              <li>Fixed retention periods, kept only for the development phase</li>
+              <li>A redaction pass that removes personal anecdotes, candid asides, or anything off-record</li>
+            </ul>
+          </li>
+          <li>One transcription move still open on our side: commit to Adam's distilled-insights-only retention - but that's a problem during development, because we can't re-distill raw transcriptions as we iterate the prompts</li>
+          <li>Good call with Samsung - recording is the one sticking point, as we thought
+            <ul class="bul">
+              <li>Emma (Samsung) is on leave until Wednesday - we regroup Wednesday afternoon once she's reviewed the notes</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">4 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 - BUILD. Cream, three white cue cards. -->
+  <section data-label="Build">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Build</h2>
+        <div class="aw-grid-3">
+          <div class="aw-card">
+            <p class="aw-card__label">Transcription redactor</p>
+            <p>Takes a raw Teams transcript and redacts what people would feel wary about being retained</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Client-intelligence-layer builder</p>
+            <p>A Copilot agent that creates the client intelligence layer</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Tested with two client intelligence agents (CIAs)</p>
+            <ul class="bul">
+              <li>Awin (dogfooding)</li>
+              <li>Samsung CIA (built from conversations so far, data I can access, and deliberately simulated performance data)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">5 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 - SECTION OPENER: Part two. Ink-deep, with lead line + Ignacio quote. -->
+  <section data-label="Shift of technical direction">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body">
+        <p class="aw-eyebrow">Part two</p>
+        <h2 class="aw-h aw-h--1">Shift of technical direction</h2>
+        <p class="aw-lead">The technical direction is shifting</p>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">6 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 - SHIFT 1. Lilac. From/to shown as tag pills (aw-flow's __name is
+       hardcoded white and only pairs with ink cards, so a lilac/cream surface
+       would render invisible text - substituted with aw-tag pills instead). -->
+  <section data-label="Where the agent is built">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Where the agent is built</h2>
+        <div style="display:flex; align-items:center; gap:24px; margin:4px 0 8px">
+          <span class="aw-tag">Copilot Studio</span>
+          <span class="aw-emph" style="font-size:2.25rem; color:var(--awn-orange-default); line-height:1">&rarr;</span>
+          <span class="aw-tag aw-tag--orange">LangGraph / Deep Agents</span>
+        </div>
+        <ul class="bul">
+          <li>Build the real agent in LangGraph / Deep Agents - the same framework Ava runs on</li>
+          <li>Copilot Studio becomes a thin front door to surface the agent to users
+            <ul class="bul">
+              <li>i.e. a custom agent surfaced through the LiteLLM gateway as an MCP connection to a very basic Copilot agent</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">7 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 - SHIFT 2. Cream. -->
+  <section data-label="Model access and telemetry">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Model access and telemetry</h2>
+        <ul class="bul">
+          <li>By going through LiteLLM, we standardise with Awin's approach to building agents</li>
+          <li>We can tie into LangSmith for traces, evals and a continual improvement loop</li>
+          <li>Additional benefits across model and platform flexibility</li>
+          <li>Eventually we can have self-healing benchmark and prompt-rewriting loops, so we can swap models and hill-climb as providers compete</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">8 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 - SHIFT 3. Lilac. -->
+  <section data-label="The performance and data layer">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">The performance and data layer</h2>
+        <ul class="bul">
+          <li>No longer expecting to build this data layer fully ourselves</li>
+          <li>Avalytics (Awin's BI-plus-AI insights layer) will be one source of insights</li>
+          <li>Semantic data layer (Benni's data platform) is a longer-term home for performance analytics</li>
+          <li>Therefore our data requirements may be smaller than expected
+            <ul class="bul">
+              <li>However we can't wait for the semantic layer, which may take 18 months or more</li>
+              <li>We can probably access Avalytics quickly</li>
+            </ul>
+          </li>
+          <li>We will still need some bespoke analytics calculations and interfaces, which we can build ourselves and may contribute back to the main project</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">9 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 - SHIFT 4. Cream. -->
+  <section data-label="Longer term - Copilot to Ava?">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Longer term - Copilot to Ava?</h2>
+        <ul class="bul">
+          <li>I got the impression that over time Ava may become a standard chat interface for staff to access Awin resources</li>
+          <li>If so, we could surface our agent to Ava through the same approach we currently plan for Copilot</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">10 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 - BLOCKERS. Ink-deep, Ignacio quote nested as a sub-bullet. -->
+  <section data-label="Blockers">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Blockers</h2>
+        <ul class="bul">
+          <li>Ava's Deep Agents approach is apparently code complete but requires production approval - is this risky?</li>
+          <li>Surfacing Ava (and possibly our project) is technically trivial but apparently restricted by legal
+            <ul class="bul">
+              <li>&ldquo;We're more restricted by legal and things like that right now than by capacity - we could do it relatively easily, and I'd love to.&rdquo; - Ignacio</li>
+            </ul>
+          </li>
+          <li>The exact route for me building into the Ava stack is a bit ambiguous at present</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">11 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 12 - SECTION OPENER: Part three. Ink-deep. -->
+  <section data-label="This week">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body">
+        <p class="aw-eyebrow">Part three</p>
+        <h2 class="aw-h aw-h--1">This week</h2>
+        <p class="aw-lead">The week ahead - research meetings to get across the platform, then Adam on Thursday</p>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">12 / 16</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 13 (NEW) - RESEARCH THIS WEEK. Cream, card grid. -->
+  <section data-label="Research this week">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Research this week</h2>
+        <p class="aw-sub">Getting fully across the platform before I commit to a build</p>
+        <div class="aw-grid-3">
+          <div class="aw-card">
+            <p class="aw-card__label">Heiko</p>
+            <p>Resourcing - the data-intelligence role</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Benni Hellmann</p>
+            <p>Data platform / semantic layer <span style="opacity:.7">- later today</span></p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Sumanth Pagadala</p>
+            <p>Data Engineer, Avalytics</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Othman Bouzahzah</p>
+            <p>Data Scientist, spans Sagitta and Andromeda</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Henning Schutz</p>
+            <p>Engineer, Team Andromeda - the AI platform team</p>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Daniel Cortes</p>
+            <p>Engineer, Team Andromeda</p>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">13 / 19</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 14 (NEW) - EMILY'S TEAM, ONCE WE'RE GREEN-LIT. Lilac. -->
+  <section data-label="Emily&#39;s team, once we&#39;re green-lit">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Emily's team, once we're green-lit</h2>
+        <p class="aw-lead">Emily is working on the internal side, and Samsung regroups Wednesday once Emma (their contact) is back from leave.</p>
+        <div class="aw-card" style="max-width:1200px">
+          <ul class="aw-list">
+            <li><span><span class="aw-emph">Ellie</span> - Project Manager</span></li>
+            <li><span><span class="aw-emph">Beth</span> - Account Manager</span></li>
+          </ul>
+        </div>
+        <p class="aw-sub">As soon as Emily gives the go-ahead, I'll set these up</p>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">14 / 19</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 15 (NEW) - THURSDAY - ADAM. Ink-deep divider into the Adam block. -->
+  <section data-label="Thursday - Adam">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Thursday - Adam</h2>
+        <p class="aw-lead">Agenda?</p>
+        <ul class="bul">
+          <li>Deviations from original vision</li>
+          <li>Shifting technical landscape</li>
+          <li>Blockers (production approval for Ava / legal approval to surface through Copilot connector)</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">15 / 19</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 16 - DEVIATIONS FROM THE ORIGINAL VISION. Lilac. -->
+  <section data-label="Deviations from the original vision">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Deviations from the original vision</h2>
+        <ul class="bul">
+          <li><span class="lead-line">My interpretation of the product surface</span> - i.e. not just a client intelligence record, but also the interface</li>
+          <li><span class="lead-line">Compute sandbox for creative account managers</span> - pre-anticipated performance calculations happen, but the AI can also write and run its own code</li>
+          <li><span class="lead-line">Transcriptions?</span>
+            <ul class="bul">
+              <li>I lean towards keeping more than Adam
+                <ul class="bul">
+                  <li>We can't know today what we'll want in six months
+                    <ul class="bul">
+                      <li>e.g. my previous experience with NHS</li>
+                    </ul>
+                  </li>
+                  <li>The works council consideration</li>
+                  <li>Adam's original vision was distilled-only retention</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">16 / 19</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 17 - THE SHIFTING TECHNICAL LANDSCAPE. Cream. -->
+  <section data-label="The shifting technical landscape">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">The shifting technical landscape</h2>
+        <p class="aw-lead">Is this worth sharing with Adam?</p>
+        <ul class="bul">
+          <li>Copilot build vs LangGraph + connector
+            <ul class="bul">
+              <li>Strategic alignment vs quick and dirty</li>
+            </ul>
+          </li>
+          <li>Not sure if he wants that level of detail</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">17 / 19</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 18 - STAKEHOLDER UPDATE. Lilac. -->
+  <section data-label="Stakeholder update">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Stakeholder update</h2>
+        <p class="aw-lead">Should I share the stakeholder updates with him?</p>
+        <ul class="bul">
+          <li>Samsung / transcriptions</li>
+          <li>Viator</li>
+          <li>Resourcing?</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">18 / 18</span>
+      </footer>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- SPEAKER NOTES - one entry per slide, in document order (18 entries). -->
+<script type="application/json" id="speaker-notes">
+[
+  "Title. Keep it brisk - this is a standing Monday update with Stephen (and James if he joins), not a pitch. Three things today: what got built last week, a real shift in how we're building it, and what I need from Stephen before I sit with Adam on Thursday.",
+  "Agenda. Just orient them on the shape of the session - progress first, then the technical-direction shift (this is the bulk of the update), then the this-week section where I actually need something back from Stephen.",
+  "Part one divider. Quick beat - say 'here's what moved since we last spoke' and go straight into the stakeholder line.",
+  "Stakeholder. Lead with Emily and Samsung's transcription concern - that's the live risk. Then walk the two compromise positions I floated: fixed retention windows scoped to the development phase, and a redaction pass that strips personal anecdotes and off-record asides before anything is kept. Land the tension plainly: Adam's own preference is distilled-insights-only retention, and that's fine long-term, but during active development we need the raw transcript to re-run and re-distill as the prompts change - we can't distil what we've already thrown away. Then bring them up to speed on where it stands live: Emily had a good call with Samsung and recording is the one sticking point, as we thought. Emma at Samsung is on leave until Wednesday, so we regroup Wednesday afternoon once she's been over the follow-up notes. If Samsung ends up uncomfortable, Viator is the fallback client - but we are not there yet.",
+  "Build. This is the show-and-tell slide - each of these gets demoed live, so don't over-describe them here, just name them and move to the demo. The redactor takes a raw Teams transcript and strips what people would be wary about. The builder is the Copilot agent that assembles the client intelligence layer itself. And I've now tested it two ways - Awin as the dogfooding case, and a simulated Samsung CIA (client intelligence agent) build using what I can actually access plus deliberately fabricated performance numbers, since I don't have real Samsung platform data yet.",
+  "Part two divider. This is the meat of the update, so slow down here. Say the theme up front before the detail: everything I'm about to describe reduces the amount of work we have to do ourselves - we're leaning on what Awin is already building rather than building it all bespoke. If it's useful, add Ignacio's framing verbally: 'make it as easy as possible, standardised, maintainable and scalable' - that's the design philosophy behind it.",
+  "Shift 1 - where the agent is built. The real change: build the actual agent in LangGraph / Deep Agents, the same framework Ava itself runs on, rather than building the whole thing natively in Copilot Studio. Copilot Studio becomes a thin front door onto that agent - specifically, a custom agent surfaced through the LiteLLM gateway as an MCP connection to a very basic Copilot agent. Worth floating as the sharper version of the idea, not a firm commitment yet.",
+  "Shift 2 - model access and telemetry. Route model calls through Awin's own self-hosted LiteLLM gateway, which standardises with how Awin already builds agents, with traces and evals landing in LangSmith. Make the benefit concrete: this isn't locked to one model or one platform, so as models improve we can swap them in without a rebuild. The longer-term payoff - flag it as a later step, not now - is a self-healing benchmark and prompt-rewriting loop, so if a model swap regresses performance we can hill-climb back automatically.",
+  "Shift 3 - the performance and data layer. The real shift here is scope: we stop trying to build a fully custom data layer ourselves. Instead tap what already exists - Avalytics, Awin's BI-plus-AI insights layer, and the semantic data layer that Benni's team owns. Land the honest caveat: the data role may end up smaller than we thought, but we can't sit around waiting for the semantic-layer work, it could take 18 months or more. Avalytics is probably fast to tap, though I genuinely don't know yet whether it holds everything we need - some of it we may end up building ourselves and contributing back to the main project rather than throwing it away.",
+  "Shift 4 - longer term, Copilot to Ava. Flag this as an impression, not a commitment: over time Ava may become the standard chat interface staff use to reach Awin's internal resources. If that plays out, we could surface our agent to Ava the same way we currently plan to surface it to Copilot. Don't oversell it - it's a direction, not a decision.",
+  "Blockers. The important framing: our velocity on the Ava integration isn't gated by our own build effort, it's gated by other teams' approvals. Ava's Deep Agents redesign is code-complete and just waiting on production sign-off - worth asking whether that's risky in itself. Surfacing Ava through Copilot is technically trivial - the hold-up is legal; read Ignacio's quote, it's the clearest evidence I have that this isn't a capacity problem. And practically, the exact route for me building into the Ava stack is still a bit ambiguous. Land it plainly: our speed now depends on other teams clearing these, which is exactly the kind of thing Adam can lean on.",
+  "Part three divider. Reframe the room here: everything so far was reporting, this section is where I need something back. Say the ask explicitly before the detail: I want a steer from Stephen on what Adam most wants to see on Thursday, and how much depth he wants on each part.",
+  "Research this week. These are this week's discovery meetings - name each person and why I'm seeing them, so Stephen and JS know who they are. Heiko is resourcing, the data-intelligence role; Benni Hellmann owns the data platform and semantic layer, seeing him later today; Sumanth Pagadala is the Data Engineer on Avalytics; Othman Bouzahzah is the Data Scientist who spans Sagitta and Andromeda; Henning Schutz and Daniel Cortes are the engineers on Team Andromeda, the AI platform team. The point of the slide is that I'm being systematic before committing to a build, not skipping the groundwork.",
+  "Emily's team, once we're green-lit. I'm ready to go with Ellie and Beth the moment Emily green-lights it. The hold-up is Samsung's comfort with transcription - Emily had a good call, recording is the sticking point, and Emma at Samsung is on leave until Wednesday, so we regroup then. Emily is also squaring the internal side. Flag that I'm not sitting idle - the research meetings on the previous slide are lined up and moving regardless.",
+  "Thursday - Adam. This is the big one - say so. The slide previews my agenda for Thursday: the deviations from the original vision, the shifting technical landscape, and the blockers (production approval for Ava, legal approval to surface through the Copilot connector). Use the next few slides to get Stephen and JS's steer on emphasis before Thursday.",
+  "Deviations from the original vision. Walk these as three honest departures from the original brief, in order. One - my own interpretation of the product surface goes beyond a single static record: real interface and interaction considerations, not just data. Two - a compute sandbox for creative account managers: alongside the pre-anticipated performance calculations, the AI can write and run its own code for the questions we didn't anticipate. Three is the one to slow down on - transcriptions. I lean towards keeping more than Adam originally wanted: we can't know today what we'll wish we'd kept in six months (my NHS business-case work is real proof of that), it's complicated by the works council, and Adam's original vision was distilled-only retention. Don't resolve it here - genuinely ask Stephen for his steer.",
+  "The shifting technical landscape. Genuinely not sure this is worth walking Adam through - flag that as a live question for Stephen. The framing, if I do: to Adam this still looks like a Copilot agent from the outside; underneath it's a Copilot build vs LangGraph-plus-connector question - strategic alignment vs quick and dirty. I'm just not sure he wants that level of detail on Thursday - want Stephen's read on it.",
+  "Stakeholder update. Another live question for Stephen: should I share the stakeholder picture with Adam at all on Thursday? If so, it's three lines - Samsung and the transcription concern, Viator as the likely second client, and resourcing now that the data role looks lighter than expected."
+]
+</script>
+
+<!-- Runtime. -->
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<!-- Auto-number footer page numbers (same mechanism as the reference deck:
+     un-footered cover, main run renumbered 2..N of N). -->
+<script>
+(function () {
+  function numberFooters() {
+    var pages = Array.prototype.slice.call(document.querySelectorAll('.aw-foot__page'));
+    var main = pages.filter(function (p) { return !/^A\d/.test((p.textContent || '').trim()); });
+    var total = main.length + 1;
+    main.forEach(function (p, i) { p.textContent = (i + 2) + ' / ' + total; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+</body>
+</html>
