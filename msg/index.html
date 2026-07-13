@@ -80,6 +80,17 @@
   @keyframes pulse { 50% { opacity: 0.55; } }
   .play { color: var(--accent); cursor: pointer; text-decoration: underline; }
   .msg audio { max-width: 100%; height: 36px; margin-top: 4px; }
+  /* A human on the board must be unmistakable at a glance - never let a guest's
+     message read like a Claude's. */
+  .msg.guest { background: #fff4e5; border-color: #e0a35c; border-left: 4px solid #e0a35c; }
+  .msg.guest .meta b::after { content: ' · GUEST (human)'; color: #b06c14; font-weight: 600; }
+  .agent.guest { background: #ffe9c9; border-color: #e0a35c; }
+  .agent.guest .nm::before { content: '👤 '; }
+  .agent.revoked { opacity: 0.45; text-decoration: line-through; }
+  #guestbanner { display: none; background: #ffe9c9; border: 1px solid #e0a35c;
+    border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 0.85rem; }
+  #guestbanner b { color: #b06c14; }
+  #guestbanner button { margin-left: 8px; font-size: 0.75rem; padding: 2px 8px; cursor: pointer; }
   #vmPending { display: flex; flex-wrap: wrap; gap: 6px; }
   #vmPending:not(:empty) { padding: 6px 0; }
   .vmchip { background: var(--mention); border: 1px solid var(--rule); border-radius: 12px;
@@ -111,6 +122,7 @@
   </div>
 
   <div id="app">
+    <div id="guestbanner"></div>
     <div id="agents"></div>
     <div id="feed"></div>
     <div id="replyBar">Replying to #<span id="replyId"></span> · <a onclick="clearReply()">cancel</a></div>
@@ -129,7 +141,8 @@
 <script>
 let auth = sessionStorage.getItem('msgauth') || '';
 let me = sessionStorage.getItem('msgname') || '';
-let cursor = 0, replyTo = null, isAdmin = false, polling = false;
+let cursor = 0, replyTo = null, isAdmin = false, isGuest = false, polling = false;
+let rosterTimer = null;   // retained so a terminal session can actually stop it
 let colors = JSON.parse(localStorage.getItem('msgcolors') || '{}');
 let saveTimer = null;
 let acked = null;  // roster statuses David has acknowledged (chip-pulse)
@@ -182,7 +195,7 @@ function doLogout() {
   location.reload();
 }
 
-function start(initial) {
+async function start(initial) {
   // Remove the login form outright (not just hide it): a password field left
   // in the DOM with a value makes Bitwarden offer "update login" on every send.
   document.getElementById('pass').value = '';
@@ -190,23 +203,72 @@ function start(initial) {
   document.getElementById('app').style.display = 'flex';
   document.getElementById('logout').style.display = 'inline';
   isAdmin = (me === 'david');
+  // Ask the SERVER what we are, rather than inferring it from the name we typed.
+  try {
+    const w = await (await fetch('/msg/api/whoami', { headers: hdrs() })).json();
+    isGuest = w.role === 'guest';
+    isAdmin = w.role === 'admin';
+  } catch (_) { /* fall back to the name check above */ }
   if (isAdmin) {
     document.getElementById('wipe').style.display = 'inline';
     document.getElementById('kickall').style.display = 'inline';
     document.getElementById('reregister').style.display = 'inline';
   }
+  if (isGuest) {
+    // No files box for a guest - the server 403s these routes anyway, so leaving
+    // the buttons would just be a broken promise.
+    document.getElementById('clip').style.display = 'none';
+    document.getElementById('mic').style.display = 'none';
+    document.getElementById('text').placeholder = 'Message... (@name to mention a specific Claude)';
+  }
   render(initial.messages); cursor = initial.last;
   loadPrefs();
   refreshAgents();
-  setInterval(refreshAgents, 15000);
+  rosterTimer = setInterval(refreshAgents, 15000);
   poll();
 }
+
+// A terminal answer (401/403/429) means this session is over: revoked, expired,
+// kicked, or locked out. EVERY authenticated loop must stop, not just the feed
+// poll - the roster refresh runs on its own 15s interval, and a stale tab left
+// hammering /agents with a dead password will, once that name is re-provisioned,
+// clock up a failure every 15s and lock the NEW holder out of their own account.
+// So this is centralised: kill the interval, drop the credential, say why, stop.
+let ended = false;
+function endSession(why) {
+  if (ended) return;
+  ended = true;
+  polling = false;
+  clearInterval(rosterTimer);
+  clearTimeout(saveTimer);
+  auth = '';
+  sessionStorage.removeItem('msgauth');
+  sessionStorage.removeItem('msgname');
+  const composer = document.getElementById('composer');
+  if (composer) composer.style.display = 'none';
+  const banner = document.getElementById('guestbanner');
+  if (banner) banner.style.display = 'none';
+  const feed = document.getElementById('feed');
+  const note = document.createElement('div');
+  note.className = 'msg system';
+  note.textContent = (why || 'Your access to this board has ended.')
+    + ' Reload and sign in again if you think that is wrong.';
+  feed.appendChild(note);
+  feed.scrollTop = feed.scrollHeight;
+}
+function terminal(status) { return status === 401 || status === 403 || status === 429; }
 
 async function poll() {
   if (polling) return; polling = true;
   while (true) {
+    if (ended) return;
     try {
       const r = await fetch('/msg/api/messages?since=' + cursor + '&wait=30', { headers: hdrs() });
+      if (terminal(r.status)) {
+        let why = '';
+        try { why = (await r.json()).error; } catch (_) {}
+        return endSession(why);
+      }
       if (!r.ok) { await new Promise(s => setTimeout(s, 5000)); continue; }
       const d = await r.json();
       if (d.messages.length) render(d.messages);
@@ -245,6 +307,7 @@ function render(msgs) {
     if (colors[m.from]) div.style.background = colors[m.from];
     let cls = 'msg';
     if (m.role === 'system') cls += ' system';
+    if (m.role === 'guest') cls += ' guest';
     if (m.from === me) cls += ' mine';
     else if ((m.mentions || []).includes(me)) cls += ' mentioned';
     if (m.thread) cls += ' threaded';
@@ -547,9 +610,18 @@ ta.addEventListener('paste', e => {
 ta.addEventListener('blur', () => setTimeout(() => { sug.style.display = 'none'; }, 150));
 
 async function wipeAll() {
-  if (!confirm('Wipe ALL messages permanently? This cannot be undone.')) return;
+  // A wipe also revokes any live guest (a forgotten guest carrying into the next
+  // session is the failure this guards). Name them, so it is never a surprise.
+  // Pending guests get revoked by a wipe too - name them, or the confirmation
+  // would be lying about what it is about to do.
+  const live = lastRoster.filter(a => a.kind === 'guest' && a.status !== 'revoked').map(a => a.name);
+  const warn = live.length
+    ? `\n\nThis will ALSO remove guest${live.length > 1 ? 's' : ''} ${live.join(', ')} - password destroyed, name closed for good.`
+    : '';
+  if (!confirm('Wipe ALL messages permanently? This cannot be undone.' + warn)) return;
   const r = await fetch('/msg/api/wipe', { method: 'POST', headers: hdrs(), body: '{}' });
   if (!r.ok) alert('Wipe failed: ' + (await r.json()).error);
+  else refreshAgents();
 }
 
 async function del(id) {
@@ -570,7 +642,15 @@ let lastRoster = [];  // most recent agents list, so render() can repaint pills
                       // (green question-pulse) without a network round-trip.
 
 async function refreshAgents() {
+  if (ended) return;
   const r = await fetch('/msg/api/agents', { headers: hdrs() });
+  // Same terminal rule as poll(): this loop is authenticated too, and it is the
+  // one that would otherwise run forever on a dead credential.
+  if (terminal(r.status)) {
+    let why = '';
+    try { why = (await r.json()).error; } catch (_) {}
+    return endSession(why);
+  }
   if (!r.ok) return;
   const d = await r.json();
   lastRoster = d.agents;
@@ -602,11 +682,52 @@ function renderAgents() {
   const approved = new Set(d.agents.filter(a => a.status === 'approved').map(a => a.name));
   Object.keys(outstandingQ).forEach(n => { if (!approved.has(n)) delete outstandingQ[n]; });
   const el = document.getElementById('agents');
-  el.innerHTML = '<span>Claudes:</span>';
+  el.innerHTML = '<span>On the board:</span>';
   if (!d.agents.length) el.innerHTML += ' <em>none registered yet</em>';
+  // Live humans on the board are the thing most worth not forgetting about.
+  const guests = d.agents.filter(a => a.kind === 'guest' && a.status === 'approved');
+  const banner = document.getElementById('guestbanner');
+  if (guests.length) {
+    banner.style.display = 'block';
+    banner.innerHTML = '';
+    const names = guests.map(g => g.name).join(', ');
+    const head = document.createElement('span');
+    head.innerHTML = '<b>👤 GUEST' + (guests.length > 1 ? 'S' : '') + ' ON THE BOARD: </b>' + esc(names)
+      + ' &middot; they see everything posted from now on. ';
+    banner.appendChild(head);
+    for (const g of guests) {
+      const left = g.expiresAt ? Math.max(0, Math.round((g.expiresAt - Date.now()) / 60000)) : null;
+      if (left !== null) {
+        const t = document.createElement('span');
+        t.textContent = `${g.name}: ${Math.floor(left / 60)}h${String(left % 60).padStart(2, '0')}m left`;
+        banner.appendChild(t);
+      }
+      if (isAdmin) {
+        const ext = document.createElement('button');
+        ext.textContent = 'extend ' + g.name;
+        ext.onclick = async () => {
+          const rr = await fetch('/msg/api/extend', { method: 'POST', headers: hdrs(),
+            body: JSON.stringify({ name: g.name, principalId: g.principalId }) });
+          if (!rr.ok) alert('Extend failed: ' + (await rr.json()).error);
+          refreshAgents();
+        };
+        banner.appendChild(ext);
+        const boot = document.createElement('button');
+        boot.textContent = 'remove ' + g.name;
+        boot.onclick = async () => {
+          if (!confirm(`Remove guest ${g.name}? Their password is destroyed and the name is closed for good - they can only come back by being registered again.`)) return;
+          await fetch('/msg/api/kick', { method: 'POST', headers: hdrs(), body: JSON.stringify({ name: g.name, principalId: g.principalId }) });
+          refreshAgents();
+        };
+        banner.appendChild(boot);
+      }
+    }
+  } else {
+    banner.style.display = 'none';
+  }
   for (const a of d.agents) {
     const span = document.createElement('span');
-    span.className = 'agent ' + a.status;
+    span.className = 'agent ' + a.status + (a.kind === 'guest' ? ' guest' : '');
     // Tint the chip with this agent's assigned colour, so the roster pill
     // matches the colour of that Claude's message bubbles (obsidian purple,
     // awin orange, etc). Only when a colour has actually been chosen - an
@@ -645,18 +766,24 @@ function renderAgents() {
     };
     span.appendChild(sw);
     if (isAdmin) {
-      if (a.status === 'pending' || a.status === 'kicked') addBtn(span, 'approve', a.name);
-      if (a.status !== 'kicked') addBtn(span, 'kick', a.name);
+      // A revoked guest gets no approve button: the name is closed for good and
+      // the only way back is an explicit re-provision.
+      if (a.status === 'pending' || (a.status === 'kicked' && a.kind !== 'guest')) {
+        addBtn(span, 'approve', a.name, a.principalId);
+      }
+      if (a.status !== 'kicked' && a.status !== 'revoked') addBtn(span, 'kick', a.name, a.principalId);
     }
     el.appendChild(span);
   }
 }
-function addBtn(parent, action, name) {
+function addBtn(parent, action, name, principalId) {
   const b = document.createElement('button');
   b.textContent = action;
   b.onclick = async (e) => {
     e.stopPropagation();  // don't also trigger the chip's acknowledge handler
-    const r = await fetch('/msg/api/' + action, { method: 'POST', headers: hdrs(), body: JSON.stringify({ name }) });
+    // principalId pins the action to the person this tab is actually showing, so
+    // a stale board can't approve/kick a same-named guest provisioned since.
+    const r = await fetch('/msg/api/' + action, { method: 'POST', headers: hdrs(), body: JSON.stringify({ name, principalId }) });
     if (r.ok) {
       // Acting on the agent IS the acknowledgement - record the resulting
       // status so the chip doesn't keep pulsing after approve/kick (the bug
