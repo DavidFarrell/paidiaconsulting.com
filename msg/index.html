@@ -706,8 +706,10 @@ function renderAgents() {
         const ext = document.createElement('button');
         ext.textContent = 'extend ' + g.name;
         ext.onclick = async () => {
+          const h = prompt(`Extend ${g.name} for how many hours from NOW? (1-48)`, '12');
+          if (h === null) return;
           const rr = await fetch('/msg/api/extend', { method: 'POST', headers: hdrs(),
-            body: JSON.stringify({ name: g.name, principalId: g.principalId }) });
+            body: JSON.stringify({ name: g.name, principalId: g.principalId, hours: Number(h) }) });
           if (!rr.ok) alert('Extend failed: ' + (await rr.json()).error);
           refreshAgents();
         };

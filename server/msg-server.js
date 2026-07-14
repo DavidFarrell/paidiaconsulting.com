@@ -1629,7 +1629,18 @@ const server = http.createServer(async (req, res) => {
       revokeGuest(name, 'expired');
       return json(res, 409, { error: 'guest access had already expired - re-provision them' });
     }
-    a.expiresAt = Date.now() + GUEST_TTL;
+    // Optional hours (1-48) from NOW; the 12h default stays for a bare extend.
+    // Capped: a guest is a session visitor, not a standing account - anything
+    // longer than two days is a re-provision decision, not a button click.
+    let ms = GUEST_TTL;
+    if (body.hours !== undefined && body.hours !== null && body.hours !== '') {
+      const h = Number(body.hours);
+      if (!Number.isFinite(h) || h < 1 || h > 48) {
+        return json(res, 400, { error: 'hours must be a number from 1 to 48' });
+      }
+      ms = Math.round(h * 60 * 60 * 1000);
+    }
+    a.expiresAt = Date.now() + ms;
     saveAgents();
     return json(res, 200, { ok: true, name, expiresAt: a.expiresAt });
   }
