@@ -215,10 +215,8 @@ async function start(initial) {
     document.getElementById('reregister').style.display = 'inline';
   }
   if (isGuest) {
-    // No files box for a guest - the server 403s these routes anyway, so leaving
-    // the buttons would just be a broken promise.
-    document.getElementById('clip').style.display = 'none';
-    document.getElementById('mic').style.display = 'none';
+    // Guests keep the paperclip and the mic: the server takes their uploads
+    // through its own narrow, quota'd, ownership-granted door (no files box).
     document.getElementById('text').placeholder = 'Message... (@name to mention a specific Claude)';
   }
   render(initial.messages); cursor = initial.last;

@@ -80,7 +80,8 @@ const GUEST_MAX_WAKES = 3;
 // credential (the shared Claude password lets any holder assert any name) - the
 // real gate on the transcript route is MSG_TRANSCRIBER_HASH.
 const TRANSCRIBER_NAME = 'voicemail_claude';
-// Guest audio is a much narrower door than the files box. These sit on top of
+// Guest uploads (audio AND general attachments - one shared pool) are a much
+// narrower door than the files box. These sit on top of
 // the existing 25MB per-file cap.
 const GUEST_VM_MAX_DRAFTS = 10;
 const GUEST_VM_RATE_WINDOW = 15 * 60 * 1000;
@@ -115,6 +116,8 @@ const CREDS_FILE = path.join(STORE, 'guest-creds.json');
 // returns it, and a filename is checked against it BEFORE the filesystem, so a
 // guest can never use these routes as an existence oracle for the files box.
 const GUEST_VMS_FILE = path.join(STORE, 'guest-voicemails.json');
+// Same shape, same reasons, for a guest's general attachments.
+const GUEST_ATTS_FILE = path.join(STORE, 'guest-attachments.json');
 
 // Voicemails go into the files-box directory when it exists, so the
 // transcriber Claude can fetch them with its paidiafiles skill.
@@ -144,7 +147,16 @@ const ATT_TYPES = {
   zip: 'application/zip',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 };
+// Guest attachments go through the voicemail door, not the files box: the same
+// quotas, the same principal-bound ownership grants, and a NARROWER type set.
+// svg is excluded on purpose - it is the one ATT_TYPES entry that can carry
+// script if it is ever rendered inline rather than fetched to a blob.
+const GUEST_ATT_TYPES = new Set([
+  'png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'txt', 'md', 'csv',
+  'json', 'zip', 'xlsx', 'docx', 'pptx',
+]);
 
 function sanitizeAttachmentName(raw) {
   let name = String(raw || '').split(/[\\/]/).pop().trim();
@@ -177,6 +189,9 @@ let agents = {};
 let creds = {};
 // filename -> {owner, principalId, uploadedAt, bytes, messageId?}
 let guestVms = {};
+// filename -> {owner, principalId, uploadedAt, bytes, messageId?} - a guest's
+// staged/posted general attachments, grant-checked exactly like their audio.
+let guestAtts = {};
 let lastId = 0;
 try {
   for (const line of fs.readFileSync(MSG_FILE, 'utf8').split('\n')) {
@@ -189,6 +204,7 @@ try {
 try { agents = JSON.parse(fs.readFileSync(AGENTS_FILE, 'utf8')); } catch (_) { /* first boot */ }
 try { creds = JSON.parse(fs.readFileSync(CREDS_FILE, 'utf8')); } catch (_) { /* first boot */ }
 try { guestVms = JSON.parse(fs.readFileSync(GUEST_VMS_FILE, 'utf8')); } catch (_) { /* first boot */ }
+try { guestAtts = JSON.parse(fs.readFileSync(GUEST_ATTS_FILE, 'utf8')); } catch (_) { /* first boot */ }
 
 // Atomic: a crash mid-write must not leave a truncated roster or credential
 // file (which would lock everyone out, or worse, half-revoke a guest).
@@ -200,6 +216,7 @@ function writeJsonAtomic(file, obj, mode) {
 function saveAgents() { writeJsonAtomic(AGENTS_FILE, agents); }
 function saveCreds() { writeJsonAtomic(CREDS_FILE, creds, 0o600); }
 function saveGuestVms() { writeJsonAtomic(GUEST_VMS_FILE, guestVms, 0o600); }
+function saveGuestAtts() { writeJsonAtomic(GUEST_ATTS_FILE, guestAtts, 0o600); }
 
 // Own-property lookup only. 'constructor' matches the name regex and would
 // otherwise resolve to Object.prototype.constructor (truthy) - not exploitable
@@ -266,6 +283,29 @@ function guestVmDraftCount(who) {
   }
   return n;
 }
+// ---- guest general attachments: the same grant model as their audio ----
+function attachmentNames(m) {
+  return Array.isArray(m.attachments) ? m.attachments : [];
+}
+function guestAttGrant(who, name) {
+  const g = owns(guestAtts, name) ? guestAtts[name] : null;
+  return g && g.owner === who.name && g.principalId === who.principalId ? g : null;
+}
+function guestAttSourceMessage(name, grant) {
+  return messages.find(m =>
+    m.role === 'guest'
+    && m.from === grant.owner
+    && m.principalId === grant.principalId
+    && attachmentNames(m).includes(name));
+}
+function guestAttDraftCount(who) {
+  let n = 0;
+  for (const [name, grant] of Object.entries(guestAtts)) {
+    if (grant.owner === who.name && grant.principalId === who.principalId
+        && !guestAttSourceMessage(name, grant)) n++;
+  }
+  return n;
+}
 const guestVmRates = new Map();     // principalId -> {since, uploads, bytes}
 const guestVmInflight = new Map();  // principalId -> count
 function guestVmRate(principalId) {
@@ -283,8 +323,10 @@ function beginGuestVmUpload(who, req) {
   const inflight = guestVmInflight.get(who.principalId) || 0;
   const lengthText = String(req.headers['content-length'] || '');
   const length = /^\d+$/.test(lengthText) ? parseInt(lengthText, 10) : 0;
-  if (guestVmDraftCount(who) + inflight >= GUEST_VM_MAX_DRAFTS) {
-    return { error: 'too many unposted recordings (max 10)', code: 429 };
+  // Recordings and attachments share one draft pool - the composer caps a
+  // message at 10 pieces total, so an unposted pile bigger than that is junk.
+  if (guestVmDraftCount(who) + guestAttDraftCount(who) + inflight >= GUEST_VM_MAX_DRAFTS) {
+    return { error: 'too many unposted recordings/attachments (max 10)', code: 429 };
   }
   if (length > VM_MAX) return { error: 'too large (25MB max)', code: 413 };
   if ((a.vmUploads || 0) + inflight >= GUEST_VM_SESSION_UPLOADS) {
@@ -315,8 +357,17 @@ function removeGuestVoicemails(owner, principalId) {
     delete guestVms[name];
     changed = true;
   }
-  guestVmRates.delete(principalId);
   if (changed) saveGuestVms();
+  // Their attachments die with them too - same shared store, same reasoning.
+  let attsChanged = false;
+  for (const [name, grant] of Object.entries(guestAtts)) {
+    if (grant.owner !== owner || grant.principalId !== principalId) continue;
+    try { fs.unlinkSync(path.join(VM_DIR, name)); } catch (_) { /* already gone */ }
+    delete guestAtts[name];
+    attsChanged = true;
+  }
+  if (attsChanged) saveGuestAtts();
+  guestVmRates.delete(principalId);
 }
 // A guest upload lands in the SHARED file store, so at least insist the bytes
 // are the container they claim to be. This is a sanity check, not a parser.
@@ -334,6 +385,33 @@ function looksLikeAudioFile(full, ext) {
     if (ext === 'mp3') {
       return (n >= 3 && b.slice(0, 3).toString() === 'ID3')
         || (n >= 2 && b[0] === 0xff && (b[1] & 0xe0) === 0xe0);
+    }
+    return false;
+  } catch (_) {
+    return false;
+  } finally {
+    if (fd !== undefined) { try { fs.closeSync(fd); } catch (_) { /* ignore */ } }
+  }
+}
+// Same idea for a guest's general attachments. The text formats have no magic
+// bytes, so they pass as-is - they are served as text/csv/json, never anything
+// a browser would execute.
+function looksLikeAttachmentFile(full, ext) {
+  if (ext === 'txt' || ext === 'md' || ext === 'csv' || ext === 'json') return true;
+  let fd;
+  try {
+    fd = fs.openSync(full, 'r');
+    const b = Buffer.alloc(16);
+    const n = fs.readSync(fd, b, 0, b.length, 0);
+    if (ext === 'png') return n >= 4 && b[0] === 0x89 && b.slice(1, 4).toString() === 'PNG';
+    if (ext === 'jpg' || ext === 'jpeg') return n >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+    if (ext === 'gif') return n >= 4 && b.slice(0, 4).toString() === 'GIF8';
+    if (ext === 'webp') return n >= 12 && b.slice(0, 4).toString() === 'RIFF' && b.slice(8, 12).toString() === 'WEBP';
+    if (ext === 'heic') return n >= 8 && b.slice(4, 8).toString() === 'ftyp';
+    if (ext === 'pdf') return n >= 4 && b.slice(0, 4).toString() === '%PDF';
+    // zip and the OOXML family are all zip containers.
+    if (ext === 'zip' || ext === 'xlsx' || ext === 'docx' || ext === 'pptx') {
+      return n >= 2 && b[0] === 0x50 && b[1] === 0x4b;
     }
     return false;
   } catch (_) {
@@ -714,14 +792,14 @@ const server = http.createServer(async (req, res) => {
     const view = (m) => {
       if (!guest) return m;
       const c = { ...m };
-      // Attachment FILENAMES leak on their own ("NHS strategy.pptx"), and guests
-      // have no route to fetch them. The ONE exception is a guest's own audio,
-      // recorded by THIS credential generation - they need the name to play it
-      // back. Another guest's clip name stays hidden even if the message is
-      // above their floor.
+      // Everything in a guest's view is above their floor - said while the
+      // GUEST banner was on the board - so attachment names on these messages
+      // are shown, and the /attach GET route serves exactly this set (it
+      // re-checks the floor by name). AUDIO stays narrower: a voicemail is
+      // someone's voice, so only the guest's own clips, recorded by THIS
+      // credential generation, keep their names - playback is grant-bound.
       const ownAudio = c.role === 'guest' && c.from === who.name
         && c.principalId === who.principalId;
-      delete c.attachments;
       if (!ownAudio) { delete c.voicemails; delete c.voicemail; }
       // A below-floor thread root is an id for a conversation they cannot see.
       if (c.thread && c.thread <= floor) delete c.thread;
@@ -762,13 +840,10 @@ const server = http.createServer(async (req, res) => {
     const text = String(body.text || '').trim();
     const guest = who.role === 'guest' ? row(who.name) : null;
 
-    // Guests still get NO general attachments. Guest voicemail references are
-    // resolved against the private ownership grants BEFORE any filesystem check,
-    // so /send cannot become an existence oracle for the shared file store
-    // (reference a name, 403 means it exists, 200 means it doesn't).
-    if (guest && Array.isArray(body.attachments) && body.attachments.length) {
-      return json(res, 403, { error: 'guests cannot attach files' });
-    }
+    // Guest voicemail and attachment references are resolved against the
+    // private ownership grants BEFORE any filesystem check, so /send cannot
+    // become an existence oracle for the shared file store (reference a name,
+    // 403 means it exists, 200 means it doesn't).
     let vms = [];
     if (guest) {
       if (body.voicemails !== undefined && !Array.isArray(body.voicemails)) {
@@ -793,9 +868,29 @@ const server = http.createServer(async (req, res) => {
       vms = vms.filter(n => /^voicemail-[\w-]+\.(webm|m4a|ogg|mp3)$/.test(n) && fs.existsSync(path.join(VM_DIR, n)));
     }
     // Staged general attachments (uploaded earlier via /attach).
-    let atts = Array.isArray(body.attachments) ? body.attachments.slice(0, 10) : [];
-    atts = atts.map(n => sanitizeAttachmentName(n))
-      .filter(n => n && fs.existsSync(path.join(VM_DIR, n)));
+    let atts = [];
+    if (guest) {
+      if (body.attachments !== undefined && !Array.isArray(body.attachments)) {
+        return json(res, 400, { error: 'attachments must be an array' });
+      }
+      const requested = Array.isArray(body.attachments) ? body.attachments : [];
+      if (requested.length > 10 || new Set(requested).size !== requested.length) {
+        return json(res, 400, { error: 'at most 10 distinct attachments per message' });
+      }
+      for (const nm of requested) {
+        const grant = typeof nm === 'string' ? guestAttGrant(who, nm) : null;
+        // Identical error for "not yours", "doesn't exist" and "already posted".
+        if (!grant || guestAttSourceMessage(nm, grant)
+            || !fs.existsSync(path.join(VM_DIR, nm))) {
+          return json(res, 403, { error: 'guest attachment unavailable' });
+        }
+        atts.push(nm);
+      }
+    } else {
+      atts = Array.isArray(body.attachments) ? body.attachments.slice(0, 10) : [];
+      atts = atts.map(n => sanitizeAttachmentName(n))
+        .filter(n => n && fs.existsSync(path.join(VM_DIR, n)));
+    }
     if (!text && !vms.length && !atts.length) return json(res, 400, { error: 'text, voicemail or attachment required' });
     if (text.length > MAX_TEXT) return json(res, 400, { error: 'text too long (max 8KB)' });
     let thread = null, parent = null;
@@ -880,6 +975,10 @@ const server = http.createServer(async (req, res) => {
     if (guest && vms.length) {
       for (const nm of vms) guestVms[nm].messageId = msg.id;
       saveGuestVms();
+    }
+    if (guest && atts.length) {
+      for (const nm of atts) guestAtts[nm].messageId = msg.id;
+      saveGuestAtts();
     }
     // Don't hand a guest the id of a thread root they can't see: replying to a
     // visible message whose thread began below their floor would otherwise leak
@@ -1020,12 +1119,20 @@ const server = http.createServer(async (req, res) => {
   // straight off the shared store to any approved caller, so a guest could
   // otherwise pull any client's attachment by name.
   //
-  // Exactly two holes are open, both needed for a guest to speak on the board:
-  // upload their OWN draft recording, and fetch/delete their OWN clip by its
-  // exact server-generated name. The handlers below check a principal-bound
-  // ownership grant BEFORE touching the filesystem.
+  // The holes that ARE open are the ones a guest needs to take part: upload
+  // their OWN draft recording or attachment, fetch/delete their OWN object by
+  // its exact server-generated name, and fetch an attachment that a message
+  // ABOVE THEIR FLOOR shows them (David sharing a file with the guest is the
+  // whole point of the button). The handlers below check a principal-bound
+  // ownership grant or above-floor message reference BEFORE touching the
+  // filesystem.
   if (who.role === 'guest' && /^\/msg\/api\/attach(\/|$)/.test(p)) {
-    return json(res, 403, { error: 'guests have no attachment access' });
+    const ownUpload = req.method === 'POST' && p === '/msg/api/attach';
+    const ownObject = /^\/msg\/api\/attach\/./.test(p)
+      && (req.method === 'GET' || req.method === 'DELETE');
+    if (!ownUpload && !ownObject) {
+      return json(res, 403, { error: 'guests have no general attachment access' });
+    }
   }
   if (who.role === 'guest' && /^\/msg\/api\/voicemail(\/|$)/.test(p)) {
     const ownUpload = req.method === 'POST' && p === '/msg/api/voicemail'
@@ -1154,19 +1261,102 @@ const server = http.createServer(async (req, res) => {
   // General attachments: staged upload (always draft - they only ever post
   // via /send), authenticated fetch, and delete (for removing a staged chip).
   if (req.method === 'POST' && p === '/msg/api/attach') {
+    const isGuestUpload = who.role === 'guest';
     const wanted = sanitizeAttachmentName(url.searchParams.get('name'));
     if (!wanted) return json(res, 400, { error: 'bad or missing file name' });
-    const name = uniqueAttachmentPath(wanted);
+    const ext = wanted.slice(wanted.lastIndexOf('.') + 1).toLowerCase();
+    if (isGuestUpload && !GUEST_ATT_TYPES.has(ext)) {
+      return json(res, 400, { error: 'unsupported attachment type' });
+    }
+    // Guest uploads share the recording quotas: same draft cap, same session
+    // and rate budgets. One pool, one set of numbers to reason about.
+    const allowance = isGuestUpload ? beginGuestVmUpload(who, req) : {};
+    if (allowance.error) return json(res, allowance.code, { error: allowance.error });
+    let name;
+    if (isGuestUpload) {
+      // A random tag, not uniqueAttachmentPath's " (2)" suffix, decides the
+      // stored name: the visible suffix would confirm to the guest that a
+      // same-named file already sits in the shared box (existence oracle).
+      const dot = wanted.lastIndexOf('.');
+      name = uniqueAttachmentPath(
+        `${wanted.slice(0, dot)}-${crypto.randomBytes(4).toString('hex')}${wanted.slice(dot)}`);
+    } else {
+      name = uniqueAttachmentPath(wanted);
+    }
     const full = path.join(VM_DIR, name);
     const out = fs.createWriteStream(full);
-    let size = 0, dead = false;
+    let size = 0, dead = false, released = false, committed = false;
+    const release = () => {
+      if (isGuestUpload && !released) { released = true; endGuestVmUpload(who); }
+    };
+    const abort = (code, error) => {
+      if (dead) return;
+      dead = true;
+      release();
+      out.destroy();
+      fs.unlink(full, () => {});
+      json(res, code, { error });
+      req.destroy();
+    };
+    // Same flaky-connection cleanup as recordings: without it a dropped upload
+    // leaks the in-flight slot and orphans a grantless partial file in the box.
+    const onAbort = () => {
+      if (dead || committed) return;
+      dead = true;
+      release();
+      out.destroy();
+      fs.unlink(full, () => {});
+    };
+    req.on('aborted', onAbort);
+    res.on('close', onAbort);
     req.on('data', c => {
       size += c.length;
-      if (size > ATT_MAX && !dead) { dead = true; out.destroy(); fs.unlink(full, () => {}); json(res, 413, { error: 'too large (25MB max)' }); req.destroy(); }
+      if (isGuestUpload) allowance.rate.bytes += c.length;
+      if (size > ATT_MAX) return abort(413, 'too large (25MB max)');
+      if (isGuestUpload && allowance.rate.bytes > GUEST_VM_RATE_BYTES) {
+        return abort(429, 'guest upload rate limit reached - try again later');
+      }
+      const a = isGuestUpload ? row(who.name) : null;
+      if (isGuestUpload && a && (a.vmBytes || 0) + size > GUEST_VM_SESSION_BYTES) {
+        return abort(429, 'guest upload session byte quota reached');
+      }
     });
     req.pipe(out);
-    out.on('finish', () => { if (!dead) json(res, 200, { ok: true, name }); });
-    out.on('error', () => { if (!dead) { dead = true; json(res, 500, { error: 'write failed' }); } });
+    out.on('finish', () => {
+      if (dead) return;
+      committed = true;
+      release();
+      if (isGuestUpload) {
+        // They may have been revoked mid-upload.
+        if (!stillValid(who)) {
+          fs.unlink(full, () => {});
+          return json(res, 403, { error: 'access revoked' });
+        }
+        if (!looksLikeAttachmentFile(full, ext)) {
+          fs.unlink(full, () => {});
+          return json(res, 415, { error: 'file does not look like the declared type' });
+        }
+        const a = row(who.name);
+        if ((a.vmUploads || 0) >= GUEST_VM_SESSION_UPLOADS
+            || (a.vmBytes || 0) + size > GUEST_VM_SESSION_BYTES) {
+          fs.unlink(full, () => {});
+          return json(res, 429, { error: 'guest upload session quota reached' });
+        }
+        guestAtts[name] = {
+          owner: who.name, principalId: who.principalId, uploadedAt: Date.now(), bytes: size,
+        };
+        saveGuestAtts();
+        a.vmUploads = (a.vmUploads || 0) + 1;
+        a.vmBytes = (a.vmBytes || 0) + size;
+        saveAgents();
+      }
+      json(res, 200, { ok: true, name });
+    });
+    out.on('error', () => {
+      release();
+      fs.unlink(full, () => {});
+      if (!dead) { dead = true; json(res, 500, { error: 'write failed' }); }
+    });
     return;
   }
 
@@ -1175,6 +1365,46 @@ const server = http.createServer(async (req, res) => {
     const name = sanitizeAttachmentName(decodeURIComponent(att[1]));
     if (!name) return json(res, 400, { error: 'bad file name' });
     const full = path.join(VM_DIR, name);
+
+    if (who.role === 'guest') {
+      // All checks against in-memory state BEFORE any filesystem touch, so the
+      // 404-vs-anything split can never become an existence oracle for the box.
+      const grant = guestAttGrant(who, name);
+      if (req.method === 'DELETE') {
+        // Only their own STAGED attachment (removing a composer chip).
+        if (!grant) return json(res, 404, { error: 'not found' });
+        if (guestAttSourceMessage(name, grant)) {
+          return json(res, 403, { error: 'a posted attachment cannot be deleted by a guest' });
+        }
+        try { fs.unlinkSync(full); } catch (_) { /* already gone */ }
+        delete guestAtts[name];
+        saveGuestAtts();
+        return json(res, 200, { ok: true });
+      }
+      // GET: only a file some message ABOVE THEIR FLOOR actually shows them -
+      // their own posted uploads and files shared on the board while they are
+      // on it. A name nothing visible references is a 404, same as absent.
+      const floor = (row(who.name) || {}).floor || 0;
+      const shown = messages.some(m => m.id > floor && attachmentNames(m).includes(name));
+      if (!shown) return json(res, 404, { error: 'not found' });
+      try {
+        if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
+        const ext = name.split('.').pop().toLowerCase();
+        const stat = fs.statSync(full);
+        res.writeHead(200, {
+          'Content-Type': ATT_TYPES[ext] || 'application/octet-stream',
+          'Content-Length': stat.size,
+          'X-Content-Type-Options': 'nosniff',
+          // Never render inline off this origin for a guest fetch, whatever the
+          // type claims to be - the client saves to a blob anyway.
+          'Content-Disposition': 'attachment',
+        });
+        return fs.createReadStream(full).pipe(res);
+      } catch (_) {
+        return json(res, 404, { error: 'not found' });
+      }
+    }
+
     if (!fs.existsSync(full)) return json(res, 404, { error: 'not found' });
     if (req.method === 'DELETE') {
       fs.unlinkSync(full);
