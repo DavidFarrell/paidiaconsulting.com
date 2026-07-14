@@ -455,7 +455,7 @@ function drawPending() {
     chip.querySelector('b').onclick = async () => {
       pendingVms = pendingVms.filter(n => n !== name);
       drawPending();
-      fetch('/msg/api/voicemail/' + name, { method: 'DELETE', headers: hdrs() });
+      fetch('/msg/api/voicemail/' + encodeURIComponent(name), { method: 'DELETE', headers: hdrs() });
     };
     box.appendChild(chip);
   });
@@ -536,7 +536,9 @@ async function toggleRec() {
     btn.textContent = '🎙️';
     const ext = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
     const r = await fetch('/msg/api/voicemail?draft=1&ext=' + ext, {
-      method: 'POST', headers: { 'Authorization': 'Basic ' + auth },
+      // Declare the container type: the server cross-checks it against ?ext and
+      // sniffs the magic bytes for guest uploads.
+      method: 'POST', headers: { 'Authorization': 'Basic ' + auth, 'Content-Type': type },
       body: new Blob(chunks, { type }),
     });
     if (!r.ok) { alert('Voicemail upload failed: ' + (await r.json()).error); sendAfterStop = false; return; }
@@ -550,7 +552,7 @@ async function toggleRec() {
 }
 
 async function playVm(name, el) {
-  const r = await fetch('/msg/api/voicemail/' + name, { headers: hdrs() });
+  const r = await fetch('/msg/api/voicemail/' + encodeURIComponent(name), { headers: hdrs() });
   if (!r.ok) { alert('Could not load voicemail (it may have been auto-deleted)'); return; }
   const audio = document.createElement('audio');
   audio.controls = true;
