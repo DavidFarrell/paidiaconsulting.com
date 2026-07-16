@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AwinOS - Adam Ross meeting (16 Jul)</title>
+
+<!-- Vendored awn design system - all local, no CDN.
+     Load order: fonts -> tokens -> components -> semantic aliases -> deck skin. -->
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--awn-text);
+             font-family:var(--awn-font); overflow:hidden }
+  deck-stage{ background:#16131f }
+</style>
+</head>
+<body class="awn">
+
+<!--
+  AwinOS - deck for the Thu 16 Jul 14:00-14:30 meeting with CEO Adam Ross.
+  Demo-led and deliberately short: bio, a playback of Adam's own vision, the
+  record + the loop framed against his plan, then hand to the live demo, then
+  how it's built well and how it's kept honest, closing on his steer.
+  Cut on purpose: the LangGraph/LiteLLM/MCP plumbing and any "deviating from
+  Adam's spec" framing (Stephen/James steer, 13 Jul). No blockers raised.
+-->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- SLIDE 1 - TITLE. No footer. -->
+  <section data-label="Title">
+    <div class="aw-slide aw-slide--hero">
+      <div class="aw-body aw-title__body">
+        <div class="aw-title__lockup">
+          <h1 class="aw-h aw-h--hero aw-title__headline">
+            Client Intelligence Layer
+          </h1>
+          <p class="aw-title__goal">AwinOS &middot; David Gérouville-Farrell + Adam Ross &middot; 16 July 2026</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 - WHO I AM. Ink-deep, bulleted timeline. -->
+  <section data-label="Who I am">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-method__body">
+        <div class="aw-method__head">
+          <h2 class="aw-h aw-h--2">A bit about me</h2>
+        </div>
+        <ul class="aw-list aw-list--tight" style="max-width:1600px">
+          <li><span><span class="aw-emph">2001-2004</span> - Computer science and web design.</span></li>
+          <li><span><span class="aw-emph">2004-2007</span> - Video game development.</span></li>
+          <li><span><span class="aw-emph">2007-2021</span> - Academia: teaching computer science and game design. Learned to design around the user, and to run teams (my research team built games/apps for partners).</span></li>
+          <li style="grid-template-columns:1fr">
+            <div>
+              <div><span class="aw-emph">2021-now</span> - Freelance: product, service design and delivery.</div>
+              <div style="margin-top:16px; font-size:0.78em; opacity:.9; line-height:1.5">
+                <div style="margin:8px 0">&bull;&nbsp;&nbsp;Trained image-generation AI models just before ChatGPT, then leaned hard into AI.</div>
+                <div style="margin:14px 0 6px">&bull;&nbsp;&nbsp;Awin:</div>
+                <div style="padding-left:38px; margin:6px 0">&#9702;&nbsp;&nbsp;Previously, building automations as an AI engineer.</div>
+                <div style="padding-left:38px; margin:6px 0">&#9702;&nbsp;&nbsp;Now, helping get AwinOS off the ground in a hybrid technical-product role.</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">2 / 10</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 - THE VISION, PLAYED BACK. Lilac, Adam's own mockup + quote. -->
+  <section data-label="The vision">
+    <div class="aw-slide">
+      <div class="aw-body aw-briefing__body">
+        <div class="aw-grid-asym aw-briefing__grid">
+          <div class="aw-briefing__rail">
+            <h2 class="aw-h aw-h--1 aw-briefing__headline">Superhuman account managers</h2>
+            <div class="aw-quote">
+              <p style="font-size:var(--awn-fs-lg); line-height:var(--awn-lh-lg)">&ldquo;Every account manager walks into every client conversation already briefed - recent history, live performance, the right question to ask - in seconds, not half an hour of digging.&rdquo;</p>
+              <cite>Managed Services AI plan</cite>
+            </div>
+          </div>
+          <div class="aw-figure aw-briefing__figure aw-zoom">
+            <image-slot src="assets/briefing-mockup.png" fit="contain" alt="A mock pre-call briefing: an account manager asks what they need before a Boohoo call and gets back LAST, RISK and OPENING items."></image-slot>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">3 / 10</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 3b - WHAT IT LOOKS LIKE. Cream. Lifted + cleaned from the 25 Jun
+       strategy deck: the record (left) and the live Easter conversation (right).
+       The plumbing "working assumptions" (skills/MCPs/sandbox/Copilot) are cut
+       for Adam. -->
+  <section data-label="What it looks like">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-body--top aw-th">
+        <h2 class="aw-h aw-h--2" style="margin-bottom:2px">Thinking through what that might mean</h2>
+        <p class="aw-sub" style="max-width:1320px">The record might provide most of the value - but improvisation is important.</p>
+        <div class="aw-th__cols">
+
+          <!-- LEFT - the record -->
+          <div class="aw-th__col">
+            <div class="aw-rec">
+              <div class="aw-rec__chrome"><span class="aw-rec__dots"></span>client-intelligence.awin.internal</div>
+              <div class="aw-rec__head">
+                <p class="aw-rec__title">Boohoo Group PLC</p>
+                <span class="aw-rec__status">Live</span>
+              </div>
+              <div class="aw-rec__block">
+                <span class="aw-rec__tag aw-rec__tag--stored">Stored &middot; set at onboarding</span>
+                <p class="aw-rec__body">ID 8312 &middot; AM Sophie Reid &middot; Fashion / fast fashion &middot; Managed Services<br>Commission 6% default (4-10% by group) &middot; Renewal 28 Feb 2027</p>
+              </div>
+              <div class="aw-rec__block">
+                <span class="aw-rec__tag aw-rec__tag--calc">Calculated live &middot; nightly</span>
+                <p class="aw-rec__body">Revenue L30D &pound;284,500 <span class="aw-rec__down">&darr; 12% YoY</span> &middot; Approval 73% &middot; EPC &pound;0.42<br>Top publisher TopCashback &pound;38,200 &middot; 138 active publishers</p>
+              </div>
+              <div class="aw-rec__block">
+                <span class="aw-rec__tag aw-rec__tag--narr">Narrative &middot; AI-extracted from calls</span>
+                <p class="aw-rec__body aw-rec__narr">15 Apr - Q1 review: commission-rate dispute outstanding<br>3 Mar - 3 content publishers reviewing strategy, activity down ~40%<br>18 Jan - CSS decline-rate concern raised</p>
+              </div>
+            </div>
+            <p class="aw-th__text"><span class="aw-emph">The record is half the battle</span> - some stored, some calculated live, some summarised from calls by AI.</p>
+          </div>
+
+          <!-- RIGHT - the conversation -->
+          <div class="aw-th__col">
+            <div class="aw-conv">
+              <div class="aw-conv__chrome"><span class="aw-rec__dots"></span>client-intelligence.awin.internal</div>
+              <div class="aw-conv__thread">
+                <p class="aw-conv__who aw-conv__who--am">Account manager</p>
+                <div class="aw-conv__ask">To what extent is this year's Easter performance better or worse than last year's - and how does that compare to competitors?</div>
+                <p class="aw-conv__who">Account Advisor</p>
+                <div class="aw-conv__reply">
+                  <p class="aw-conv__replyline">Hold on, calculating<span class="aw-conv__dots"><span></span><span></span><span></span></span></p>
+                  <p class="aw-conv__hint">running L30D vs last year, benchmarking against sector</p>
+                </div>
+              </div>
+            </div>
+            <p class="aw-th__text">The account manager just asks - in plain language, even a messy question like Easter versus last year versus competitors.</p>
+          </div>
+
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">4 / 11</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ("From beliefs to evidence" PARKED 16 Jul - see
+       parked-beliefs-to-evidence.html; David to say where it re-enters. -->
+
+  <!-- SLIDE 6 - INITIAL EXPLORATION. Cream. The three tools built so far.
+       (Moved ahead of the loop diagram per David's 16 Jul steer.) -->
+  <section data-label="Demo">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-run__body">
+        <div class="aw-run__head">
+          <h2 class="aw-h aw-h--2">Initial exploration</h2>
+        </div>
+        <div class="aw-grid-3 aw-run__cards" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Redaction agent</p>
+            <p>Redacts personal anecdotes, jokes, and anything someone wouldn't want seen in six months.</p>
+            <p style="margin-top:14px; font-size:0.62em; line-height:1.5"><a href="https://copilotstudio.microsoft.com/environments/Default-5a9ab2d3-7b58-4525-9851-d1727266bad7/agents/17b476e1-dd23-4e45-91ec-077e7f21cf8f?trackingId=cf782413-cab7-4640-a54a-d1e98f0d9d46" target="_blank" style="color:inherit; opacity:.75; text-decoration:underline; text-underline-offset:3px">copilotstudio.microsoft.com &rsaquo; agents &rsaquo; 17b476e1 &nearr;</a></p>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Client intelligence record builder</p>
+            <p>Takes a collection of redacted transcripts and creates a client record.</p>
+            <p style="margin-top:14px; font-size:0.62em; line-height:1.5"><a href="https://copilotstudio.microsoft.com/environments/Default-5a9ab2d3-7b58-4525-9851-d1727266bad7/agents/75f3bf27-d167-417e-b5f1-3cb53a94a988?trackingId=4c136e78-945e-4b0a-9a33-5414d1f70acd" target="_blank" style="color:inherit; opacity:.75; text-decoration:underline; text-underline-offset:3px">copilotstudio.microsoft.com &rsaquo; agents &rsaquo; 75f3bf27 &nearr;</a></p>
+          </div>
+          <div class="aw-card aw-run__card">
+            <p class="aw-card__label">Client intelligence agent</p>
+            <p>Understands the record and lets the user interact with it.</p>
+            <p style="margin-top:14px; font-size:0.62em; line-height:1.5"><a href="https://copilotstudio.microsoft.com/environments/Default-5a9ab2d3-7b58-4525-9851-d1727266bad7/agents/82d58cdd-9910-48fc-babf-35405497de2e?trackingId=dbe79e9c-c90f-400d-a003-7c2400790c67" target="_blank" style="color:inherit; opacity:.75; text-decoration:underline; text-underline-offset:3px">Awin &middot; agents &rsaquo; 82d58cdd &nearr;</a><br><a href="https://copilotstudio.microsoft.com/environments/Default-5a9ab2d3-7b58-4525-9851-d1727266bad7/agents/ac6029e9-2583-4d88-bc84-53e940f07b4d?trackingId=6c893145-618a-4b20-8097-708bb4dae951" target="_blank" style="color:inherit; opacity:.75; text-decoration:underline; text-underline-offset:3px">Samsung &middot; agents &rsaquo; ac6029e9 &nearr;</a></p>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">6 / 10</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 - THE LOOP. Cream. Swim-lane diagram (imagegen2 render). The
+       diagram carries its own title ("Initial loop exploration"); green =
+       built, dashed = to come. Click to zoom (aw-zoom). -->
+  <section data-label="The loop">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body" style="display:flex; align-items:center; justify-content:center; padding:40px 56px">
+        <div class="aw-zoom" style="margin:auto">
+          <img src="assets/loop-swimlane.png" alt="Swim-lane diagram - Initial loop exploration. An interaction (email, Teams chat, phone call or Teams meeting) is transcribed, then the redaction agent (built) removes anything off-record, then the record builder (built) extracts topics, commitments and risks and updates the Client Intelligence Record. The record feeds a pre-call briefing for the account manager (to come), and the next conversation loops back in." style="display:block; width:100%; max-width:1560px; height:auto; margin:auto; border-radius:14px">
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">7 / 10</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ("Approach to building" PARKED 16 Jul per David - run goes Initial
+       exploration -> The loop -> The next sprint -> Over to you. Slide saved
+       in parked-approach-to-building.html. -->
+
+  <!-- SLIDE 9 - THE NEXT SPRINT. Cream. Built around the account managers +
+       Samsung consent. Sub-points use single-column <li> + plain divs so the
+       aw-list 1fr/auto grid doesn't throw them right (same fix as the bio). -->
+  <section data-label="Getting it right">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body aw-method__body">
+        <div class="aw-method__head">
+          <h2 class="aw-h aw-h--2">The next sprint</h2>
+          <p class="aw-sub" style="max-width:1320px">Getting properly close to the account managers.</p>
+        </div>
+        <ul class="aw-list aw-list--tight" style="max-width:1600px">
+          <li style="grid-template-columns:1fr">
+            <div>
+              <div><span class="aw-emph">Into the account-manager teams.</span></div>
+              <div style="margin-top:12px; font-size:0.82em; opacity:.9; line-height:1.5">
+                <div style="margin:8px 0">&bull;&nbsp;&nbsp;Interview and shadow account managers.</div>
+                <div style="margin:8px 0">&bull;&nbsp;&nbsp;Understand at a deeper level what they care about, and what they want access to.</div>
+              </div>
+            </div>
+          </li>
+          <li style="grid-template-columns:1fr">
+            <div>
+              <div><span class="aw-emph">Samsung.</span></div>
+              <div style="margin-top:12px; font-size:0.82em; opacity:.9; line-height:1.5">
+                <div style="margin:8px 0">&bull;&nbsp;&nbsp;Concerned about transcriptions.</div>
+                <div style="margin:8px 0">&bull;&nbsp;&nbsp;Emily is working to get them on side.</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">9 / 10</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 - CLOSE. Ink-deep. Over to Adam. -->
+  <section data-label="Close">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body aw-ask__body">
+        <div class="aw-ask__head">
+          <h2 class="aw-h aw-h--2">Over to you</h2>
+          <p class="aw-sub">Thoughts?</p>
+        </div>
+        <ul class="aw-list aw-ask__list">
+          <li><span>Is the emphasis right?</span></li>
+          <li><span>Does this spark any other concerns / ideas?</span></li>
+          <li><span>Anything else?</span></li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">10 / 10</span>
+      </footer>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- SPEAKER NOTES - one entry per slide, in document order (10 entries). -->
+<script type="application/json" id="speaker-notes">
+[
+  "Title. Warm and quick - first proper sit-down with Adam. Frame the half hour: I'd like to play back the vision to check we're aligned, and show you what's working after two weeks. Then get moving - the demo is the point.",
+  "Who I am. ~45 seconds, don't expand it. The through-line: user-centred designer who can also build. Land the AI-before-ChatGPT bit as real credibility for a builder. End on 'hybrid technical-product role on this one' - that's the role I'm growing into here.",
+  "The vision, played back. Point at the mockup - it's from your own plan. Read the picture: the AM walks in already briefed, in seconds, not half an hour of digging. This is your vision; I've captured the intent. Don't renegotiate the product surface - just show I've heard it. Nuance to add out loud, lightly: a record isn't just static - the real value is asking it live.",
+  "What it looks like. My cleaned-up mockup from the June planning session - the record on the left, an account manager asking a live question on the right. The record: some stored, some calculated live each night, some summarised from calls by AI. The conversation: the AM just asks, in plain language, even a messy question - how's Easter versus last year and versus competitors. That messiness is the point - Easter means several things, the right comparison isn't obvious, the competitor set is itself a judgement. The vision made concrete.",
+  "Initial exploration / demo. Switch to the tools. Three steps, keep it tight: redact a real transcript (use the Luxembourg/niece example - stop before the home-office line), build a client record from a folder of transcripts, then ask the record questions live. This is the part that impresses - give it the time.",
+  "Initial loop exploration. This is your loop - capture, extract signal, update commitments and flags, no manual logging. What I've built in two weeks: a redaction step after capture, and the record builder doing the extract and update. Not where we want it yet, but the loop runs end to end. Click the diagram to zoom if the room needs it. Keep this non-technical - no framework names, no plumbing (Stephen's steer).",
+  "The next sprint. The goal: get properly close to the account managers. Into the teams - interview and shadow them, understand at a deeper level what they care about and what they want access to. Then Samsung: they're concerned about transcriptions; Emily is working to get them on side - mention it as in-hand, not a blocker.",
+  "Over to you - Thoughts? Three open prompts: is the emphasis right, does this spark concerns or ideas, anything else. Let Adam react - and listen. Still have answers ready if he asks: which team first (tie to the pilot), and what 'worth it in three months' looks like. Close warm."
+]
+</script>
+
+<!-- Click-to-zoom lightbox for figures marked .aw-zoom. Click a figure to
+     open it full-screen; click anywhere, or press any arrow / space / Esc,
+     to dismiss. The keydown handler is capture-phase and stops propagation
+     so a dismissing arrow key does NOT also advance the deck. -->
+<style>
+  .aw-zoom { cursor: zoom-in; }
+  #aw-lightbox {
+    position: fixed; inset: 0; z-index: 2147483600; display: none;
+    align-items: center; justify-content: center; padding: 3.2vw;
+    box-sizing: border-box; background: rgba(18,14,28,0.93); cursor: zoom-out;
+  }
+  #aw-lightbox[data-open] { display: flex; }
+  #aw-lightbox img {
+    max-width: 100%; max-height: 100%; object-fit: contain;
+    border-radius: 10px; box-shadow: 0 24px 90px rgba(0,0,0,0.55);
+    background: #fff;
+  }
+</style>
+<script>
+(function () {
+  var box = document.createElement('div');
+  box.id = 'aw-lightbox';
+  var img = document.createElement('img');
+  box.appendChild(img);
+  document.body.appendChild(box);
+
+  function open(src, alt) {
+    if (!src) return;
+    img.src = src; img.alt = alt || '';
+    box.setAttribute('data-open', '');
+  }
+  function close() { box.removeAttribute('data-open'); img.src = ''; }
+
+  box.addEventListener('click', close);
+
+  // Capture-phase so we run before <deck-stage>'s window keydown handler and
+  // can stop it advancing the slide while the lightbox is up.
+  window.addEventListener('keydown', function (e) {
+    if (!box.hasAttribute('data-open')) return;
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    close();
+  }, true);
+
+  function wire() {
+    var figs = document.querySelectorAll('.aw-zoom');
+    Array.prototype.forEach.call(figs, function (el) {
+      if (el.__awWired) return;
+      el.__awWired = true;
+      el.addEventListener('click', function () {
+        var slot = el.matches('image-slot') ? el : el.querySelector('image-slot');
+        var src = slot ? slot.getAttribute('src') : null;
+        var alt = slot ? slot.getAttribute('alt') : '';
+        if (!src) { var im = el.querySelector('img'); if (im) { src = im.src; alt = im.alt; } }
+        open(src, alt);
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();
+</script>
+
+<!-- Runtime. -->
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<!-- Auto-number footer page numbers: un-footered cover, main run renumbered 2..N. -->
+<script>
+(function () {
+  function numberFooters() {
+    var pages = Array.prototype.slice.call(document.querySelectorAll('.aw-foot__page'));
+    var main = pages.filter(function (p) { return !/^A\d/.test((p.textContent || '').trim()); });
+    var total = main.length + 1;
+    main.forEach(function (p, i) { p.textContent = (i + 2) + ' / ' + total; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+</body>
+</html>
