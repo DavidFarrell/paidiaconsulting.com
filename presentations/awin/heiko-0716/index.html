@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AwinOS - Heiko catch-up</title>
+
+<!-- Vendored awn design system - all local, no CDN. Load order:
+     fonts -> tokens -> components -> semantic aliases -> deck skin.
+     Same skin as weekly-0713 (assets copied 16 Jul 2026). -->
+<link rel="stylesheet" href="assets/fonts.css" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/colors_and_type.css" />
+<link rel="stylesheet" href="assets/deck.css" />
+
+<style>
+  deck-stage:not(:defined){ visibility:hidden }
+  html,body{ margin:0; padding:0; background:#000; color:var(--awn-text);
+             font-family:var(--awn-font); overflow:hidden }
+  deck-stage{ background:#16131f }
+
+  /* Clean bullets, no separators (house style since weekly-0713 rev 3). */
+  .aw-slide ul.bul { list-style: none; margin: 0; padding: 0; }
+  .aw-slide ul.bul > li { position: relative; padding-left: 1.5em; margin: 0 0 .75em 0; border: 0; line-height: 1.42; }
+  .aw-slide ul.bul > li::before { content: ""; position: absolute; left: .25em; top: .58em; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .5; }
+  .aw-slide ul.bul ul.bul { margin-top: .5em; }
+  .aw-slide ul.bul ul.bul > li::before { opacity: .35; }
+  .aw-slide ul.bul li > .lead-line { font-weight: 600; }
+
+  /* No divider hairlines deck-wide. */
+  .aw-slide .aw-list li { border-top: 0 !important; }
+  .aw-foot { border-top: 0 !important; }
+
+  /* Readability bump (matches weekly-0713). */
+  html { font-size: 20px; }
+  .aw-slide, .aw-slide p, .aw-slide li, .aw-slide .aw-lead, .aw-slide .aw-sub,
+  .aw-slide .aw-body-text, .aw-slide .aw-h {
+    overflow-wrap: break-word; word-break: break-word; white-space: normal;
+  }
+  .aw-org__outer-head, .aw-planes__phase, .aw-tl__phase { white-space: nowrap; }
+</style>
+</head>
+<body class="awn">
+
+<!--
+  AwinOS - Heiko catch-up deck, Thu 16 Jul 2026 10:30. Seven slides, bullet-led,
+  deliberately small: the likely stack after the discovery round, what already
+  exists (overlaps), the concerns heard, the data picture, the reshaped
+  resourcing ask, and the asks for Heiko.
+-->
+
+<deck-stage width="1920" height="1080">
+
+  <!-- SLIDE 1 - TITLE. No footer. -->
+  <section data-label="Title">
+    <div class="aw-slide aw-slide--hero">
+      <div class="aw-body aw-title__body">
+        <div class="aw-title__lockup">
+          <p class="aw-eyebrow">Heiko / David &middot; 16 July 2026</p>
+          <h1 class="aw-h aw-h--hero aw-title__headline">AwinOS</h1>
+          <p class="aw-lead">Discovery read-out - what a week of 1-1s changed</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 - THE LIKELY STACK. Lilac, three cards + one line. -->
+  <section data-label="The likely stack">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">The likely stack</h2>
+        <p class="aw-lead">Build on Awin's AI platform, not beside it</p>
+        <div class="aw-grid-3">
+          <div class="aw-card">
+            <p class="aw-card__label">Front door</p>
+            <ul class="bul">
+              <li>Copilot stays the interface AMs already live in</li>
+              <li>Thin - not the build platform</li>
+            </ul>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">The agent</p>
+            <ul class="bul">
+              <li>Deep Agents / LangGraph - same framework as Ava</li>
+              <li>Model calls via the self-hosted LiteLLM gateway</li>
+              <li>Surfaced to Copilot as an MCP connection</li>
+            </ul>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Observability</p>
+            <ul class="bul">
+              <li>LangSmith - integration is hand-built (no automatic path)</li>
+              <li>New 15 Jul: Copilot Studio &rarr; App Insights export (preview)</li>
+            </ul>
+          </div>
+        </div>
+        <p class="aw-sub" style="margin-top:1.2em">Registered in the AI Systems &amp; Features Registry &middot; possible end state: AwinOS as a skill on Ava's orchestrator</p>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">2 / 7</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 - WHAT ALREADY EXISTS. Cream, three cards. -->
+  <section data-label="What already exists">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">What already exists</h2>
+        <p class="aw-lead">Less to build than I thought two weeks ago</p>
+        <div class="aw-grid-3">
+          <div class="aw-card">
+            <p class="aw-card__label">Programme-snapshot advisor</p>
+            <ul class="bul">
+              <li>Deep Agent already interprets real programme data - advice, not dashboard narration</li>
+              <li>Overlaps the performance-intelligence vision</li>
+            </ul>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Data Strategy programme</p>
+            <ul class="bul">
+              <li>Semantic layer - Q4 2026</li>
+              <li>Catalogue + internal Awin MCP - Q1 2027</li>
+              <li>"Talk to your data" - Q2 2027</li>
+            </ul>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Avalytics - corrected</p>
+            <ul class="bul">
+              <li>Analytics about Ava's own performance</li>
+              <li>Not client / advertiser data - doesn't cover our performance layer</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">3 / 7</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 - CONCERNS I'VE HEARD. Lilac, bullets. -->
+  <section data-label="Concerns I've heard">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Concerns I've heard - taken seriously</h2>
+        <ul class="bul">
+          <li><span class="lead-line">"Somebody building everything on-site once again"</span> - the instinctive first reaction to a new parallel build</li>
+          <li><span class="lead-line">Don't do the same thing twice</span> - separate by user and scope, or plug in rather than rebuild</li>
+          <li><span class="lead-line">Don't add to teams' workloads</span> - mid-programme asks land on people who already have roadmaps</li>
+          <li><span class="lead-line">Don't couple too tightly</span> - or AwinOS inherits multi-year timelines it can't afford</li>
+          <li><span class="lead-line">Adoption is fragile</span> - one unsatisfactory answer loses a user for good (Ava's early lesson)</li>
+        </ul>
+        <p class="aw-sub" style="margin-top:1em">My stance: light-touch alignment &middot; reuse first &middot; flag anything quick-and-dirty &middot; Wizard-of-Oz before builds &middot; ADR + Security for the durable path</p>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">4 / 7</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 - THE DATA. Cream, three cards mapping data character -> source. -->
+  <section data-label="The data">
+    <div class="aw-slide aw-slide--cream">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">The data - three characters, three sources</h2>
+        <div class="aw-grid-3">
+          <div class="aw-card">
+            <p class="aw-card__label">Live CRM fields</p>
+            <ul class="bul">
+              <li>Straight from Salesforce / D365</li>
+              <li>New route: Teams &rarr; Salesforce call-capture POC (Simon, CRM)</li>
+            </ul>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">Deterministic performance</p>
+            <ul class="bul">
+              <li>Reuse: snapshot advisor now, semantic layer when it lands</li>
+              <li>Not a bespoke build</li>
+            </ul>
+          </div>
+          <div class="aw-card">
+            <p class="aw-card__label">LLM narrative layer</p>
+            <ul class="bul">
+              <li>Transcripts &rarr; redact &rarr; extract &rarr; briefing</li>
+              <li>The genuinely new part - my build</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">5 / 7</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 - RESOURCING, RESHAPED. Lilac. -->
+  <section data-label="Resourcing - reshaped">
+    <div class="aw-slide">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--2">Resourcing - reshaped since 8 July</h2>
+        <ul class="bul">
+          <li><span class="lead-line">Then:</span> a dedicated platform / data-intelligence person</li>
+          <li><span class="lead-line">Now:</span> borrow scrappy help where it already exists
+            <ul class="bul">
+              <li>Ninja research tasks (Ashley checking - back 27 Jul)</li>
+              <li>Anup Belbase - central data-engineering support</li>
+              <li>Pablo Elgueta - performance layer / Deep Agents architecture</li>
+            </ul>
+          </li>
+          <li><span class="lead-line">Open question:</span> does your BI + data-scientist pairing still fit this smaller shape?</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">6 / 7</span>
+      </footer>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 - ASKS. Ink-deep closer. -->
+  <section data-label="Asks">
+    <div class="aw-slide aw-slide--ink aw-slide--ink-deep">
+      <div class="aw-body">
+        <h2 class="aw-h aw-h--1">Asks</h2>
+        <ul class="bul">
+          <li>The data-security workstream intros (MCP / talk-to-your-data overlap)</li>
+          <li>Your read on the reshaped resourcing ask</li>
+          <li>App Insights telemetry export (preview, 15 Jul) - org-level switch; who would own enabling it?</li>
+          <li>Anything you'd like reflected to Adam at 14:00 today?</li>
+        </ul>
+      </div>
+      <footer class="aw-foot">
+        <span class="aw-foot__page">7 / 7</span>
+      </footer>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- SPEAKER NOTES - one entry per slide, in document order (7 entries). -->
+<script type="application/json" id="speaker-notes">
+[
+  "Title. This is a 30-minute catch-up, not a pitch - Heiko offered to help navigate Awin and this is the read-out he's owed. Two things I owe him: the Benni/Ashley semantic-layer read-out, and the reshaped data-role picture. Two things he may have for me: the data-security workstream intros, and his read on resourcing.",
+  "The stack. His Ignacio pointer paid off - this whole picture comes from that chain of intros. Key line: build ON the platform, not beside it. Copilot is just the front door; the agent itself lives on Deep Agents behind the LiteLLM gateway, surfaced as MCP. Telemetry: LangSmith needs a hand-built integration (Ignacio was explicit - no automatic path); the App Insights export preview landed yesterday as a possible complement/fallback, but it's an org-level admin switch, not something I can flip.",
+  "What already exists. This is the Benni/Ashley read-out I owe him. The semantic layer I assumed I'd need to commission is already a board-tracked programme - Q4 2026 for the layer itself. Othman flagged the programme-snapshot advisor: interpretation of real programme data already exists in the Deep Agent. And Sumanth corrected my Avalytics assumption - it's analytics about Ava itself, not client data, so it does NOT cover the performance layer the way I'd hoped on 10 Jul.",
+  "Concerns. Be honest that these came up unprompted, and that I think they're all fair. Benni's 'building everything on-site once again' was his literal first reaction - he then immediately engaged constructively. Othman's steer: don't do the same thing twice unless the user/scope separation is clear. The coupling point cuts both ways - too tight and I inherit 2027 timelines, too loose and I duplicate. Daniel's adoption warning comes from Ava's own early experience. My stance line at the bottom is the same boundary Stephen drew: light-touch, reuse, flag the quick-and-dirty.",
+  "The data. The three-characters framing from our 8 Jul call, now with real sources against each. Live CRM fields come straight from Salesforce/D365 - and Simon in CRM has a ten-day-old POC capturing Teams calls straight into Salesforce, which is a direct alternative to the Graph route for my capture loop. Deterministic performance is now a reuse story, not a build. The narrative layer - transcripts to briefings - is the genuinely new part and the bit I'm building.",
+  "Resourcing. This is the follow-up to the thinking-cap ask from 8 Jul. The honest update: the dedicated hire has shrunk. Between the Data Strategy programme, the snapshot advisor, Ninja research tasks and Anup for central data engineering, the near-term need looks like borrowed scrappy help, not a role. Genuinely ask: does his BI-person-plus-data-scientist pairing idea still apply at this smaller size, and is there anyone he'd name?",
+  "Asks. Keep this quick and concrete. The data-security workstream intros are still open from 8 Jul - chase gently. His read on resourcing. The App Insights export needs a Power Platform admin + Managed Environments - who owns that decision? And since I see Adam at 14:00: anything he wants reflected upward - remembering the steer is outcomes and demo with Adam, not plumbing."
+]
+</script>
+
+<!-- Runtime. -->
+<script src="assets/image-slot.js"></script>
+<script src="assets/deck-stage.js"></script>
+
+<!-- Auto-number footer page numbers (un-footered cover, main run 2..N of N). -->
+<script>
+(function () {
+  function numberFooters() {
+    var pages = Array.prototype.slice.call(document.querySelectorAll('.aw-foot__page'));
+    var main = pages.filter(function (p) { return !/^A\d/.test((p.textContent || '').trim()); });
+    var total = main.length + 1;
+    main.forEach(function (p, i) { p.textContent = (i + 2) + ' / ' + total; });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', numberFooters);
+  } else {
+    numberFooters();
+  }
+})();
+</script>
+
+</body>
+</html>
