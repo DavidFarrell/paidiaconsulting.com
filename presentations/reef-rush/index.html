@@ -724,7 +724,15 @@ body { cursor:pointer; }
     started = true; wait.style.display = "none"; timer.style.display = "block";
     tl.play(T[k]); draw();
   };
-  const next = () => { if (!started) return go(0); if (cur() < T.length - 1) go(cur() + 1); };
+  // the first click only starts slide 1; a double click must not also skip it
+  let begun = 0;
+  const next = () => {
+    if (!started) { begun = performance.now(); return go(0); }
+    if (performance.now() - begun < 800) return;
+    if (cur() < T.length - 1) go(cur() + 1);
+  };
+  // back to waiting on slide 1, ready for the next run
+  const reset = () => { started = false; timer.style.display = "none"; wait.style.display = ""; tl.pause(REST); draw(); };
   const prev = () => { if (!started) return; go(cur() - 1); };
 
   // ---- the overview: the talk pauses while it is open
@@ -762,6 +770,7 @@ body { cursor:pointer; }
     if (k === "ArrowUp") { e.preventDefault(); openOver(); }
     else if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }
     else if (["ArrowLeft", "PageUp"].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === "r" || k === "R" || k === "Home") reset();
     else if (k === "f" || k === "F") (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
   });
   addEventListener("click", next);
@@ -772,7 +781,7 @@ body { cursor:pointer; }
   imgs.forEach((i) => { i.addEventListener("load", tick); i.addEventListener("error", tick); }); tick();
 
   tl.pause(REST); draw();
-  window.__pk = { tl, T, cur, started: () => started };   // for automated checks
+  window.__pk = { tl, T, cur, reset, started: () => started };   // for automated checks
 })();
 </script>
 </body>
