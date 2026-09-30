@@ -549,19 +549,19 @@ title("s05", at("s05", 0.2)); rise("#s05-quote", at("s05", 0.8)); rise("#s05-l1"
 slide("#s05-img", cue("s05", 24) - 2, 60); rise("#s05-tbl", cue("s05", 26) - 2); rise("#s05-foot", cue("s05", 40) - 3);
 
 // s06 Play makes it close
-title("s06", at("s06", 0.2)); rise("#s06-a", cue("s06", 6)); rise("#s06-b", cue("s06", 20)); rise("#s06-foot", cue("s06", 28) - 2);
+title("s06", at("s06", 0.2)); rise("#s06-a", at("s06", 0.6)); rise("#s06-b", at("s06", 3.0)); rise("#s06-foot", at("s06", 5.0));
 
 // s07 Building a reef
-title("s07", at("s07", 0.2)); rise("#s07-lede", cue("s07", 8));
-slide("#s07-card", cue("s07", 6), 80);
-rise("#s07-l1", cue("s07", 15)); rise("#s07-l2", cue("s07", 23));
+title("s07", at("s07", 0.2)); rise("#s07-lede", at("s07", 0.4));
+slide("#s07-card", at("s07", 0.4), 80);
+rise("#s07-l1", at("s07", 3.0)); rise("#s07-l2", at("s07", 5.5));
 
-// s08 Card by card: the four named species arrive as they are named
-title("s08", at("s08", 0.2)); rise("#s08-lede", cue("s08", 8));
-["#s08-a1", "#s08-a2", "#s08-a3", "#s08-a4"].forEach((sel, i) => rise(sel, at("s08", 5.0) + i * 1.25));
+// s08 Card by card: the four species are all up well before the slide changes
+title("s08", at("s08", 0.2)); rise("#s08-lede", at("s08", 0.4));
+["#s08-a1", "#s08-a2", "#s08-a3", "#s08-a4"].forEach((sel, i) => rise(sel, at("s08", 1.5) + i * 1.0));
 
 // s09 Working with scientists
-title("s09", at("s09", 0.2)); rise("#s09-lede", at("s09", 0.9)); rise("#s09-box", cue("s09", 14)); rise("#s09-foot", cue("s09", 18));
+title("s09", at("s09", 0.2)); rise("#s09-lede", at("s09", 0.4)); rise("#s09-box", at("s09", 2.0)); rise("#s09-foot", at("s09", 4.0));
 
 // s10 Habitats: photos first, then the cards drop in
 title("s10", at("s10", 0.2));
