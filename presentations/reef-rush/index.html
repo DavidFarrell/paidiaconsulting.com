@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BioInvaders! Reef Rush, ECGBL 2026 Pecha Kucha v3</title>
+<script src="vendor/gsap.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#06131f; font-family:"Helvetica Neue", Helvetica, Arial, sans-serif; color:#f4f7fa; }
+#root { position:relative; width:1920px; height:1080px; overflow:hidden; background:#06131f; }
+.clip { position:absolute; inset:0; }
+.scene { background:#06131f; overflow:hidden; }
+.glow { position:absolute; left:220px; top:-320px; width:1040px; height:1040px; border-radius:50%;
+        background:radial-gradient(circle, rgba(60,140,190,0.26) 0%, rgba(6,19,31,0) 65%); }
+.bg { position:absolute; left:0; top:0; width:1920px; height:1080px; object-fit:cover; }
+.tint { position:absolute; inset:0; background:#0d2033; mix-blend-mode:multiply; opacity:0.2; }
+.scrim-top { position:absolute; left:0; top:0; width:1920px; height:420px;
+             background:linear-gradient(180deg, rgba(6,19,31,0.94) 0%, rgba(6,19,31,0.6) 55%, rgba(6,19,31,0) 100%); }
+.scrim-bottom { position:absolute; left:0; bottom:0; width:1920px; height:460px;
+                background:linear-gradient(0deg, rgba(6,19,31,0.97) 0%, rgba(6,19,31,0.85) 40%, rgba(6,19,31,0) 100%); }
+.scrim-left { position:absolute; left:0; top:0; width:1200px; height:1080px;
+              background:linear-gradient(90deg, rgba(6,19,31,0.98) 0%, rgba(6,19,31,0.92) 60%, rgba(6,19,31,0) 100%); }
+.cap { z-index:50; pointer-events:none; }
+.cap-box { position:absolute; left:50%; bottom:28px; transform:translateX(-50%); max-width:1500px; padding:10px 26px 12px;
+           background:rgba(0,0,0,0.72); border-radius:10px; font-size:38px; line-height:1.3; color:#ffffff; text-align:center; }
+.cap-id { display:block; font-size:20px; letter-spacing:0.2em; color:#ffd166; margin-bottom:4px; }
+#hud { z-index:60; pointer-events:none; }
+#hud-clock { position:absolute; right:24px; top:18px; font-size:30px; font-weight:700; font-variant-numeric:tabular-nums;
+             color:#ffffff; background:rgba(0,0,0,0.6); padding:4px 14px; border-radius:8px; }
+#hud-over { position:absolute; right:24px; top:70px; font-size:22px; font-weight:700; letter-spacing:0.1em;
+            color:#ffffff; background:#c62828; padding:4px 14px; border-radius:8px; }
+.kicker { position:absolute; z-index:5; left:100px; top:20px; font-size:24px; letter-spacing:0.3em; text-transform:uppercase; color:#5fb8c9; font-weight:700; }
+.title { position:absolute; left:100px; width:1720px; font-size:84px; font-weight:800; line-height:1.05; letter-spacing:-0.02em;
+         color:#f3e7d3; text-shadow:0 6px 26px rgba(0,0,0,0.6); }
+.line { position:absolute; left:100px; width:1720px; font-size:34px; line-height:1.35; color:#cfe3ef; text-shadow:0 4px 18px rgba(0,0,0,0.7); }
+.line b, .foot b { color:#9fd3f5; font-weight:700; }
+.hot { color:#ff9d7a; font-weight:700; }
+.foot { position:absolute; left:100px; width:1720px; bottom:56px; font-size:32px; line-height:1.35; color:#9fc3d9; text-shadow:0 4px 18px rgba(0,0,0,0.7); }
+.label { position:absolute; font-size:24px; letter-spacing:0.12em; text-transform:uppercase; color:#9fc3d9; font-weight:700; }
+.pin { position:absolute; font-size:27px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:#f6f1e6;
+       padding:9px 18px; border-radius:8px; background:rgba(6,19,31,0.78); border:1px solid rgba(246,241,230,0.3); white-space:nowrap; }
+.pin.big { font-size:40px; padding:16px 34px; border-radius:14px; border-width:2px; }
+.panel { position:absolute; border-radius:24px; background:rgba(255,255,255,0.06); border:2px solid rgba(255,255,255,0.12); padding:28px 32px; }
+.panel h3 { font-size:24px; letter-spacing:0.1em; text-transform:uppercase; color:#9fc3d9; font-weight:700; margin-bottom:18px; }
+.panel p { font-size:30px; line-height:1.35; color:#e4eef5; }
+.panel ul { list-style:none; }
+.panel li { font-size:30px; line-height:1.3; color:#e4eef5; margin-bottom:22px; padding-left:34px; position:relative; }
+.panel li b { color:#9fd3f5; }
+.panel li::before { content:""; position:absolute; left:0; top:15px; width:12px; height:12px; border-radius:50%; background:#9fd3f5; }
+.chip { position:absolute; display:flex; align-items:center; justify-content:center; text-align:center; padding:0 30px; border-radius:14px;
+        font-size:34px; font-weight:700; color:#f4f7fa; background:rgba(122,31,31,0.6); border:3px solid #ff8a80; }
+.card { position:absolute; border-radius:22px; box-shadow:0 24px 60px rgba(0,0,0,0.6); overflow:hidden; background:#0a1c2b; }
+.card img { display:block; width:100%; height:100%; object-fit:cover; }
+.shot { position:absolute; overflow:hidden; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.55); background:#0a1c2b; }
+.shot img { display:block; }
+.shot-cap { position:absolute; left:0; right:0; bottom:0; padding:14px 22px; font-size:22px; color:#cfe3ef; background:rgba(6,19,31,0.85); }
+.marks { position:absolute; left:100px; top:790px; width:1080px; height:136px; border-radius:14px; background:#f3ecdf;
+         display:flex; align-items:center; justify-content:space-between; padding:0 30px; box-sizing:border-box; }
+.marks img { display:block; width:auto; }
+.funding { position:absolute; left:100px; top:952px; display:flex; align-items:center; gap:18px; font-size:24px; font-weight:700; color:#cfe3ef; }
+.funding img { display:block; height:40px; width:60px; border:1px solid rgba(255,255,255,0.25); }
+.funding .grant { font-size:19px; font-weight:400; color:#9fc3d9; margin-left:6px; }
+.credit { position:absolute; right:24px; bottom:18px; font-size:18px; color:rgba(244,247,250,0.8); text-shadow:0 2px 8px rgba(0,0,0,0.8); }
+.fish { position:absolute; filter:drop-shadow(0 12px 24px rgba(0,0,0,0.6)); }
+.fish.small { width:96px; height:auto; }
+.threat { position:absolute; top:220px; width:520px; }
+.threat-art { width:520px; height:400px; border-radius:22px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,0.6); }
+.threat-art img { display:block; width:100%; height:100%; object-fit:cover; }
+.threat h3 { margin-top:28px; font-size:40px; font-weight:800; color:#f3e7d3; letter-spacing:-0.01em; }
+.threat p { margin-top:12px; font-size:28px; line-height:1.35; color:#cfe3ef; }
+.tbl { position:absolute; font-size:30px; color:#e4eef5; }
+.tbl .row { display:grid; grid-template-columns:1.6fr 1fr 1fr; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.14); }
+.tbl .row.head { font-size:22px; letter-spacing:0.12em; text-transform:uppercase; color:#9fc3d9; }
+.tag { position:absolute; width:760px; padding:22px 28px; border-radius:18px; background:rgba(6,19,31,0.82); border:1px solid rgba(246,241,230,0.2); }
+.tag h3 { font-size:24px; letter-spacing:0.12em; text-transform:uppercase; color:#9fc3d9; margin-bottom:10px; }
+.tag p { font-size:36px; color:#f3e7d3; font-weight:700; }
+.art { position:absolute; top:290px; width:340px; }
+.art img { display:block; width:340px; height:473px; object-fit:cover; border-radius:20px; box-shadow:0 24px 60px rgba(0,0,0,0.6); }
+.art span { display:block; margin-top:18px; font-size:30px; font-weight:700; color:#f3e7d3; text-align:center; }
+.hab { position:absolute; top:200px; width:520px; }
+.hab-cards { position:relative; height:330px; }
+.mini { position:absolute; top:40px; width:200px; height:273px; border-radius:14px; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,0.6); }
+.mini img { display:block; width:100%; height:100%; object-fit:cover; }
+.mini:nth-child(1) { left:0; } .mini:nth-child(2) { left:160px; top:10px; } .mini:nth-child(3) { left:320px; }
+.hab-photo { position:relative; width:520px; height:400px; border-radius:22px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,0.6); }
+.hab-photo img { display:block; width:100%; height:100%; object-fit:cover; }
+.band { position:absolute; left:0; right:0; bottom:0; padding:16px; font-size:30px; font-weight:700; text-align:center; color:#fff; letter-spacing:0.04em; }
+.quote { position:absolute; left:100px; top:700px; width:1720px; padding:28px 34px; border-radius:20px; background:rgba(6,19,31,0.85); border-left:8px solid #ff9d7a; }
+.quote p { font-size:34px; line-height:1.35; color:#f3e7d3; font-style:italic; }
+.quote span { display:block; margin-top:12px; font-size:22px; letter-spacing:0.08em; text-transform:uppercase; color:#9fc3d9; }
+.felt { position:absolute; left:100px; top:200px; width:1720px; height:660px; border-radius:30px; background:rgba(10,40,60,0.55); border:2px solid rgba(255,255,255,0.08); }
+.deck { position:absolute; left:160px; top:300px; width:300px; height:420px; border-radius:18px; overflow:hidden;
+        box-shadow:4px 4px 0 #0a1c2b, 8px 8px 0 #0e2536, 12px 12px 0 #0a1c2b, 0 24px 60px rgba(0,0,0,0.6); }
+.deck img { display:block; width:100%; height:100%; object-fit:cover; }
+.venom { position:absolute; right:160px; top:220px; text-align:right; }
+.venom-n { position:relative; height:110px; width:260px; margin-left:auto; }
+.venom-n span { position:absolute; right:0; top:0; font-size:96px; font-weight:800; color:#f3e7d3; line-height:1.1; }
+.flip { position:absolute; width:220px; height:300px; perspective:1400px; }
+.flip-inner { position:relative; width:100%; height:100%; transform-style:preserve-3d; }
+.face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:14px; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,0.55); }
+.face img { display:block; width:100%; height:100%; object-fit:cover; }
+.face.front { transform:rotateY(180deg); }
+.big { position:absolute; top:190px; width:500px; }
+.big img { display:block; width:500px; height:682px; object-fit:cover; border-radius:24px; box-shadow:0 24px 60px rgba(0,0,0,0.6); }
+.big span { display:block; margin-top:20px; font-size:32px; letter-spacing:0.14em; text-transform:uppercase; color:#ff9d7a; font-weight:700; text-align:center; }
+.grid { position:absolute; left:1190px; top:310px; display:grid; grid-template-columns:repeat(3, 140px); grid-template-rows:repeat(2, 196px); gap:16px; }   /* cells are 63:88, the card ratio */
+.cell { border-radius:14px; border:2px dashed rgba(255,255,255,0.18); }
+.cell.guard { border:4px solid #9fd3f5; }
+.cell.safe { border:4px solid #7cc49a; }
+.cell img { display:block; width:100%; height:100%; object-fit:cover; border-radius:10px; }
+.cell.guard, .cell.safe { overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,0.55); }
+.arrow { position:absolute; left:560px; top:520px; font-size:110px; color:#ff9d7a; font-weight:800; }
+.seven { position:absolute; left:100px; top:120px; font-size:220px; font-weight:800; line-height:1; color:#f3e7d3; }
+.flags { position:absolute; left:100px; top:810px; display:flex; gap:60px; }
+.flag { display:flex; align-items:center; gap:22px; }
+.flag img { display:block; height:72px; width:auto; border-radius:6px; box-shadow:0 8px 20px rgba(0,0,0,0.5); }
+.flag em { font-style:normal; font-size:34px; font-weight:700; color:#f3e7d3; }
+.contact { position:absolute; left:0; width:1920px; top:400px; text-align:center; font-size:56px; font-weight:700; color:#f3e7d3; }
+.contact .label { display:block; margin-bottom:8px; }
+.qr { position:absolute; left:860px; top:668px; width:200px; height:200px; border-radius:18px; overflow:hidden; background:#fff; padding:12px; }
+.qr img { display:block; width:100%; height:100%; }
+#s28-marks { left:0; top:auto; bottom:0; width:1920px; height:176px; border-radius:0; padding:0 260px; }
+</style>
+</head>
+<body>
+<!-- GENERATED by build_deck.py. Edit build_deck.py, not this file. -->
+<div id="root" data-composition-id="reef-rush-v3" data-start="0" data-width="1920" data-height="1080" data-duration="400" data-fps="30">
+<!-- s01 Reef Rush -->
+<section class="clip scene" id="s01" data-start="0.000" data-duration="16.238" data-track-index="1" data-label="Reef Rush">
+<div class="glow"></div>
+  <div class="kicker" id="s01-kicker" style="top:232px; font-size:40px; letter-spacing:0.35em;">BioInvaders!</div>
+  <h1 class="title" id="s01-title" style="top:300px; width:1060px; font-size:150px; line-height:1;">Reef Rush</h1>
+  <div class="line" id="s01-l1" style="top:560px; width:1040px;">A push-your-luck card game, in development</div>
+  <div class="line" id="s01-l2" style="top:618px; width:1040px;">2 to 5 players, plays in about 20 minutes</div>
+  <div class="line" id="s01-l3" style="top:676px; width:1090px; font-size:32px;">Made as part of GuardIAS, with ecologists in Greece and Germany</div>
+  <div class="card" id="s01-card" style="right:150px; top:120px; width:560px; height:782px;"><img src="assets/cards/card_back.webp" alt="Reef Rush card back"></div>
+  <div class="marks" id="s01-marks">
+    <img src="assets/logos/guardias_colour.png" alt="GuardIAS" style="height:96px;">
+    <img src="assets/logos/paidia.png" alt="Paidia" style="height:92px;">
+    <img src="assets/logos/uaegean.webp" alt="University of the Aegean" style="height:80px;">
+    <img src="assets/logos/fu_berlin.svg" alt="Freie Universit&auml;t Berlin" style="height:84px;">
+  </div>
+  <div class="funding" id="s01-foot"><img src="assets/logos/eu_flag.png" alt="European Union flag">Funded by the European Union<span class="grant">Horizon Europe grant agreement No 101181413</span></div>
+</section>
+<!-- s02 The invader -->
+<section class="clip scene" id="s02" data-start="15.738" data-duration="23.378" data-track-index="2" data-label="The invader">
+<img class="bg" src="assets/generated/slide_03_map_v2.webp" alt="" style="filter:saturate(0.88) brightness(0.86) contrast(1.03);">
+  <div class="tint"></div>
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom" style="height:300px;"></div>
+  <h1 class="title" id="s02-title" style="top:62px;">The invader</h1>
+  <div class="line" id="s02-lede" style="top:186px; font-size:40px;">Through the Suez Canal, <span class="hot">about fifteen years ago</span></div>
+  <div class="pin" id="s02-p1" style="left:1290px; top:632px;">Red Sea</div>
+  <div class="pin" id="s02-p2" style="left:572px; top:498px;">Suez Canal</div>
+  <div class="pin" id="s02-p3" style="left:110px; top:396px;">Eastern Mediterranean</div>
+  <div class="pin" id="s02-p4" style="left:110px; top:300px;">Greek and Turkish coasts</div>
+  <img class="fish" id="s02-big" src="assets/art/lionfish_cutout.webp" alt="Lionfish" style="left:1190px; top:690px; width:340px; height:auto;">
+  <img class="fish small" id="s02-f1" src="assets/art/lionfish_cutout.webp" alt="" style="left:1010px; top:690px;">
+  <img class="fish small" id="s02-f2" src="assets/art/lionfish_cutout.webp" alt="" style="left:955px; top:540px;">
+  <img class="fish small" id="s02-f3" src="assets/art/lionfish_cutout.webp" alt="" style="left:975px; top:360px;">
+  <img class="fish small" id="s02-f4" src="assets/art/lionfish_cutout.webp" alt="" style="left:830px; top:280px;">
+  <img class="fish small" id="s02-f5" src="assets/art/lionfish_cutout.webp" alt="" style="left:790px; top:236px;">
+  <img class="fish small" id="s02-f6" src="assets/art/lionfish_cutout.webp" alt="" style="left:670px; top:350px;">
+  <img class="fish small" id="s02-f7" src="assets/art/lionfish_cutout.webp" alt="" style="left:560px; top:250px;">
+  <div class="foot" id="s02-foot" style="bottom:54px;">The reefs our Greek partners dive on. <b>Every species in the game is one they meet in the sea</b></div>
+</section>
+<!-- s03 Why it's a threat -->
+<section class="clip scene" id="s03" data-start="38.616" data-duration="22.338" data-track-index="3" data-label="Why it&#x27;s a threat">
+<div class="glow"></div>
+  <h1 class="title" id="s03-title" style="top:62px;">Why it's a threat</h1>
+  <div class="threat" id="s03-t1" style="left:100px;">
+    <div class="threat-art"><img src="assets/art/lionfish_large_full_art.webp" alt=""></div>
+    <h3>A successful predator</h3>
+    <p>Eats huge numbers of fish and crustaceans that never learned to avoid it</p>
+  </div>
+  <div class="threat" id="s03-t2" style="left:700px;">
+    <div class="threat-art"><img src="assets/art/dusky_grouper_full_art.webp" alt=""></div>
+    <h3>Few natural enemies</h3>
+    <p>Groupers and morays can eat small lionfish, but overfishing has thinned those predators out</p>
+  </div>
+  <div class="threat" id="s03-t3" style="left:1300px;">
+    <div class="threat-art"><img src="assets/art/lionfish_small_full_art.webp" alt=""></div>
+    <h3>Breeds most of the year</h3>
+    <p>Thousands of eggs at a time, so numbers grow fast and spread into new areas</p>
+  </div>
+</section>
+<!-- s04 Invasive species this, invasive species that -->
+<section class="clip scene" id="s04" data-start="60.455" data-duration="15.235" data-track-index="4" data-label="Invasive species this, invasive species that">
+<img class="bg" src="assets/generated/slide_06_scrolling_figure.webp" alt="" style="filter:brightness(0.55) saturate(0.7);">
+  <div class="scrim-left"></div>
+  <h1 class="title" id="s04-title" style="top:150px; width:1100px; font-size:96px;">Invasive species this,<br><span class="hot">invasive species that</span></h1>
+  <div class="line" id="s04-l1" style="top:520px; width:1000px; font-size:44px; color:#f3e7d3;">It's not that people don't care</div>
+  <div class="line" id="s04-l2" style="top:610px; width:1000px;">It stays <b>abstract</b>. It doesn't feel emotionally salient, and it doesn't motivate action</div>
+</section>
+<!-- s05 The law of apparent reality -->
+<section class="clip scene" id="s05" data-start="75.189" data-duration="16.099" data-track-index="5" data-label="The law of apparent reality">
+<div class="glow"></div>
+  <h1 class="title" id="s05-title" style="top:62px;">The law of apparent reality</h1>
+  <div class="panel" id="s05-quote" style="left:100px; top:200px; width:1000px;">
+    <h3>Paraphrase</h3>
+    <p style="font-size:34px; line-height:1.4; color:#f3e7d3;">Emotions are elicited by events appraised as real, and their intensity corresponds to the degree to which this is the case</p>
+    <p style="font-size:22px; margin-top:18px; color:#9fc3d9;">Frijda, N. H. (1988). The laws of emotion. <i>American Psychologist</i>, 43(5), 349-358</p>
+  </div>
+  <div class="line" id="s05-l1" style="top:560px; width:1000px; font-size:40px; color:#f3e7d3;">We don't react to what is real. We react to what is <span class="hot">apparently</span> real</div>
+  <div class="card" id="s05-img" style="left:1180px; top:200px; width:640px; height:360px;"><img src="assets/generated/slide_08_car_plane_coaster.webp" alt=""></div>
+  <div class="tbl" id="s05-tbl" style="left:1180px; top:600px; width:640px;">
+    <div class="row head"><span></span><span>Danger</span><span>Fear</span></div>
+    <div class="row"><span>Car</span><span class="hot">High</span><span>Low</span></div>
+    <div class="row"><span>Plane</span><span>Low</span><span class="hot">High</span></div>
+    <div class="row"><span>Roller coaster</span><span>Low</span><span class="hot">High</span></div>
+  </div>
+  <div class="foot" id="s05-foot" style="bottom:54px;">The fear tracks the <b>experience</b>, not the danger</div>
+</section>
+<!-- s06 Play makes it close -->
+<section class="clip scene" id="s06" data-start="90.788" data-duration="12.632" data-track-index="6" data-label="Play makes it close">
+<img class="bg" src="assets/generated/slide_06_reef_table.webp" alt="" style="filter:brightness(0.8);">
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+  <h1 class="title" id="s06-title" style="top:62px;">Play makes it close</h1>
+  <div class="tag" id="s06-a" style="left:100px; top:820px;"><h3>A story you read</h3><p>Happening to somebody else, far away</p></div>
+  <div class="tag" id="s06-b" style="left:1060px; top:820px;"><h3>A dive you played</h3><p>It happens <span class="hot">to you</span></p></div>
+  <div class="foot" id="s06-foot" style="bottom:40px; font-size:40px; color:#f3e7d3;">A game puts it in your hands</div>
+</section>
+<!-- s07 Building a reef -->
+<section class="clip scene" id="s07" data-start="102.921" data-duration="13.326" data-track-index="7" data-label="Building a reef">
+<img class="bg" src="assets/photos/island_santorini_full_art.webp" alt="" style="filter:brightness(0.75);">
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+  <h1 class="title" id="s07-title" style="top:62px;">Building a reef</h1>
+  <div class="line" id="s07-lede" style="top:186px; font-size:40px;">You build a reef beside one of the islands of the Aegean</div>
+  <div class="card" id="s07-card" style="right:120px; top:300px; width:412px; height:562px;"><img src="assets/cards/island_santorini_card.webp" alt="Santorini island card"></div>
+  <div class="line" id="s07-l1" style="top:780px; width:1200px;"><b>A healthy reef ecosystem</b> is the thing you are growing</div>
+  <div class="line" id="s07-l2" style="top:850px; width:1200px;"><b>Human action</b> supports it, and together they are how the lionfish problem gets controlled</div>
+</section>
+<!-- s08 Card by card -->
+<section class="clip scene" id="s08" data-start="115.747" data-duration="14.366" data-track-index="8" data-label="Card by card">
+<img class="bg" src="assets/bga/final_reefs.webp" alt="" style="filter:brightness(0.3) saturate(0.6) blur(2px);">
+  <div class="scrim-top"></div>
+  <h1 class="title" id="s08-title" style="top:62px;">Card by card</h1>
+  <div class="line" id="s08-lede" style="top:186px; font-size:40px;">Every card features <b>sea life native to the seas around Greece</b></div>
+  <div class="art" id="s08-a1" style="left:100px;"><img src="assets/art/dusky_grouper_full_art.webp" alt=""><span>Dusky grouper</span></div>
+  <div class="art" id="s08-a2" style="left:560px;"><img src="assets/art/ornate_wrasse_full_art.webp" alt=""><span>Ornate wrasse</span></div>
+  <div class="art" id="s08-a3" style="left:1020px;"><img src="assets/art/yellow_tube_sponge_full_art.webp" alt=""><span>Yellow tube sponge</span></div>
+  <div class="art" id="s08-a4" style="left:1480px;"><img src="assets/art/jellyfish_full_art.webp" alt=""><span>Fried egg jellyfish</span></div>
+</section>
+<!-- s09 Working with scientists -->
+<section class="clip scene" id="s09" data-start="129.612" data-duration="12.100" data-track-index="9" data-label="Working with scientists">
+<img class="bg" src="assets/photos/s09_aegean_reef_gamba.webp" alt="Rocky reef in the Cyclades with ornate wrasse, seabreams, rabbitfish, red algae and red encrusting sponge" style="left:auto; right:0; width:1080px; filter:brightness(0.85);">
+  <div class="scrim-left" style="width:1300px;"></div>
+  <h1 class="title" id="s09-title" style="top:62px;">Working with scientists</h1>
+  <div class="line" id="s09-lede" style="top:186px; width:1000px; font-size:40px;">Every species in the deck is a <b>real Aegean species</b></div>
+  <div class="panel" id="s09-box" style="left:100px; top:330px; width:900px;">
+    <p style="font-size:32px; line-height:1.4;">The GuardIAS ecologists in Greece and Germany chose and checked the species, the habitats they live in, and the way they behave</p>
+  </div>
+  <div class="foot" id="s09-foot" style="bottom:54px; width:1000px;">Managing invasions in the Med is <b>what they do for a living</b></div>
+  <div class="credit" id="s09-credit">Photo: Paolo Gamba, Cyclades, CC BY 2.0</div>
+</section>
+<!-- s10 The right habitats -->
+<section class="clip scene" id="s10" data-start="141.212" data-duration="17.139" data-track-index="10" data-label="The right habitats">
+<div class="glow"></div>
+  <h1 class="title" id="s10-title" style="top:62px;">The right habitats</h1>
+  <div class="hab" id="s10-h1" style="left:100px;">
+    <div class="hab-cards"><div class="mini" id="s10-c1a"><img src="assets/cards/scorpionfish_card.webp" alt=""></div><div class="mini" id="s10-c1b"><img src="assets/cards/cystoseira_card.webp" alt=""></div><div class="mini" id="s10-c1c"><img src="assets/cards/parrotfish_card.webp" alt=""></div></div>
+    <div class="hab-photo"><img src="assets/photos/reef_rock_full_art.webp" alt=""><div class="band" style="background:#7a3b1f;">Rocky reef</div></div>
+  </div>
+  <div class="hab" id="s10-h2" style="left:700px;">
+    <div class="hab-cards"><div class="mini" id="s10-c2a"><img src="assets/cards/damselfish_card.webp" alt=""></div><div class="mini" id="s10-c2b"><img src="assets/cards/peacock_wrasse_card.webp" alt=""></div><div class="mini" id="s10-c2c"><img src="assets/cards/loggerhead_turtle_card.webp" alt=""></div></div>
+    <div class="hab-photo"><img src="assets/photos/seagrass_bed_full_art.webp" alt=""><div class="band" style="background:#228833;">Posidonia meadows</div></div>
+  </div>
+  <div class="hab" id="s10-h3" style="left:1300px;">
+    <div class="hab-cards"><div class="mini" id="s10-c3a"><img src="assets/cards/axillary_seabream_card.webp" alt=""></div><div class="mini" id="s10-c3b"><img src="assets/cards/sand_steenbras_card.webp" alt=""></div><div class="mini" id="s10-c3c"><img src="assets/cards/fried_egg_jellyfish_card.webp" alt=""></div></div>
+    <div class="hab-photo"><img src="assets/photos/sandy_bottom_full_art.webp" alt=""><div class="band" style="background:#9a7b2c;">Sandy bottom</div></div>
+  </div>
+  <div class="foot" id="s10-foot" style="bottom:40px;">The border colour and the corner icon name the habitat. <b>Build the right mix</b></div>
+</section>
+<!-- s11 The goals of the game -->
+<section class="clip scene" id="s11" data-start="157.851" data-duration="10.206" data-track-index="11" data-label="The goals of the game">
+<div class="glow"></div>
+  <h1 class="title" id="s11-title" style="top:62px;">The goals of the game</h1>
+  <div class="line" id="s11-lede" style="top:186px; font-size:40px;">Three <b>shared objectives</b> pull every player towards the shape of a working ecosystem</div>
+  <div class="card" id="s11-o1" style="left:150px; top:290px; width:440px; height:600px;"><img src="assets/cards/obj_habitat_specialist_card.webp" alt=""></div>
+  <div class="card" id="s11-o2" style="left:740px; top:290px; width:440px; height:600px;"><img src="assets/cards/obj_travelled_diver_card.webp" alt=""></div>
+  <div class="card" id="s11-o3" style="left:1330px; top:290px; width:440px; height:600px;"><img src="assets/cards/obj_two_storey_reef_card.webp" alt=""></div>
+  <div class="chip" id="s11-chip" style="left:460px; top:940px; width:1000px; height:84px;">A healthy reef is a high-scoring reef</div>
+</section>
+<!-- s12 Human action -->
+<section class="clip scene" id="s12" data-start="167.557" data-duration="17.485" data-track-index="12" data-label="Human action">
+<img class="bg" src="assets/photos/expedition_lionfish_programme_full_art.webp" alt="" style="filter:brightness(0.7);">
+  <div class="scrim-left" style="width:1400px;"></div>
+  <div class="scrim-bottom"></div>
+  <h1 class="title" id="s12-title" style="top:62px;">Human action</h1>
+  <div class="line" id="s12-lede" style="top:186px; width:1000px; font-size:40px;">A healthy reef is <b>only half of it</b></div>
+  <div class="panel" id="s12-box" style="left:100px; top:330px; width:900px;">
+    <h3>Incentivised culling</h3>
+    <p style="font-size:30px; line-height:1.4;">Give the catch a value, and the culling keeps happening long after the funding stops</p>
+  </div>
+  <div class="card" id="s12-card" style="right:120px; top:230px; width:440px; height:600px;"><img src="assets/cards/spearfisher_card.webp" alt="Spearfisher card"></div>
+  <div class="line" id="s12-l1" style="top:680px; width:1100px;"><b>Spearfishers already hunt lionfish.</b> The systems question is how to keep them at it</div>
+  <div class="line" id="s12-l2" style="top:810px; width:1100px;">Build the incentive in and the culling carries on by itself</div>
+</section>
+<!-- s13 An economy around the lionfish -->
+<section class="clip scene" id="s13" data-start="184.542" data-duration="10.219" data-track-index="13" data-label="An economy around the lionfish">
+<img class="bg" src="assets/generated/slide_18_products.webp" alt="" style="filter:brightness(0.85);">
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom" style="height:520px;"></div>
+  <h1 class="title" id="s13-title" style="top:62px;">An economy around the lionfish</h1>
+  <div class="pin" id="s13-p1" style="left:280px; top:470px;">Food</div>
+  <div class="pin" id="s13-p2" style="left:940px; top:470px;">Jewellery</div>
+  <div class="pin" id="s13-p3" style="left:1520px; top:410px;">Leather</div>
+  <div class="quote" id="s13-quote">
+    <p>&ldquo;Invasive but tasty, so we took the opportunity to taste it. We've enjoyed this delicacy two days in a row.&rdquo;</p>
+    <span>Jazzumbo, TripAdvisor review of a Cretan restaurant</span>
+  </div>
+</section>
+<!-- s14 Push your luck -->
+<section class="clip scene" id="s14" data-start="194.261" data-duration="22.384" data-track-index="14" data-label="Push your luck">
+<div class="glow"></div>
+  <h1 class="title" id="s14-title" style="top:62px;">Push your luck</h1>
+  <div class="shot" id="s14-shot" style="left:100px; top:200px; width:1000px; height:760px;"><img src="assets/bga/mid_game.webp" alt="" style="width:1000px; height:1000px; margin-top:-120px;"><div class="shot-cap">A shared dive on Board Game Arena, 9 September playtest</div></div>
+  <div class="panel" id="s14-panel" style="left:1180px; top:200px; width:640px;">
+    <h3>How a dive works</h3>
+    <ul>
+      <li id="s14-b1"><b>One shared dive deck</b>, two to four players</li>
+      <li id="s14-b2">Whoever is leading <b>flips cards</b>, going deeper each round</li>
+      <li id="s14-b3">Until everyone has surfaced, <b>or the dive busts</b></li>
+      <li id="s14-b4">Everyone is down there <b>on every dive</b></li>
+    </ul>
+  </div>
+</section>
+<!-- s15 Diving the reef -->
+<section class="clip scene" id="s15" data-start="216.145" data-duration="28.578" data-track-index="15" data-label="Diving the reef">
+<div class="glow"></div>
+  <h1 class="title" id="s15-title" style="top:62px;">Diving the reef</h1>
+  <div id="s15-table" style="position:absolute; inset:0;">
+    <div class="felt"></div>
+    <div class="deck" id="s15-deck"><img src="assets/cards/card_back.webp" alt=""></div>
+    <div class="label" id="s15-decklab" style="left:170px; top:760px;">Dive deck</div>
+    <div class="venom" id="s15-venom"><span class="label" style="position:static;" data-layout-allow-overlap>Venom on the table</span><div class="venom-n"><span id="s15-v0">0</span><span id="s15-v2">2</span><span id="s15-v6">6</span><span id="s15-v12" class="hot">12</span></div></div>
+    <div class="flip" id="s15-c1"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/ornate_wrasse_card.webp" alt=""></div></div></div>
+    <div class="flip" id="s15-c2"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/cystoseira_card.webp" alt=""></div></div></div>
+    <div class="flip" id="s15-c3"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/axillary_seabream_card.webp" alt=""></div></div></div>
+    <div class="flip" id="s15-c4"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/moray_eel_card.webp" alt=""></div></div></div>
+    <div class="flip" id="s15-c5"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/lionfish_small_card.webp" alt=""></div></div></div>
+    <div class="flip" id="s15-c6"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/lionfish_medium_card.webp" alt=""></div></div></div>
+    <div class="flip" id="s15-c7"><div class="flip-inner"><div class="face back"><img src="assets/cards/card_back.webp" alt=""></div><div class="face front"><img src="assets/cards/lionfish_large_card.webp" alt=""></div></div></div>
+    <div class="line" id="s15-l1" style="top:900px;"><b>Every card turned over</b> is a new species anyone can take into their reef. <b>Or it is a lionfish</b>, and the venom on the table goes up</div>
+  </div>
+  <div id="s15-trio" style="position:absolute; inset:0;">
+    <div class="big" id="s15-b1" style="left:120px;"><img src="assets/cards/lionfish_small_card.webp" alt=""><span>Venom 2</span></div>
+    <div class="big" id="s15-b2" style="left:710px;"><img src="assets/cards/lionfish_medium_card.webp" alt=""><span>Venom 4</span></div>
+    <div class="big" id="s15-b3" style="left:1300px;"><img src="assets/cards/lionfish_large_card.webp" alt=""><span>Venom 6</span></div>
+    <div class="chip" id="s15-chip" style="left:260px; top:940px; width:1400px; height:84px;">Add up the venom on the table. More than six and the dive busts</div>
+  </div>
+</section>
+<!-- s16 The deeper you dive -->
+<section class="clip scene" id="s16" data-start="244.223" data-duration="18.255" data-track-index="16" data-label="The deeper you dive">
+<img class="bg" src="assets/photos/expedition_travelled_diver_full_art.webp" alt="" style="left:auto; right:0; width:1080px; filter:brightness(0.8);">
+  <div class="scrim-left" style="width:1300px;"></div>
+  <h1 class="title" id="s16-title" style="top:62px;">The deeper you dive</h1>
+  <div class="line" id="s16-l1" style="top:330px; width:960px; font-size:40px;">The longer the dive runs, <b>the more cards are on display</b>, and the better the chance the one you want is there</div>
+  <div class="line" id="s16-l2" style="top:530px; width:960px; font-size:40px;">Every card revealed is also <b>another chance of a lionfish</b></div>
+  <div class="chip" id="s16-chip" style="left:100px; top:760px; width:960px; height:84px;">More than six venom on display and the dive busts</div>
+</section>
+<!-- s17 Stay or surface -->
+<section class="clip scene" id="s17" data-start="261.978" data-duration="9.584" data-track-index="17" data-label="Stay or surface">
+<img class="bg" src="assets/generated/slide_17_stay_or_surface.webp" alt="" style="filter:brightness(0.85);">
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+  <h1 class="title" id="s17-title" style="top:62px;">Stay or surface</h1>
+  <div class="line" id="s17-lede" style="top:186px; font-size:40px;">After every card, each player <b>decides in secret and reveals at the same time</b></div>
+  <div class="pin big" id="s17-p1" style="left:220px; top:760px;">&darr;&ensp;Stay down</div>
+  <div class="pin big" id="s17-p2" style="left:1320px; top:760px;">&uarr;&ensp;Surface</div>
+</section>
+<!-- s18 If you stop -->
+<section class="clip scene" id="s18" data-start="271.062" data-duration="13.713" data-track-index="18" data-label="If you stop">
+<img class="bg" src="assets/generated/slide_26_surfacing.webp" alt="" style="filter:brightness(0.8);">
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+  <h1 class="title" id="s18-title" style="top:62px;">If you stop</h1>
+  <div class="line" id="s18-lede" style="top:186px; width:1100px; font-size:40px;">Push your luck, or <b>stop on this card</b> and surface?</div>
+  <div class="card" id="s18-card" style="right:140px; top:250px; width:440px; height:600px;"><img src="assets/cards/ornate_wrasse_card.webp" alt=""></div>
+  <div class="line" id="s18-l1" style="top:840px; width:1100px;"><b>Surface</b>, and you take exactly one card from the display into your reef. The dive goes on without you</div>
+</section>
+<!-- s19 Natural predators -->
+<section class="clip scene" id="s19" data-start="284.275" data-duration="8.758" data-track-index="19" data-label="Natural predators">
+<div class="glow"></div>
+  <h1 class="title" id="s19-title" style="top:62px;">Natural predators</h1>
+  <div class="line" id="s19-lede" style="top:186px; font-size:40px;">Grouper and moray are the <b>bodyguards</b> of your reef</div>
+  <div class="card" id="s19-c1" style="left:100px; top:300px; width:400px; height:545px;"><img src="assets/cards/dusky_grouper_card.webp" alt=""></div>
+  <div class="card" id="s19-c2" style="left:560px; top:300px; width:400px; height:545px;"><img src="assets/cards/moray_eel_card.webp" alt=""></div>
+  <div class="grid" id="s19-grid">
+    <div class="cell safe"><img src="assets/cards/damselfish_card.webp" alt="Damselfish"></div><div class="cell guard"><img src="assets/cards/dusky_grouper_card.webp" alt="Dusky grouper"></div><div class="cell safe"><img src="assets/cards/ornate_wrasse_card.webp" alt="Ornate wrasse"></div>
+    <div class="cell"></div><div class="cell safe"><img src="assets/cards/gobies_card.webp" alt="Gobies"></div><div class="cell"></div>
+  </div>
+  <div class="label" id="s19-cap" style="left:1190px; top:744px; width:452px; text-align:center; font-size:22px;">Protects the cards beside and beneath it</div>
+  <div class="foot" id="s19-foot" style="bottom:54px;">They protect the cards next to them, and <b>they cannot be eaten themselves</b></div>
+</section>
+<!-- s20 Cashing in the catch -->
+<section class="clip scene" id="s20" data-start="292.533" data-duration="8.758" data-track-index="20" data-label="Cashing in the catch">
+<div class="glow"></div>
+  <h1 class="title" id="s20-title" style="top:62px;">Cashing in the catch</h1>
+  <div class="line" id="s20-lede" style="top:186px; font-size:35px;">The spearfisher removes a lionfish, but <b>selling the catch at the market is where the points are</b></div>
+  <div class="card" id="s20-sp" style="left:100px; top:320px; width:400px; height:545px;"><img src="assets/cards/spearfisher_card.webp" alt=""></div>
+  <div class="arrow" id="s20-arrow">&rarr;</div>
+  <div class="card" id="s20-m1" style="left:740px; top:320px; width:340px; height:463px;"><img src="assets/cards/meal_lionfish_chips_card.webp" alt=""></div>
+  <div class="card" id="s20-m2" style="left:1120px; top:320px; width:340px; height:463px;"><img src="assets/cards/jewellery_earrings_card.webp" alt=""></div>
+  <div class="card" id="s20-m3" style="left:1500px; top:320px; width:340px; height:463px;"><img src="assets/cards/leather_wallet_card.webp" alt=""></div>
+  <div class="label" id="s20-cap" style="left:740px; top:810px; font-size:24px;">Meal &middot; Jewellery &middot; Leather, each in a basic and a luxury version</div>
+  <div class="foot" id="s20-foot" style="bottom:54px;">Create market demand and <b>culling the invader becomes worth doing again and again</b></div>
+</section>
+<!-- s21 The game ends -->
+<section class="clip scene" id="s21" data-start="300.791" data-duration="15.406" data-track-index="21" data-label="The game ends">
+<div class="glow"></div>
+  <h1 class="title" id="s21-title" style="top:62px;">The game ends</h1>
+  <div class="shot" id="s21-shot" style="left:100px; top:200px; width:1000px; height:760px;"><img src="assets/bga/final_reefs_10.webp" alt="" style="width:1000px; height:1000px; margin-top:-120px;"><div class="shot-cap">Endgame reef, 9 September playtest with the Greek team</div></div>
+  <div class="panel" id="s21-panel" style="left:1180px; top:200px; width:640px;">
+    <h3>Ending the game</h3>
+    <ul>
+      <li id="s21-b1"><b>Ten cards</b> in a reef triggers the end</li>
+      <li id="s21-b2">The current dive <b>finishes as normal</b></li>
+      <li id="s21-b3">Score your reef against the <b>objectives</b></li>
+      <li id="s21-b4">Extra points for <b>goods</b> from lionfish taken to market</li>
+    </ul>
+  </div>
+</section>
+<!-- s22 One of seven games -->
+<section class="clip scene" id="s22" data-start="315.697" data-duration="14.366" data-track-index="22" data-label="One of seven games">
+<img class="bg" src="assets/photos/s22_backs.webp" alt="">
+  <div class="scrim-bottom" style="height:360px;"></div>
+  <div class="seven" id="s22-seven">7</div>
+  <div class="label" id="s22-lab" style="left:270px; top:212px; font-size:30px;">Games for GuardIAS</div>
+  <div class="line" id="s22-l1" style="top:820px; width:1720px; font-size:40px;">Reef Rush is <b>one of seven games</b> we are making for GuardIAS, a Horizon Europe project on protecting against aquatic invasive species</div>
+  <div class="line" id="s22-l2" style="top:950px; width:1720px;">A few months in, still very much a prototype, and still changing</div>
+</section>
+<!-- s23 In person and online -->
+<section class="clip scene" id="s23" data-start="329.563" data-duration="12.979" data-track-index="23" data-label="In person and online">
+<div class="glow"></div>
+  <h1 class="title" id="s23-title" style="top:62px;">In person and online</h1>
+  <div class="shot" id="s23-a" style="left:100px; top:210px; width:840px; height:560px;"><img src="assets/generated/slide_23_three_player_dive.webp" alt="" style="width:840px; height:473px; margin-top:0;"><div class="shot-cap">Playtests round the table</div></div>
+  <div class="shot" id="s23-b" style="left:980px; top:210px; width:840px; height:560px;"><img src="assets/bga/mid_game.webp" alt="" style="width:840px; height:840px; margin-top:-100px;"><div class="shot-cap">Digital playtests on Board Game Arena</div></div>
+  <div class="chip" id="s23-chip" style="left:130px; top:860px; width:1660px; height:84px; font-size:30px;">Print-and-play copies being tested by our Greek partner later this month, at a lionfish event in Santorini</div>
+</section>
+<!-- s24 The sweet spot -->
+<section class="clip scene" id="s24" data-start="342.042" data-duration="10.206" data-track-index="24" data-label="The sweet spot">
+<img class="bg" src="assets/generated/slide_24_balance_gen.webp" alt="" style="filter:brightness(0.8);">
+  <div class="scrim-top"></div>
+  <div class="scrim-bottom"></div>
+  <h1 class="title" id="s24-title" style="top:62px;">The sweet spot</h1>
+  <div class="line" id="s24-lede" style="top:186px; font-size:40px;"><span class="hot">Risk</span> against <b>reward</b></div>
+  <div class="foot" id="s24-foot" style="bottom:54px; font-size:36px;">Feedback from that event and other playtests tunes the economy until the feel is right</div>
+</section>
+<!-- s25 Free under Creative Commons -->
+<section class="clip scene" id="s25" data-start="351.748" data-duration="15.752" data-track-index="25" data-label="Free under Creative Commons">
+<div class="glow"></div>
+  <h1 class="title" id="s25-title" style="top:62px;">Free under Creative Commons</h1>
+  <div class="shot" id="s25-shot" style="left:100px; top:210px; width:840px; height:473px;"><img src="assets/generated/slide_25_manual_gen.webp" alt="" style="width:840px; height:473px; margin-top:0;"></div>
+  <div class="panel" id="s25-panel" style="left:1000px; top:210px; width:820px;">
+    <ul>
+      <li id="s25-b1"><b>Print-and-play</b>, or on Board Game Arena (when it's finished!)</li>
+      <li id="s25-b2"><b>Printed copies</b> to be produced and distributed</li>
+      <li id="s25-b3">A short <b>manual for teachers</b>, the science set beside each rule</li>
+    </ul>
+  </div>
+  <div class="label" id="s25-tl" style="left:100px; top:760px; font-size:30px;">Will be translated into</div>
+  <div class="flags" id="s25-flags">
+    <div class="flag" id="s25-f1"><img src="assets/logos/flag_gr.svg" alt="Flag of Greece"><em>Greek</em></div>
+    <div class="flag" id="s25-f2"><img src="assets/logos/flag_de.svg" alt="Flag of Germany"><em>German</em></div>
+    <div class="flag" id="s25-f3"><img src="assets/logos/flag_gb.svg" alt="Flag of the United Kingdom"><em>English</em></div>
+  </div>
+</section>
+<!-- s26 Why it should win -->
+<section class="clip scene" id="s26" data-start="367.000" data-duration="28.500" data-track-index="26" data-label="Why it should win">
+<img class="bg" src="assets/generated/slide_26_prototype_gen.webp" alt="" style="filter:brightness(0.6);">
+  <div class="scrim-left" style="width:1400px;"></div>
+  <h1 class="title" id="s26-title" style="top:62px;">Why it should win</h1>
+  <div class="panel" id="s26-panel" style="left:100px; top:200px; width:1060px;">
+    <ul>
+      <li id="s26-b1"><b>Already fun</b></li>
+      <li id="s26-b2"><b>Nowhere near finished</b></li>
+      <li id="s26-b3">Tuning the economy until it plays like <b>any other commercial game</b></li>
+      <li id="s26-b4">Nailing the visual language: the focal species were <b>locked in early to finish the feature art</b>; the layouts and graphic design are still in flux</li>
+      <li id="s26-b5">The <b>educational aspects</b> are already working</li>
+      <li id="s26-b6">An <b>understudied topic</b>, underrepresented in the gaming space: we haven't found <b>another game about this invasion</b></li>
+    </ul>
+  </div>
+  <div class="card" id="s26-c1" style="left:1290px; top:190px; width:215px; height:338px; border-radius:16px;"><img src="assets/cards/layout_option_1.webp" alt=""></div>
+  <div class="card" id="s26-c2" style="left:1540px; top:190px; width:215px; height:338px; border-radius:16px;"><img src="assets/cards/layout_option_2.webp" alt=""></div>
+  <div class="card" id="s26-c3" style="left:1290px; top:545px; width:215px; height:338px; border-radius:16px;"><img src="assets/cards/layout_option_5.webp" alt=""></div>
+  <div class="card" id="s26-c4" style="left:1540px; top:545px; width:215px; height:338px; border-radius:16px;"><img src="assets/cards/layout_option_7.webp" alt=""></div>
+  <div class="label" id="s26-cap" style="left:1232px; top:905px; width:580px; text-align:center; font-size:22px;">Four of the layouts being tried</div>
+</section>
+<!-- s28 Questions -->
+<section class="clip scene" id="s28" data-start="395.000" data-duration="5.000" data-track-index="27" data-label="Questions">
+<div class="glow"></div>
+  <div class="kicker" id="s28-kick" style="left:0; width:1920px; text-align:center; top:120px;">BioInvaders! Reef Rush</div>
+  <h1 class="title" id="s28-title" style="left:0; width:1920px; text-align:center; top:170px; font-size:130px;">Questions?</h1>
+  <div class="contact" id="s28-mail" style="top:360px;"><span class="label" style="position:static;">Email</span>games@paidia.fun</div>
+  <div class="contact" id="s28-web" style="top:500px;"><span class="label" style="position:static;">Web</span>paidia.fun</div>
+  <div class="qr" id="s28-qr"><img src="assets/generated/qr_paidia_fun.png" alt="QR code for paidia.fun"></div>
+  <div class="marks" id="s28-marks">
+    <img src="assets/logos/guardias_colour.png" alt="GuardIAS" style="height:96px;">
+    <img src="assets/logos/paidia.png" alt="Paidia" style="height:92px;">
+    <img src="assets/logos/uaegean.webp" alt="University of the Aegean" style="height:80px;">
+    <img src="assets/logos/fu_berlin.svg" alt="Freie Universit&auml;t Berlin" style="height:84px;">
+  </div>
+</section>
+</div>
+<script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+const S = {"s01": {"T": 0.0, "D": 15.738, "W": 0.3333}, "s02": {"T": 15.738, "D": 22.878, "W": 0.3333}, "s03": {"T": 38.616, "D": 21.838, "W": 0.3333}, "s04": {"T": 60.455, "D": 14.735, "W": 0.3333}, "s05": {"T": 75.189, "D": 15.599, "W": 0.3333}, "s06": {"T": 90.788, "D": 12.132, "W": 0.3333}, "s07": {"T": 102.921, "D": 12.826, "W": 0.3333}, "s08": {"T": 115.747, "D": 13.866, "W": 0.3333}, "s09": {"T": 129.612, "D": 11.6, "W": 0.3333}, "s10": {"T": 141.212, "D": 16.639, "W": 0.3333}, "s11": {"T": 157.851, "D": 9.706, "W": 0.3333}, "s12": {"T": 167.557, "D": 16.985, "W": 0.3333}, "s13": {"T": 184.542, "D": 9.719, "W": 0.3333}, "s14": {"T": 194.261, "D": 21.884, "W": 0.3333}, "s15": {"T": 216.145, "D": 28.078, "W": 0.3333}, "s16": {"T": 244.223, "D": 17.755, "W": 0.3333}, "s17": {"T": 261.978, "D": 9.084, "W": 0.3333}, "s18": {"T": 271.062, "D": 13.213, "W": 0.3333}, "s19": {"T": 284.275, "D": 8.258, "W": 0.3333}, "s20": {"T": 292.533, "D": 8.258, "W": 0.3333}, "s21": {"T": 300.791, "D": 14.906, "W": 0.3333}, "s22": {"T": 315.697, "D": 13.866, "W": 0.3333}, "s23": {"T": 329.563, "D": 12.479, "W": 0.3333}, "s24": {"T": 342.042, "D": 9.706, "W": 0.3333}, "s25": {"T": 351.748, "D": 15.252, "W": 0.3333}, "s26": {"T": 367.0, "D": 28.0, "W": 0.3333}, "s28": {"T": 395.0, "D": 5.0, "W": 0.3333}};
+const at  = (id, s) => S[id].T + s;                 // seconds into a scene
+const cue = (id, n) => S[id].T + n * S[id].W;       // n words into a scene's script
+const end = (id, s) => S[id].T + S[id].D - s;       // seconds before a scene ends
+
+function fadeIn(id) { if (S[id].T > 0) tl.fromTo("#" + id, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, S[id].T); }
+function rise(sel, t, o = {}) { tl.fromTo(sel, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out", ...o }, t); }
+function pop(sel, t, o = {}) { tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)", ...o }, t); }
+function slide(sel, t, dx, o = {}) { tl.fromTo(sel, { opacity: 0, x: dx }, { opacity: 1, x: 0, duration: 0.8, ease: "power3.out", ...o }, t); }
+function show(sel, t, o = {}) { tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none", ...o }, t); }
+function title(id, t) { rise("#" + id + "-title", t); }
+
+Object.keys(S).forEach(fadeIn);
+
+// s01 Reef Rush
+rise("#s01-kicker", at("s01", 0.3)); rise("#s01-title", at("s01", 0.5));
+rise("#s01-l1", at("s01", 1.2)); rise("#s01-l2", at("s01", 1.5)); rise("#s01-l3", at("s01", 1.8));
+tl.fromTo("#s01-card", { opacity: 0, scale: 0.9, rotation: -4 }, { opacity: 1, scale: 1, rotation: 0, duration: 1.1, ease: "power3.out" }, at("s01", 0.4));
+show("#s01-marks", at("s01", 2.2)); show("#s01-foot", at("s01", 2.2));
+
+// s02 The invader: big lionfish at the start of the route, small ones along it
+title("s02", at("s02", 0.2)); rise("#s02-lede", at("s02", 5.5));
+show("#s02-p1", at("s02", 1.0)); show("#s02-p2", at("s02", 6.0)); show("#s02-p3", at("s02", 9.5)); show("#s02-p4", at("s02", 10.5));
+tl.fromTo("#s02-big", { opacity: 0, scale: 0.6, x: 40, y: 40 }, { opacity: 1, scale: 1, x: 0, y: 0, duration: 1.0, ease: "back.out(1.4)" }, at("s02", 3.5));
+["#s02-f1", "#s02-f2", "#s02-f3", "#s02-f4", "#s02-f5", "#s02-f6", "#s02-f7"].forEach((sel, i) => pop(sel, at("s02", 5.5) + i * 0.6, { duration: 0.5 }));
+rise("#s02-foot", at("s02", 12.5));
+
+// s03 Why it's a threat: one panel per spoken reason
+title("s03", at("s03", 0.2));
+rise("#s03-t1", cue("s03", 9)); rise("#s03-t2", cue("s03", 26)); rise("#s03-t3", cue("s03", 49));
+
+// s04 Invasive species this
+title("s04", at("s04", 0.2));
+rise("#s04-l1", cue("s04", 23) - 5); rise("#s04-l2", cue("s04", 30) - 5);
+
+// s05 Frijda
+title("s05", at("s05", 0.2)); rise("#s05-quote", at("s05", 0.8)); rise("#s05-l1", cue("s05", 10));
+slide("#s05-img", cue("s05", 24) - 2, 60); rise("#s05-tbl", cue("s05", 26) - 2); rise("#s05-foot", cue("s05", 40) - 3);
+
+// s06 Play makes it close
+title("s06", at("s06", 0.2)); rise("#s06-a", cue("s06", 6)); rise("#s06-b", cue("s06", 20)); rise("#s06-foot", cue("s06", 28) - 2);
+
+// s07 Building a reef
+title("s07", at("s07", 0.2)); rise("#s07-lede", cue("s07", 8));
+slide("#s07-card", cue("s07", 6), 80);
+rise("#s07-l1", cue("s07", 15)); rise("#s07-l2", cue("s07", 23));
+
+// s08 Card by card: the four named species arrive as they are named
+title("s08", at("s08", 0.2)); rise("#s08-lede", cue("s08", 8));
+["#s08-a1", "#s08-a2", "#s08-a3", "#s08-a4"].forEach((sel, i) => rise(sel, at("s08", 5.0) + i * 1.25));
+
+// s09 Working with scientists
+title("s09", at("s09", 0.2)); rise("#s09-lede", at("s09", 0.9)); rise("#s09-box", cue("s09", 14)); rise("#s09-foot", cue("s09", 18));
+
+// s10 Habitats: photos first, then the cards drop in
+title("s10", at("s10", 0.2));
+rise("#s10-h1 .hab-photo", at("s10", 0.6)); rise("#s10-h2 .hab-photo", at("s10", 0.8)); rise("#s10-h3 .hab-photo", at("s10", 1.0));
+["#s10-c1a", "#s10-c1b", "#s10-c1c", "#s10-c2a", "#s10-c2b", "#s10-c2c", "#s10-c3a", "#s10-c3b", "#s10-c3c"].forEach((sel, i) => pop(sel, cue("s10", 15) + i * 0.15));
+rise("#s10-foot", cue("s10", 20));
+
+// s11 Goals
+title("s11", at("s11", 0.2)); rise("#s11-lede", cue("s11", 4));
+rise("#s11-o1", cue("s11", 6)); rise("#s11-o2", cue("s11", 6) + 0.3); rise("#s11-o3", cue("s11", 6) + 0.6);
+pop("#s11-chip", cue("s11", 23) - 2);
+
+// s12 Human action: the spearfisher card arrives halfway through
+title("s12", at("s12", 0.2)); rise("#s12-lede", cue("s12", 8) - 2); rise("#s12-box", cue("s12", 22) - 2);
+slide("#s12-card", at("s12", S.s12.D / 2 - 2), 80); rise("#s12-l1", cue("s12", 31) - 2); rise("#s12-l2", cue("s12", 41) - 2);
+
+// s13 Economy
+title("s13", at("s13", 0.2));
+pop("#s13-p1", at("s13", 1.2)); pop("#s13-p2", at("s13", 1.8)); pop("#s13-p3", at("s13", 2.4));
+rise("#s13-quote", at("s13", 3.5));
+
+// s14 Push your luck
+title("s14", at("s14", 0.2)); slide("#s14-shot", at("s14", 0.3), -60); rise("#s14-panel", at("s14", 1.0));
+rise("#s14-b1", at("s14", 3.0)); rise("#s14-b2", at("s14", 6.0)); rise("#s14-b3", at("s14", 9.0)); rise("#s14-b4", at("s14", 12.0));
+
+// s15 Diving the reef: cards flip from the deck to the table, lionfish raise the venom, then the three lionfish fill the screen
+title("s15", at("s15", 0.2));
+show("#s15-table", at("s15", 0.2)); show("#s15-decklab", at("s15", 0.6)); show("#s15-venom", at("s15", 0.6));
+gsap.set(["#s15-v2", "#s15-v6", "#s15-v12"], { opacity: 0 });
+const deckX = 160, deckY = 300, slotY = 340, slot0 = 520, slotGap = 190;
+const dealTimes = [cue("s15", 1), cue("s15", 5), cue("s15", 9), cue("s15", 13), cue("s15", 26) - 0.5, cue("s15", 28) - 0.5, cue("s15", 30) - 0.5];
+dealTimes.forEach((t0, i) => {
+  const sel = "#s15-c" + (i + 1), sx = slot0 + i * slotGap;
+  gsap.set(sel, { left: sx, top: slotY });
+  tl.fromTo(sel, { x: deckX - sx + 40, y: deckY - slotY + 60, scale: 300 / 220 }, { x: 0, y: 0, scale: 1, duration: 0.9, ease: "power2.inOut" }, t0);
+  tl.fromTo(sel + " .flip-inner", { rotationY: 0 }, { rotationY: 180, duration: 0.9, ease: "power2.inOut" }, t0);
+});
+rise("#s15-l1", cue("s15", 3));
+function venom(from, to, t) { tl.to(from, { opacity: 0, duration: 0.2 }, t); tl.fromTo(to, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, t); }
+venom("#s15-v0", "#s15-v2", dealTimes[4] + 0.7); venom("#s15-v2", "#s15-v6", dealTimes[5] + 0.7); venom("#s15-v6", "#s15-v12", dealTimes[6] + 0.7);
+const trioT = dealTimes[6] + 2.0;
+tl.to("#s15-table", { autoAlpha: 0, duration: 0.6 }, trioT);
+gsap.set("#s15-trio", { opacity: 0 });
+tl.to("#s15-trio", { opacity: 1, duration: 0.1 }, trioT + 0.2);
+pop("#s15-b1", trioT + 0.3, { duration: 0.8 }); pop("#s15-b2", trioT + 0.5, { duration: 0.8 }); pop("#s15-b3", trioT + 0.7, { duration: 0.8 });
+pop("#s15-chip", trioT + 2.0);
+
+// s16 Deeper you dive
+title("s16", at("s16", 0.2)); rise("#s16-l1", at("s16", 1.2)); rise("#s16-l2", at("s16", 4.5)); pop("#s16-chip", at("s16", 7.5));
+
+// s17 Stay or surface
+title("s17", at("s17", 0.2)); rise("#s17-lede", cue("s17", 5)); pop("#s17-p1", cue("s17", 13)); pop("#s17-p2", cue("s17", 20));
+
+// s18 If you stop
+title("s18", at("s18", 0.2)); rise("#s18-lede", cue("s18", 7)); slide("#s18-card", cue("s18", 12), 80); rise("#s18-l1", cue("s18", 18));
+
+// s19 Natural predators
+title("s19", at("s19", 0.2)); rise("#s19-lede", cue("s19", 5));
+rise("#s19-c1", cue("s19", 3)); rise("#s19-c2", cue("s19", 3) + 0.3);
+rise("#s19-grid", cue("s19", 11)); show("#s19-cap", cue("s19", 13)); rise("#s19-foot", cue("s19", 15));
+
+// s20 Cashing in the catch
+title("s20", at("s20", 0.2)); rise("#s20-lede", cue("s20", 4));
+rise("#s20-sp", cue("s20", 1)); pop("#s20-arrow", cue("s20", 10));
+rise("#s20-m1", cue("s20", 13)); rise("#s20-m2", cue("s20", 14)); rise("#s20-m3", cue("s20", 16));
+show("#s20-cap", cue("s20", 17)); rise("#s20-foot", end("s20", 4));
+
+// s21 The game ends
+title("s21", at("s21", 0.2)); slide("#s21-shot", at("s21", 0.6), -60); rise("#s21-panel", at("s21", 1.0));
+rise("#s21-b1", cue("s21", 6)); rise("#s21-b2", cue("s21", 17)); rise("#s21-b3", cue("s21", 25)); rise("#s21-b4", cue("s21", 33));
+
+// s22 One of seven
+pop("#s22-seven", cue("s22", 5), { duration: 0.8 }); rise("#s22-lab", cue("s22", 8)); rise("#s22-l1", cue("s22", 10)); rise("#s22-l2", cue("s22", 29) - 1);
+
+// s23 In person and online
+title("s23", at("s23", 0.2)); rise("#s23-a", cue("s23", 3)); rise("#s23-b", cue("s23", 7)); pop("#s23-chip", cue("s23", 18) - 1);
+
+// s24 Sweet spot
+title("s24", at("s24", 0.2)); rise("#s24-lede", cue("s24", 21)); rise("#s24-foot", cue("s24", 3));
+
+// s25 Creative Commons: flags come in without being spoken
+title("s25", at("s25", 0.2)); rise("#s25-shot", at("s25", 0.4)); rise("#s25-panel", at("s25", 0.8));
+rise("#s25-b1", at("s25", 3.5)); rise("#s25-b2", at("s25", 7.0)); rise("#s25-b3", at("s25", 10.0));
+rise("#s25-tl", at("s25", 6.0)); pop("#s25-f1", at("s25", 6.3)); pop("#s25-f2", at("s25", 6.6)); pop("#s25-f3", at("s25", 6.9));
+
+// s26 Why it should win (s27 folded in)
+title("s26", at("s26", 0.2)); rise("#s26-panel", at("s26", 0.8));
+rise("#s26-b1", at("s26", 0.4)); rise("#s26-b2", at("s26", 2.0)); rise("#s26-b3", at("s26", 3.5)); rise("#s26-b4", at("s26", 7.5));
+["#s26-c1", "#s26-c2", "#s26-c3", "#s26-c4"].forEach((sel, i) => slide(sel, at("s26", 7.5) + i * 0.6, 60));
+show("#s26-cap", at("s26", 11.0));
+rise("#s26-b5", at("s26", 14.5)); rise("#s26-b6", at("s26", 17.5));
+
+// s28 Questions
+show("#s28-kick", at("s28", 0.2)); rise("#s28-title", at("s28", 0.3)); rise("#s28-mail", at("s28", 1.2)); rise("#s28-web", at("s28", 1.5)); pop("#s28-qr", at("s28", 1.8)); show("#s28-marks", at("s28", 0.6));
+
+if (document.getElementById("hud-clock")) {
+  const clock = { t: 0 }, el = document.getElementById("hud-clock");
+  const fmt = (x) => { const m = Math.floor(x / 60), s = x - m * 60; return m + ":" + (s < 10 ? "0" : "") + s.toFixed(1); };
+  tl.to(clock, { t: 400.000, duration: 400.000, ease: "none",
+    onUpdate() { el.textContent = fmt(clock.t) + " / 6:40"; el.style.color = clock.t > 400 ? "#ff6b6b" : "#ffffff"; } }, 0);
+}
+
+window.__timelines["reef-rush-v3"] = tl;
+</script>
+<style>
+html, body { width:100%; height:100%; overflow:hidden; background:#06131f; }
+body { cursor:pointer; }
+#root { transform-origin:0 0; }
+#pk-timer { position:fixed; right:1.6vw; top:2.2vh; z-index:30; min-width:2.4em; padding:.1em .45em; border-radius:.35em;
+  font:700 4.2vh/1.25 "Helvetica Neue", Helvetica, Arial, sans-serif; font-variant-numeric:tabular-nums; text-align:center;
+  color:#ffffff; background:rgba(0,0,0,.62); pointer-events:none; display:none; }
+#pk-timer.low { background:#c62828; }
+#pk-wait { position:fixed; right:3vw; bottom:4vh; z-index:30; padding:.5em 1.2em; border-radius:2em;
+  font:600 2.6vh/1.3 "Helvetica Neue", Helvetica, Arial, sans-serif; color:#06131f; background:#ffd166; white-space:nowrap;
+  box-shadow:0 .4em 1.6em rgba(0,0,0,.5); pointer-events:none; }
+#pk-wait small { font-weight:400; font-size:.8em; margin-left:.8em; opacity:.8; }
+#pk-over { position:fixed; inset:0; z-index:40; display:none; background:#06131f; overflow:auto; cursor:default;
+  grid-template-columns:repeat(7, 1fr); gap:10px; padding:18px; align-content:start; }
+#pk-over.on { display:grid; }
+#pk-over button { all:unset; cursor:pointer; border:3px solid transparent; border-radius:10px; padding:6px; display:block; }
+#pk-over button.sel { border-color:#ffd166; background:rgba(255,209,102,.14); }
+#pk-over .th { aspect-ratio:16 / 9; width:100%; border-radius:6px; background:#0d2033 center / cover no-repeat; display:block; }
+#pk-over .nm { display:block; margin-top:6px; font:500 14px/1.25 "Helvetica Neue", Helvetica, Arial, sans-serif; color:#f4f7fa; }
+#pk-over .nm b { color:#ffd166; margin-right:.5em; font-variant-numeric:tabular-nums; }
+</style>
+<div id="pk-timer"></div>
+<div id="pk-wait">Click to start<small id="pk-load"></small></div>
+<div id="pk-over"></div>
+<script>
+(function () {
+  const END = 400.000, REST = 3.0;                 // REST: where slide 1 sits, fully drawn, before the talk starts
+  const ids = Object.keys(S), T = ids.map((id) => S[id].T), names = ["Reef Rush", "The invader", "Why it's a threat", "Invasive species this, invasive species that", "The law of apparent reality", "Play makes it close", "Building a reef", "Card by card", "Working with scientists", "The right habitats", "The goals of the game", "Human action", "An economy around the lionfish", "Push your luck", "Diving the reef", "The deeper you dive", "Stay or surface", "If you stop", "Natural predators", "Cashing in the catch", "The game ends", "One of seven games", "In person and online", "The sweet spot", "Free under Creative Commons", "Why it should win", "Questions"];
+  const root = document.getElementById("root"), timer = document.getElementById("pk-timer"),
+        wait = document.getElementById("pk-wait"), over = document.getElementById("pk-over");
+  tl.add(() => {}, END);                                 // the last slide runs its full time
+  gsap.ticker.lagSmoothing(0);                           // keep to the wall clock if a frame is slow
+
+  const clips = [...document.querySelectorAll("#root > .clip")].map((el) => ({ el, a: +el.dataset.start, b: +el.dataset.start + +el.dataset.duration }));
+  const cur = () => { const t = tl.time() + 1e-3; let k = 0; T.forEach((x, j) => { if (x <= t) k = j; }); return k; };
+  let started = false;
+  const draw = () => {
+    const t = tl.time();
+    clips.forEach((c, k) => (c.el.style.visibility = t >= c.a && (t < c.b || k === clips.length - 1) ? "visible" : "hidden"));
+    if (!started) return;
+    const k = cur(), left = Math.max(0, (k + 1 < T.length ? T[k + 1] : END) - t);
+    timer.textContent = Math.ceil(left - 1e-6);
+    timer.classList.toggle("low", left <= 3);
+  };
+  tl.eventCallback("onUpdate", draw);
+
+  const fit = () => {
+    const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+    root.style.transform = "translate(" + (innerWidth - 1920 * k) / 2 + "px," + (innerHeight - 1080 * k) / 2 + "px) scale(" + k + ")";
+  };
+  addEventListener("resize", fit); fit();
+
+  // every move plays on from the start of that slide: the talk never sits still once begun
+  const go = (k) => {
+    k = Math.max(0, Math.min(T.length - 1, k));
+    started = true; wait.style.display = "none"; timer.style.display = "block";
+    tl.play(T[k]); draw();
+  };
+  const next = () => { if (!started) return go(0); if (cur() < T.length - 1) go(cur() + 1); };
+  const prev = () => { if (!started) return; go(cur() - 1); };
+
+  // ---- the overview: the talk pauses while it is open
+  let sel = 0, was = false;
+  names.forEach((name, k) => {
+    const b = document.createElement("button");
+    b.innerHTML = '<span class="th" style="background-image:url(thumbs/' + String(k + 1).padStart(2, "0") + '.jpg)"></span>' +
+      '<span class="nm"><b>' + (k + 1) + "</b>" + name.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span>";
+    b.addEventListener("click", (e) => { e.stopPropagation(); closeOver(false); go(k); });
+    over.appendChild(b);
+  });
+  const pick = (k) => {
+    sel = Math.max(0, Math.min(T.length - 1, k));
+    [...over.children].forEach((b, j) => b.classList.toggle("sel", j === sel));
+    over.children[sel].scrollIntoView({ block: "nearest" });
+  };
+  const openOver = () => { was = started && !tl.paused(); tl.pause(); over.classList.add("on"); pick(started ? cur() : 0); };
+  function closeOver(resume) { over.classList.remove("on"); if (resume && was) tl.play(); }
+  const overKey = (e) => {
+    const k = e.key, step = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 7, PageDown: 7, PageUp: -7 }[k];
+    e.preventDefault();
+    if (step) pick(sel + step);
+    else if (k === "ArrowUp") { if (sel >= 7) pick(sel - 7); else closeOver(true); }
+    else if (k === "Enter" || k === " ") { closeOver(false); go(sel); }
+    else if (k === "Escape") closeOver(true);
+    else if (k === "Home") pick(0);
+    else if (k === "End") pick(T.length - 1);
+  };
+  over.addEventListener("click", (e) => { e.stopPropagation(); closeOver(true); });
+
+  addEventListener("keydown", (e) => {
+    const k = e.key;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (over.classList.contains("on")) return overKey(e);
+    if (k === "ArrowUp") { e.preventDefault(); openOver(); }
+    else if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }
+    else if (["ArrowLeft", "PageUp"].includes(k)) { e.preventDefault(); prev(); }
+    else if (k === "f" || k === "F") (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
+  });
+  addEventListener("click", next);
+
+  // pictures still arriving: say so, but never hold the start back
+  const load = document.getElementById("pk-load"), imgs = [...document.images];
+  const tick = () => { const n = imgs.filter((i) => i.complete).length; load.textContent = n < imgs.length ? "loading pictures " + n + " of " + imgs.length : ""; };
+  imgs.forEach((i) => { i.addEventListener("load", tick); i.addEventListener("error", tick); }); tick();
+
+  tl.pause(REST); draw();
+  window.__pk = { tl, T, cur, started: () => started };   // for automated checks
+})();
+</script>
+</body>
+</html>
