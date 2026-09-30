@@ -672,8 +672,9 @@ body { cursor:pointer; }
 #root { transform-origin:0 0; }
 #pk-timer { position:fixed; right:1.6vw; top:2.2vh; z-index:30; min-width:2.4em; padding:.1em .45em; border-radius:.35em;
   font:700 4.2vh/1.25 "Helvetica Neue", Helvetica, Arial, sans-serif; font-variant-numeric:tabular-nums; text-align:center;
-  color:#ffffff; background:rgba(0,0,0,.62); pointer-events:none; display:none; }
+  color:#ffffff; background:rgba(0,0,0,.62); cursor:pointer; display:none; }
 #pk-timer.low { background:#c62828; }
+#pk-timer.held { background:#ffd166; color:#06131f; }
 #pk-wait { position:fixed; right:3vw; bottom:4vh; z-index:30; padding:.5em 1.2em; border-radius:2em;
   font:600 2.6vh/1.3 "Helvetica Neue", Helvetica, Arial, sans-serif; color:#06131f; background:#ffd166; white-space:nowrap;
   box-shadow:0 .4em 1.6em rgba(0,0,0,.5); pointer-events:none; }
@@ -707,8 +708,10 @@ body { cursor:pointer; }
     clips.forEach((c, k) => (c.el.style.visibility = t >= c.a && (t < c.b || k === clips.length - 1) ? "visible" : "hidden"));
     if (!started) return;
     const k = cur(), left = Math.max(0, (k + 1 < T.length ? T[k + 1] : END) - t);
-    timer.textContent = Math.ceil(left - 1e-6);
-    timer.classList.toggle("low", left <= 3);
+    const held = tl.paused();
+    timer.textContent = (held ? "\u275A\u275A " : "") + Math.ceil(left - 1e-6);
+    timer.classList.toggle("held", held);
+    timer.classList.toggle("low", !held && left <= 3);
   };
   tl.eventCallback("onUpdate", draw);
 
@@ -731,6 +734,9 @@ body { cursor:pointer; }
     if (performance.now() - begun < 800) return;
     if (cur() < T.length - 1) go(cur() + 1);
   };
+  // hold the talk where it is, and carry on from the same moment
+  const hold = () => { if (!started) return; if (tl.paused()) tl.play(); else tl.pause(); draw(); };
+  timer.addEventListener("click", (e) => { e.stopPropagation(); hold(); });
   // back to waiting on slide 1, ready for the next run
   const reset = () => { started = false; timer.style.display = "none"; wait.style.display = ""; tl.pause(REST); draw(); };
   const prev = () => { if (!started) return; go(cur() - 1); };
@@ -768,7 +774,8 @@ body { cursor:pointer; }
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (over.classList.contains("on")) return overKey(e);
     if (k === "ArrowUp") { e.preventDefault(); openOver(); }
-    else if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }
+    else if (["ArrowRight", "PageDown", "Enter"].includes(k)) { e.preventDefault(); next(); }
+    else if (k === " " || k === "p" || k === "P") { e.preventDefault(); if (started) hold(); else next(); }
     else if (["ArrowLeft", "PageUp"].includes(k)) { e.preventDefault(); prev(); }
     else if (k === "r" || k === "R" || k === "Home") reset();
     else if (k === "f" || k === "F") (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
