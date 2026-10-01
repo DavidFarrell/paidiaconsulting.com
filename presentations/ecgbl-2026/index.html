@@ -166,7 +166,17 @@ input[type=range] { width: 100%; margin: 12px 0 2px; accent-color: var(--accent)
 .badge.now { background: var(--now); color: var(--accent-ink); }
 .card-title { font-weight: 650; font-size: 15px; line-height: 1.3; margin-top: 5px; }
 .card-auth { color: var(--muted); font-size: 13px; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-.card-stream { color: var(--faint); font-size: 12px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-stream { color: var(--room, var(--muted)); font-size: 12px; font-weight: 650; margin-top: 5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.streams { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px 12px; margin: 14px 0 6px; box-shadow: var(--shadow); }
+.streams-h { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; display: flex; justify-content: space-between; gap: 8px; }
+.streams-h span { font: 600 12px ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0; text-transform: none; }
+.streams-grid { display: grid; gap: 6px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.stream { display: flex; gap: 10px; align-items: flex-start; text-align: left; border: 0; border-left: 4px solid var(--room, var(--rx)); background: var(--surface-2); border-radius: 8px; padding: 7px 10px; font-size: 13px; line-height: 1.3; cursor: pointer; width: 100%; }
+.stream b { color: var(--room, var(--rx)); white-space: nowrap; flex: none; width: 74px; }
+.stream span { color: var(--ink); font-weight: 550; }
+.stream em { display: block; color: var(--muted); font-style: normal; font-size: 12px; font-weight: 400; margin-top: 2px; }
+.stream[aria-pressed="true"] { outline: 2px solid var(--room); }
+@media (max-width: 640px) { .streams-grid { grid-template-columns: 1fr; } }
 .card.open .card-auth { -webkit-line-clamp: unset; display: block; }
 .star { position: absolute; top: 6px; right: 6px; border: 0; background: transparent; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; color: var(--faint); display: grid; place-items: center; }
 .star:hover { background: var(--surface-2); }
@@ -342,9 +352,9 @@ function card(d, opts = {}) {
   return `<article class="${cls.join(' ')}" id="c-${d.id}" style="--room: var(--r${roomKey(d)})">
     <button class="card-btn" data-toggle="${d.id}" aria-expanded="${state.open.has(d.id)}">
       <div class="card-meta">${time}${d.room ? `<span class="room">${esc(roomLabel(d))}</span>` : ''}${badges.join('')}</div>
+      ${d.stream && !opts.noStream ? `<div class="card-stream">${esc(shortStream(d.stream))}</div>` : ''}
       <div class="card-title">${highlight(d.title, q)}</div>
       ${d.authors ? `<div class="card-auth">${highlight(d.authors, q)}</div>` : ''}
-      ${d.stream && !opts.noStream ? `<div class="card-stream">${esc(d.stream)}</div>` : ''}
     </button>
     ${isSpan(d) && !d.authors ? '' : `<button class="star" data-star="${d.id}" aria-pressed="${starred}" aria-label="${starred ? 'Unstar' : 'Star'} this session">${starred ? STAR_SVG : STAR_O}</button>`}
     <div class="detail">${state.open.has(d.id) ? detail(d) : ''}</div>
@@ -383,6 +393,40 @@ function cardGroup(items, opts = {}) {
     html += `<details class="more"${anyOpen ? ' open' : ''}><summary>${posters.length} posters (Lobby and Room 146)</summary><div class="grid">${posters.map(d => card(d, opts)).join('')}</div></details>`;
   } else html += posters.map(d => card(d, opts)).join('');
   return html;
+}
+
+// ---------- streams ----------
+const shortStream = st => String(st || '').replace(/^Game Judging:\s*/i, 'Games · ').replace(/Fully developed games \(judging panel (\d)\)/i, 'Fully developed, panel $1').replace(/^(Stream [A-Z])\s*:\s*/, '$1 · ');
+// A "session block" is a run of parallel sessions with no gap longer than a short break;
+// lunch, keynotes and refreshment breaks split blocks, and each block has its own streams.
+function sessionBlocks(day) {
+  const items = sortItems(DATA.filter(d => d.day === day && !isSpan(d) && !isPoster(d) && d.stream));
+  // block boundaries: keynotes, plenaries and any break of 15+ minutes (a 10-minute short break keeps the streams)
+  const cuts = DATA.filter(d => d.day === day && (['keynote', 'plenary'].includes(d.type) || (d.type === 'break' && d.e - d.s >= 15))).map(d => d.s);
+  const byKey = new Map();
+  for (const d of items) {
+    const k = cuts.filter(c => c <= d.s).length;
+    if (!byKey.has(k)) byKey.set(k, { s: d.s, e: d.e, items: [] });
+    const b = byKey.get(k); b.items.push(d); b.s = Math.min(b.s, d.s); b.e = Math.max(b.e, d.e);
+  }
+  const blocks = [...byKey.values()].sort((a, b) => a.s - b.s);
+  for (const b of blocks) {
+    const seen = new Map();
+    for (const d of sortItems(b.items)) {
+      const k = d.room + '|' + d.stream;
+      if (!seen.has(k)) seen.set(k, { room: d.room, stream: d.stream, chair: d.chair, type: d.type, panel: panel(d), s: d.s, e: d.e });
+      const x = seen.get(k); x.s = Math.min(x.s, d.s); x.e = Math.max(x.e, d.e);
+    }
+    b.streams = [...seen.values()].sort((a, c) => (ROOM_ORDER.indexOf(a.room) - ROOM_ORDER.indexOf(c.room)) || a.panel - c.panel || a.s - c.s);
+  }
+  return blocks;
+}
+function streamLegend(b, title, clickable) {
+  return `<div class="streams"><div class="streams-h">${title}<span>${fmt(b.s)}–${fmt(b.e)}</span></div><div class="streams-grid">${b.streams.map(x => {
+    const tag = clickable ? `button data-room="${esc(x.room)}" aria-pressed="${state.room === x.room}"` : 'div';
+    const partial = (x.s > b.s + 15 || x.e < b.e - 15) ? ` · ${fmt(x.s)}–${fmt(x.e)}` : '';
+    return `<${tag} class="stream" style="--room: var(--r${ROOM_ORDER.includes(x.room) ? x.room : 'x'})"><b>Room ${esc(x.room)}</b><span>${esc(shortStream(x.stream))}<em>${x.chair ? esc(x.type === 'games-judging' ? x.chair : 'Chair: ' + x.chair) : ''}${partial}</em></span></${clickable ? 'button' : 'div'}>`;
+  }).join('')}</div></div>`;
 }
 
 // ---------- views ----------
@@ -426,6 +470,10 @@ function viewNow() {
       return `<button class="mine-item" data-goto="${d.id}"><span class="when">${d.start}</span><span class="what"><b>${esc(d.title)}</b><span>${esc(roomLabel(d))}${d.chair && d.type === 'games-judging' ? ' · ' + esc(d.chair) : ''}</span></span><span class="eta">${eta}</span></button>`;
     }).join('')}</div>`;
   }
+  const blks = sessionBlocks(state.day);
+  const curB = blks.find(b => b.s <= t && t < b.e), nextB = blks.find(b => b.s > t);
+  if (curB) html += streamLegend(curB, 'Streams this session', false);
+  else if (nextB && nextB.s - t <= 120) html += streamLegend(nextB, 'Streams after the break', false);
   spanOn.forEach(s => { html += `<div class="banner"><span class="bt">${s.start}–${s.end}</span><span><b>${esc(s.title)}</b>${s.room ? ' · ' + esc(roomLabel(s)) : ''}${s.authors ? ' · ' + esc(s.authors) : ''}</span></div>`; });
   if (roomsOn.length) html += `<div class="section-label">${today && state.live ? 'On now' : 'On at ' + fmt(t)} <span class="n">${roomsOn.length}</span></div><div class="grid">${cardGroup(roomsOn, { showTime: true })}</div>`;
   else if (!spanOn.length) html += `<div class="banner">${t < dayStart ? `Nothing yet. The day starts at <b>${fmt(dayStart)}</b>.` : nextStart == null ? 'That’s the programme done for the day.' : 'Between sessions.'}</div>`;
@@ -447,7 +495,10 @@ function slotsHtml(items, day) {
   const today = n.date === day;
   const starts = [...new Set(items.map(d => d.s))].sort((a, b) => a - b);
   let html = '', placedNow = false;
+  const blks = state.q ? [] : sessionBlocks(day);
   for (const s of starts) {
+    const blk = blks.find(b => b.s === s);
+    if (blk) html += streamLegend(blk, 'Streams', true);
     const group = sortItems(items.filter(d => d.s === s));
     const end = Math.max(...group.map(d => d.e));
     if (today && !placedNow && s > n.min) { html += `<div class="nowline" id="nowline">NOW ${fmt(n.min)}</div>`; placedNow = true; }
@@ -586,7 +637,7 @@ document.addEventListener('click', e => {
     return;
   }
   if (t.dataset.goto) { e.preventDefault(); goTo(t.dataset.goto); history.replaceState(null, '', '#i=' + t.dataset.goto); return; }
-  if (t.dataset.room) { state.room = t.dataset.room; render(); return; }
+  if (t.dataset.room) { state.room = (t.classList.contains('stream') && state.room === t.dataset.room) ? 'all' : t.dataset.room; const y = window.scrollY; render(); if (t.classList.contains('stream')) window.scrollTo(0, y); return; }
   if (t.dataset.jump) { state.live = false; state.scrubMin = +t.dataset.jump; render(); return; }
   if (t.dataset.share) {
     const url = location.origin + location.pathname + '#i=' + t.dataset.share;
