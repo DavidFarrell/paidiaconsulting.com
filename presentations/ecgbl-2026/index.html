@@ -389,8 +389,8 @@ function cardGroup(items, opts = {}) {
   const posters = items.filter(isPoster), rest = items.filter(d => !isPoster(d));
   let html = rest.map(d => card(d, opts)).join('');
   if (posters.length > 4 && !state.q) {
-    const anyOpen = posters.some(p => state.open.has(p.id));
-    html += `<details class="more"${anyOpen ? ' open' : ''}><summary>${posters.length} posters (Lobby and Room 146)</summary><div class="grid">${posters.map(d => card(d, opts)).join('')}</div></details>`;
+    const anyOpen = state.postersOpen || posters.some(p => state.open.has(p.id));
+    html += `<details class="more" id="posters"${anyOpen ? ' open' : ''}><summary>${posters.length} posters (Lobby and Room 146)</summary><div class="grid">${posters.map(d => card(d, opts)).join('')}</div></details>`;
   } else html += posters.map(d => card(d, opts)).join('');
   return html;
 }
@@ -668,6 +668,7 @@ function fromHash() {
   return false;
 }
 window.addEventListener('hashchange', fromHash);
+document.addEventListener('toggle', e => { if (e.target.id === 'posters') state.postersOpen = e.target.open; }, true);
 tick();
 if (!fromHash()) render({ scrollNow: true });
 </script>
