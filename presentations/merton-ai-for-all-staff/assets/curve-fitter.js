@@ -381,7 +381,7 @@ if (window.Chart) {
       const step = computeStep(getParams());
       applyStep(step);
       showProposal(computeStep(getParams()));
-    }, 500);                                     // Merton: one visible move every half second
+    }, 200);                                     // Merton: one visible move every 0.2 s (David, 8 Oct)
   }
   function boot() {
     if (typeof Chart === 'undefined') { setTimeout(boot, 100); return; }
