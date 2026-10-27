@@ -1,7 +1,6 @@
 {
   "$schema": "https://schema.railpack.com",
   "deploy": {
-    "aptPackages": ["nodejs"],
     "startCommand": "sh /app/start.sh"
   }
 }

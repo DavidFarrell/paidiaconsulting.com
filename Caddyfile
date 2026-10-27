@@ -43,19 +43,5 @@
 	@infra path /server/* /start.sh /Caddyfile /railpack.json /nixpacks.toml
 	respond @infra 404
 
-	# Private file transfer box: drag-drop UI at /files/, API proxied to the
-	# local Node file server. Same password as the GOSH decks (user: david).
-	header /files/* X-Robots-Tag "noindex, nofollow"
-	@filesArea path /files /files/*
-	basic_auth @filesArea {
-		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
-	}
-	reverse_proxy /files/api/* 127.0.0.1:8484
-
-	# Claude message bus. The /msg/ page is a public shell (login form, no
-	# data); all data sits behind the API's own two-password auth.
-	header /msg/* X-Robots-Tag "noindex, nofollow"
-	reverse_proxy /msg/api/* 127.0.0.1:8485
-
 	file_server
 }
