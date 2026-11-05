@@ -57,7 +57,14 @@
         // MailerLite answers 200 with {"success":false} when it rejects a sign-up
         return r.json().catch(function () { return {}; }).then(function (b) { if (b.success === false) throw new Error('rejected'); });
       })
-      .then(function () { say(form, MSG[kind]); form.reset(); })
+      .then(function () {
+        say(form, MSG[kind]); form.reset();
+        // The fields give way to the thank-you line (styled by the build), which takes focus
+        // because the button it replaces had it.
+        form.classList.add('is-sent');
+        var m = form.querySelector('.form-msg');
+        if (m) { m.setAttribute('tabindex', '-1'); m.focus(); }
+      })
       .catch(function () { say(form, MSG.failed); })
       .then(function () { if (btn) btn.disabled = false; });
   }, true);
@@ -72,6 +79,9 @@
     retarget('[data-luma], [data-oh-signup]', CONFIG.luma_url);
     retarget('[data-book]', CONFIG.booking_url);
   }
+  // Screen readers announce the thank-you or failure line when it appears.
+  document.querySelectorAll('form[data-mail] .form-msg').forEach(function (m) { m.setAttribute('role', 'status'); });
+
   // learn.js sets the sign-up button's mailto when it runs; set ours after everything has loaded.
   if (document.readyState === 'complete') links(); else window.addEventListener('load', links);
 })();

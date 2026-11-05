@@ -1,10 +1,11 @@
-# Build: B4 unzipped -> B4 optimised
+# Build: site-src/b4 -> site-src/dist -> the served root
 
-`optimise.py` makes a faster copy of Nikki's site without changing how it looks. It never edits `B4 unzipped/`, so when Nikki sends a new version: drop it in as the source, re-run, re-check.
+`optimise.py` makes a faster copy of Nikki's site without changing how it looks. It never edits `site-src/b4/`, so when Nikki sends a new version: drop it in there, run `site-src/publish.sh`, re-check.
 
 ```
-/usr/bin/python3 -I optimise.py                 # all steps
-/usr/bin/python3 -I optimise.py --steps fonts   # any subset, comma-separated
+../publish.sh                                                         # normal use: build + copy into the root
+/usr/bin/python3 -I optimise.py --src ../b4 --out ../dist             # build only
+/usr/bin/python3 -I optimise.py --src ../b4 --out ../dist --steps css # any subset, comma-separated
 ```
 
 Needs `npx` (for PurgeCSS 6.0.0) and the `trash` command (the old output goes to the Bin).
@@ -26,7 +27,9 @@ Needs `npx` (for PurgeCSS 6.0.0) and the `trash` command (the old output goes to
 
 The check scripts (`shots.cjs`, `states.cjs`, `diff.sh`, `throttle-proxy.cjs`, `rt-proxy.cjs`) are in Claude's session scratch folder for now. Move them here if we keep this workflow.
 
-## Known, not ours
+## Fixed by the build (were in Nikki's original)
 
-- At desktop width the menu pill sometimes wraps "Our work" and "Contact us" onto two lines on load, and always does after scrolling down and back up. This happens in Nikki's original too.
-- The stylesheet refers to `brand/wordmark.webp` and `hero/hero-mask.webp`, which aren't in the zip. Also, `/favicon.ico` 404s.
+- The desktop menu pill wrapped "Our work" and "Contact us" onto two lines after scrolling (step `fixes`).
+- There was no favicon (step `favicons`).
+
+For the full list of steps (the table above covers only the speed steps), see `CLAUDE.md` at the repo root and the comments in `optimise.py`.

@@ -26,7 +26,7 @@
 	header /presentations/* X-Robots-Tag "noindex, nofollow"
 
 	# Infrastructure files aren't content - don't serve them.
-	@infra path /server/* /site-src/* /start.sh /Caddyfile /railpack.json /nixpacks.toml /README.md /.gitignore
+	@infra path /server/* /site-src/* /start.sh /Caddyfile /railpack.json /nixpacks.toml /README.md /CLAUDE.md /.gitignore
 	respond @infra 404
 
 	file_server

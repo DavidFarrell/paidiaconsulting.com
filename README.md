@@ -1,5 +1,7 @@
 # paidiaconsulting.com
 
+**Working on this with Claude (or any AI assistant)? Read `CLAUDE.md` first.**
+
 Company site, one Railway deployment. Static files served by Caddy.
 Push to `main` on GitHub = auto-deploy (~90s). Built June 2026; redesigned
 by Nikki in November 2026 (the October site is tag `october-2026-website`).
@@ -38,11 +40,10 @@ retired on 27 Oct 2026; their code is in git history before that date.
 
 ## SEO / favicon / Google Search Console
 
-- **Favicons**: `favicon.ico` (16/32) at root, plus
-  `assets/images/favicon-{32,48,96,180}.png`, all declared in the `<head>`
-  of `index.html`. 48 and 96 exist because Google wants the search-result
-  favicon to be a square multiple of 48px - smaller-only can get ignored.
-  Regenerate from the 180 source: `sips -z 48 48 favicon-180.png --out favicon-48.png`.
+- **Favicons**: `favicon.ico` (16/32) at root, plus `assets/icons/favicon-{32,48,96}.png`
+  and `apple-touch-icon.png`, declared in every page's `<head>` by the build (step
+  `favicons`, sources in `site-src/build/vendor/logo/`). 48 and 96 exist because Google
+  wants the search-result favicon to be a square multiple of 48px - smaller-only can get ignored.
 - **Google Search Console**: the site is a verified URL-prefix property
   (`https://paidiaconsulting.com/`) under the **work** Google account
   `davidgerouvillefarrell@paidiaconsulting.com`. Manage at

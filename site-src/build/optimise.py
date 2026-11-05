@@ -430,6 +430,13 @@ def step_formnotes():
     # contrast (below the 4.5:1 minimum). Notes inside those forms take the panel's light text colour.
     css = OUT / "assets" / "site.min.css"
     rule = "\n.cp-form .note{color:rgba(255,255,255,.75)}\n.cp-form .note a{color:inherit}\n"
+    # David, 5 Nov 2026: a sent form should look sent. integrations.js adds "is-sent" on success;
+    # the fields give way to the thank-you line, made bigger and bolder with a tick.
+    rule += ("form.is-sent>:not(.form-msg):not(h2){display:none}\n"
+             "form.is-sent .form-msg{font-size:1.15em;font-weight:600;color:inherit}\n"
+             # it takes focus only so focus isn't lost; the site's focus ring would draw a box round it
+             "form.is-sent .form-msg:focus{outline:none!important;box-shadow:none!important}\n"
+             "form.is-sent .form-msg::before{content:\"\\2713\\00a0\"}\n")
     if ".cp-form .note{" not in css.read_text():
         with css.open("a") as f:
             f.write(rule)
