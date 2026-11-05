@@ -33,7 +33,7 @@
     e.stopImmediatePropagation(); // capture phase, so her mailto handler never runs
     var kind = kindOf(form), data = new FormData(form);
     // A newsletter tool (course forms) may want its own field names and hidden fields, and may not
-    // answer cross-site requests (MailerLite's embed endpoint doesn't): course_* settings cover that.
+    // answer cross-site requests: course_* settings cover that. (MailerLite's embed endpoint does answer.)
     var course = kind === 'course' && CONFIG.course_endpoint, rename = (course && CONFIG.course_field_names) || {};
     if (course) {
       var renamed = new FormData();
@@ -49,7 +49,13 @@
     var btn = form.querySelector('[type="submit"], button:not([type])');
     if (btn) btn.disabled = true;
     fetch(url, blind ? { method: 'POST', body: data, mode: 'no-cors' } : { method: 'POST', body: data, headers: { Accept: 'application/json' } })
-      .then(function (r) { if (!blind && !r.ok) throw new Error(r.status); say(form, MSG[kind]); form.reset(); })
+      .then(function (r) {
+        if (blind) return;
+        if (!r.ok) throw new Error(r.status);
+        // MailerLite answers 200 with {"success":false} when it rejects a sign-up
+        return r.json().catch(function () { return {}; }).then(function (b) { if (b.success === false) throw new Error('rejected'); });
+      })
+      .then(function () { say(form, MSG[kind]); form.reset(); })
       .catch(function () { say(form, MSG.failed); })
       .then(function () { if (btn) btn.disabled = false; });
   }, true);
