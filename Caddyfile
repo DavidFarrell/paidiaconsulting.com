@@ -25,20 +25,6 @@
 	# Presentations area: reachable only by link, never indexed.
 	header /presentations/* X-Robots-Tag "noindex, nofollow"
 
-	# GOSH client decks sit behind basic auth (user: david). One login per
-	# browser session covers both decks.
-	@goshDecks path /presentations/gosh/*
-	basic_auth @goshDecks {
-		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
-	}
-
-	# Awin AwinOS deck sits behind basic auth (user: david), same password as
-	# the GOSH decks.
-	@awinDecks path /presentations/awin/*
-	basic_auth @awinDecks {
-		david $2a$14$tlzDr7TxxWCc9ljqoS5LAuTJF36u9z8TbdnSHJEo0fGLj6AQcst1G
-	}
-
 	# Infrastructure files aren't content - don't serve them.
 	@infra path /server/* /site-src/* /start.sh /Caddyfile /railpack.json /nixpacks.toml /README.md /.gitignore
 	respond @infra 404

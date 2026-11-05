@@ -10,7 +10,6 @@ by Nikki in November 2026 (the October site is tag `october-2026-website`).
 |------|------|------|
 | `/`, `/about.html`, `/work.html`, `/learn.html`, `/course.html`, `/workshop.html`, `/book.html`, `/contact.html`, `/privacy.html` | Company site (Nikki's design) | public |
 | `/presentations/` | Talk decks index | public link, noindex |
-| `/presentations/gosh/*`, `/presentations/awin/*` | Client design decks | basic auth (Caddy) |
 | `/oasis/` | Redirect to the Kindle web proxy on Railway | public, unlinked |
 | `/google3aa5e6c347787cd4.html` | Search Console verification - do not delete | public |
 
