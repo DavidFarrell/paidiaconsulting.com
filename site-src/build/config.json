@@ -1,0 +1,17 @@
+{
+  "_help": "Fill these in to switch things on; leave empty to keep Nikki's email-draft behaviour, then run site-src/publish.sh. form_endpoint: hosted form service (e.g. https://formspree.io/f/XXXX). course_endpoint: optional, for the two email-course forms (defaults to form_endpoint). luma_url: office-hours event page. booking_url: applies to any [data-book] link (none on the pages yet).",
+  "form_endpoint": "",
+  "course_endpoint": "",
+  "luma_url": "",
+  "booking_url": "",
+  "course_field_names": {},
+  "course_extra_fields": {},
+  "course_no_cors": false,
+  "messages": {
+    "contact": "Thank you. Your message has reached us and we will reply by email.",
+    "booking": "Thank you. We have your booking request and will email you to confirm your place.",
+    "course": "Thank you, you are on the list. Look out for the first email.",
+    "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."
+  },
+  "_help_course": "For MailerLite (recommended newsletter tool): course_endpoint = the action URL of your MailerLite embed form (https://assets.mailerlite.com/jsonp/ACCOUNT/forms/FORM/subscribe), course_field_names = {\"email\": \"fields[email]\"}, course_extra_fields = {\"ml-submit\": \"1\", \"anticsrf\": \"true\"}, course_no_cors = true. Test with a dummy address first."
+}

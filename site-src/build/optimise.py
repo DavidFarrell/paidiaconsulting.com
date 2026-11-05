@@ -18,7 +18,7 @@ SRC = PROJECT / "B4 unzipped"
 OUT = PROJECT / "B4 optimised"
 VENDOR = Path(__file__).resolve().parent / "vendor"
 
-ALL_STEPS = ["shell", "fonts", "css", "preload", "gsap", "favicons", "prune"]
+ALL_STEPS = ["shell", "fixes", "fonts", "css", "preload", "gsap", "favicons", "social", "integrations", "prune"]
 
 
 def fresh_copy():
@@ -258,9 +258,9 @@ def step_favicons():
     icons = OUT / "assets" / "icons"
     icons.mkdir(exist_ok=True)
     for size in (32, 48, 96):
-        subprocess.run(["magick", str(src), "-resize", f"{size}x{size}", "-background", "none",
+        subprocess.run(["magick", str(src), "-strip", "-define", "png:exclude-chunks=date,time", "-resize", f"{size}x{size}", "-background", "none",
                         "-gravity", "center", "-extent", f"{size}x{size}", str(icons / f"favicon-{size}.png")], check=True)
-    subprocess.run(["magick", str(src), "-resize", "160x160", "-background", ICON_BG, "-gravity", "center",
+    subprocess.run(["magick", str(src), "-strip", "-define", "png:exclude-chunks=date,time", "-resize", "160x160", "-background", ICON_BG, "-gravity", "center",
                     "-extent", "180x180", "-flatten", str(icons / "apple-touch-icon.png")], check=True)
     links = ('<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">\n'
              '<link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png">\n'
@@ -273,8 +273,87 @@ def step_favicons():
         page.write_text(html.replace(own, own + "\n" + links.rstrip("\n")))
 
 
-STEPS = {"shell": step_shell, "fonts": step_fonts, "css": step_css, "preload": step_preload, "gsap": step_gsap,
-         "favicons": step_favicons, "prune": step_prune}
+# --- Step: forms, Luma, booking (only when config.json says so) -----------------
+# build/config.json holds the form-service endpoint, the Luma link and the booking link. With all
+# of them empty this step changes nothing, so the site keeps Nikki's email-draft behaviour.
+# Otherwise it writes assets/integrations.js (from build/integrations.js, with the settings filled
+# in) and loads it after site.min.js on every page.
+
+CONFIG_FILE = Path(__file__).resolve().parent / "config.json"
+
+
+def step_integrations():
+    import json
+    cfg = json.loads(CONFIG_FILE.read_text()) if CONFIG_FILE.exists() else {}
+    keys = ("form_endpoint", "course_endpoint", "luma_url", "booking_url")
+    if not any(cfg.get(k) for k in keys):
+        print("  nothing configured in config.json - forms stay as email drafts")
+        return
+    settings = {k: cfg.get(k, "") for k in keys}
+    for k in ("course_field_names", "course_extra_fields", "course_no_cors"):
+        settings[k] = cfg.get(k) or ({} if k != "course_no_cors" else False)
+    settings["messages"] = cfg.get("messages", {})
+    js = (Path(__file__).resolve().parent / "integrations.js").read_text()
+    assert "/*CONFIG*/{}" in js
+    js = js.replace("/*CONFIG*/{}", json.dumps(settings, ensure_ascii=False))
+    (OUT / "assets" / "integrations.js").write_text(js)
+    tag = '<script src="assets/site.min.js"></script>'
+    for page in pages():
+        html = page.read_text()
+        assert html.count(tag) == 1, f"{page.name}: site.min.js tag not found once"
+        page.write_text(html.replace(tag, tag + '\n<script src="assets/integrations.js" defer></script>'))
+    print("  integrations on:", ", ".join(k for k in keys if cfg.get(k)))
+
+
+# --- Step: small fixes to Nikki's pages ----------------------------------------
+# Content fixes agreed with David, applied on top of her source so her files stay as delivered.
+
+HOME_TITLE = "Paidia Consulting | AI consultancy"
+
+
+def step_fixes():
+    home = OUT / "index.html"
+    html = home.read_text()
+    if "<title>B4</title>" in html:
+        home.write_text(html.replace("<title>B4</title>", f"<title>{HOME_TITLE}</title>", 1))
+        print("  home page title:", HOME_TITLE)
+
+
+# --- Step: link previews (LinkedIn, WhatsApp, Slack...) -------------------------
+# Neither the old nor the new site had Open Graph tags, so shared links showed no picture.
+# One 1200x630 JPEG (the home hero still, centre crop) plus each page's own title and description.
+
+SITE_URL = "https://paidiaconsulting.com/"
+
+
+def step_social():
+    img = OUT / "assets" / "social-card.jpg"
+    subprocess.run(["magick", str(OUT / "assets" / "hero" / "highlands-still.webp"), "-resize", "1200x630^",
+                    "-gravity", "center", "-extent", "1200x630", "-quality", "82", "-strip", str(img)], check=True)
+    for page in pages():
+        html = page.read_text()
+        if 'property="og:' in html:
+            continue
+        title = re.search(r"<title>(.*?)</title>", html, re.S).group(1).strip()
+        desc_m = re.search(r'<meta name="description" content="([^"]*)"', html)
+        desc = desc_m.group(1) if desc_m else ""
+        url = SITE_URL + ("" if page.name == "index.html" else page.name)
+        tags = (f'<meta property="og:type" content="website">\n'
+                f'<meta property="og:site_name" content="Paidia Consulting">\n'
+                f'<meta property="og:title" content="{title}">\n'
+                f'<meta property="og:description" content="{desc}">\n'
+                f'<meta property="og:url" content="{url}">\n'
+                f'<meta property="og:image" content="{SITE_URL}assets/social-card.jpg">\n'
+                f'<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n'
+                f'<meta name="twitter:card" content="summary_large_image">\n')
+        anchor = re.search(r'<meta name="theme-color"[^>]*>\n', html)
+        html = html[:anchor.end()] + tags + html[anchor.end():]
+        page.write_text(html)
+
+
+STEPS = {"shell": step_shell, "fixes": step_fixes, "fonts": step_fonts, "css": step_css, "preload": step_preload,
+         "gsap": step_gsap, "favicons": step_favicons, "social": step_social, "integrations": step_integrations,
+         "prune": step_prune}
 
 
 def main():
