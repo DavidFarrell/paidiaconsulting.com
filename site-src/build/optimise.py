@@ -18,7 +18,7 @@ SRC = PROJECT / "B4 unzipped"
 OUT = PROJECT / "B4 optimised"
 VENDOR = Path(__file__).resolve().parent / "vendor"
 
-ALL_STEPS = ["shell", "fixes", "fonts", "css", "preload", "gsap", "favicons", "social", "integrations", "prune"]
+ALL_STEPS = ["shell", "fixes", "privacy", "formnotes", "newlogo", "fonts", "css", "preload", "gsap", "favicons", "social", "integrations", "prune"]
 
 
 def fresh_copy():
@@ -257,11 +257,27 @@ def step_favicons():
     src = OUT / ICON_SRC
     icons = OUT / "assets" / "icons"
     icons.mkdir(exist_ok=True)
+    made = VENDOR / "logo"
+    if (made / "favicon-32.png").exists():
+        # The new logo's hand-made set: a fox-head crop for the small sizes (the full logo with its
+        # lettering is unreadable at 16-48 px) and the full logo on cream for the Apple icon.
+        for size in (32, 48, 96):
+            shutil.copy2(made / f"favicon-{size}.png", icons / f"favicon-{size}.png")
+        shutil.copy2(made / "favicon-180.png", icons / "apple-touch-icon.png")
+    else:
+        make_favicons_from(src, icons)
+    add_icon_links()
+
+
+def make_favicons_from(src, icons):
     for size in (32, 48, 96):
         subprocess.run(["magick", str(src), "-strip", "-define", "png:exclude-chunks=date,time", "-resize", f"{size}x{size}", "-background", "none",
                         "-gravity", "center", "-extent", f"{size}x{size}", str(icons / f"favicon-{size}.png")], check=True)
     subprocess.run(["magick", str(src), "-strip", "-define", "png:exclude-chunks=date,time", "-resize", "160x160", "-background", ICON_BG, "-gravity", "center",
                     "-extent", "180x180", "-flatten", str(icons / "apple-touch-icon.png")], check=True)
+
+
+def add_icon_links():
     links = ('<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">\n'
              '<link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png">\n'
              '<link rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-96.png">\n'
@@ -341,6 +357,97 @@ def step_fixes():
         print("  desktop menu labels: no line breaks")
 
 
+# --- Step: privacy policy update (approved by David, 5 Nov 2026) ----------------
+# Nikki's privacy page carries the May 2026 policy word for word. The new site collects data
+# through web forms (Formspree) and office-hours registration (Luma), which the old wording
+# ("when you contact us via email") did not cover. Only these passages change.
+
+PRIVACY_DATE = "5 November 2026"
+PRIVACY_EDITS = [
+    ("Last updated 4 May 2026.", f"Last updated {PRIVACY_DATE}."),
+    ("<h3>2.2 Business Enquiries</h3>\n        <p>When you contact us via email, we collect:</p>",
+     "<h3>2.2 Business Enquiries and Bookings</h3>\n        <p>When you contact us by email or through the forms on our website "
+     "(for example the contact form or the workshop booking form), we collect:</p>"),
+    ("<li>Your organisation (if provided)</li>\n          <li>The content of your message</li>",
+     "<li>Your organisation and role (if provided)</li>\n          <li>Your phone number (if provided)</li>\n"
+     "          <li>The content of your message or booking request</li>"),
+    ("used solely to respond to your enquiry and,", "used solely to respond to your enquiry or booking and,"),
+    ("Where you have given explicit consent (e.g., for research participation)",
+     "Where you have given explicit consent (e.g., for research participation, or to receive our email course and updates)"),
+    ("email services, and accounting software,",
+     "email services, website form handling (Formspree), event registration (Luma), and accounting software,"),
+    ("<li><strong>Research data:</strong> As specified by the research institution's ethics approval and data management plan</li>",
+     "<li><strong>Research data:</strong> As specified by the research institution's ethics approval and data management plan</li>\n"
+     "          <li><strong>Email course and update subscribers:</strong> Until you unsubscribe</li>\n"
+     "          <li><strong>Event registrations:</strong> 2 years from the event</li>"),
+]
+PRIVACY_25 = (
+    "\n        <h3>2.5 Email Course, Updates and Events</h3>\n"
+    "        <p>If you sign up for our free email course, or tick a box asking for updates or new blog posts, we collect your "
+    "email address and use it only to send what you asked for. Every email includes a link to unsubscribe.</p>\n"
+    "        <p>If you register for our office hours or other events, registration is handled by our events platform (Luma), "
+    "which shares your name and email address with us so we can run the session and send you joining details.</p>\n"
+)
+PRIVACY_25_ANCHOR = "and to the project-specific data handling addendum referenced there.</p>"
+
+
+def step_privacy():
+    page = OUT / "privacy.html"
+    html = page.read_text()
+    for old, new in PRIVACY_EDITS:
+        assert html.count(old) == 1, f"privacy.html: expected once: {old[:60]!r}"
+        html = html.replace(old, new)
+    assert html.count(PRIVACY_25_ANCHOR) == 1, "privacy.html: 2.4 ending not found once"
+    html = html.replace(PRIVACY_25_ANCHOR, PRIVACY_25_ANCHOR + PRIVACY_25)
+    page.write_text(html)
+    print("  privacy policy updated (forms, sign-ups, Formspree, Luma), dated", PRIVACY_DATE)
+
+
+# --- Step: one line about data under the sign-up and booking forms --------------
+# David, 5 Nov 2026 (to pass on to Nikki): only the contact form said "Unsubscribe any time".
+# Same "note" style as her form messages; it sits just above the hidden thank-you line.
+
+FORM_NOTES = {
+    "course.html": 'We only use your email to send the course. Unsubscribe any time. <a href="privacy.html">Privacy policy</a>.',
+    "learn.html": 'We only use your email to send the course. Unsubscribe any time. <a href="privacy.html">Privacy policy</a>.',
+    "book.html": 'We use these details only to handle your booking. <a href="privacy.html">Privacy policy</a>.',
+}
+FORM_MSG = '<p class="note form-msg" hidden>'
+
+
+def step_formnotes():
+    for name, text in FORM_NOTES.items():
+        page = OUT / name
+        html = page.read_text()
+        n = html.count(FORM_MSG)
+        assert n >= 1, f"{name}: form message line not found"
+        html = html.replace(FORM_MSG, f'<p class="note form-privacy">{text}</p>\n      ' + FORM_MSG)
+        page.write_text(html)
+        print(f"  privacy line added under {n} form(s) on {name}")
+    # The course page's forms sit on a navy panel, where the grey "note" style reads at about 2.7:1
+    # contrast (below the 4.5:1 minimum). Notes inside those forms take the panel's light text colour.
+    css = OUT / "assets" / "site.min.css"
+    rule = "\n.cp-form .note{color:rgba(255,255,255,.75)}\n.cp-form .note a{color:inherit}\n"
+    if ".cp-form .note{" not in css.read_text():
+        with css.open("a") as f:
+            f.write(rule)
+
+
+# --- Step: the new logo (David, 5 Nov 2026) -------------------------------------
+# Nikki's redrawn logo as transparent stills (same file names as B4's), plus the header animation
+# re-made to end on the new logo, so the video-to-still hand-over stays invisible. They must ship
+# together: the new animation over the old still (or the reverse) visibly jumps.
+
+NEW_LOGO_FILES = ["fox-logo-3.webp", "fox-logo-3-222.webp", "fox-logo-2.webp", "fox-logo-3.mp4"]
+
+
+def step_newlogo():
+    src = VENDOR / "logo"
+    for name in NEW_LOGO_FILES:
+        shutil.copy2(src / name, OUT / "assets" / "brand" / name)
+    print("  new logo stills + header animation in assets/brand/")
+
+
 # --- Step: link previews (LinkedIn, WhatsApp, Slack...) -------------------------
 # Neither the old nor the new site had Open Graph tags, so shared links showed no picture.
 # One 1200x630 JPEG (the home hero still, centre crop) plus each page's own title and description.
@@ -373,7 +480,7 @@ def step_social():
         page.write_text(html)
 
 
-STEPS = {"shell": step_shell, "fixes": step_fixes, "fonts": step_fonts, "css": step_css, "preload": step_preload,
+STEPS = {"shell": step_shell, "fixes": step_fixes, "privacy": step_privacy, "formnotes": step_formnotes, "newlogo": step_newlogo, "fonts": step_fonts, "css": step_css, "preload": step_preload,
          "gsap": step_gsap, "favicons": step_favicons, "social": step_social, "integrations": step_integrations,
          "prune": step_prune}
 
