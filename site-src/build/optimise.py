@@ -359,7 +359,7 @@ def step_fixes():
 
 # --- Step: privacy policy update (approved by David, 5 Nov 2026) ----------------
 # Nikki's privacy page carries the May 2026 policy word for word. The new site collects data
-# through web forms (Formspree) and office-hours registration (Luma), which the old wording
+# through web forms (Formspree), email-course sign-ups (MailerLite) and office-hours registration (Luma), which the old wording
 # ("when you contact us via email") did not cover. Only these passages change.
 
 PRIVACY_DATE = "5 November 2026"
@@ -375,7 +375,8 @@ PRIVACY_EDITS = [
     ("Where you have given explicit consent (e.g., for research participation)",
      "Where you have given explicit consent (e.g., for research participation, or to receive our email course and updates)"),
     ("email services, and accounting software,",
-     "email services, website form handling (Formspree), event registration (Luma), and accounting software,"),
+     "email services, website form handling (Formspree), email course and mailing list (MailerLite), "
+     "event registration (Luma), and accounting software,"),
     ("<li><strong>Research data:</strong> As specified by the research institution's ethics approval and data management plan</li>",
      "<li><strong>Research data:</strong> As specified by the research institution's ethics approval and data management plan</li>\n"
      "          <li><strong>Email course and update subscribers:</strong> Until you unsubscribe</li>\n"
@@ -383,8 +384,9 @@ PRIVACY_EDITS = [
 ]
 PRIVACY_25 = (
     "\n        <h3>2.5 Email Course, Updates and Events</h3>\n"
-    "        <p>If you sign up for our free email course, or tick a box asking for updates or new blog posts, we collect your "
-    "email address and use it only to send what you asked for. Every email includes a link to unsubscribe.</p>\n"
+    "        <p>If you sign up for our free email course, or ask to receive updates or new blog posts, we collect your "
+    "email address and use it only to send what you asked for. Sign-ups are handled by our mailing-list provider (MailerLite), "
+    "and you confirm by clicking a link in the first email. Every email includes a link to unsubscribe.</p>\n"
     "        <p>If you register for our office hours or other events, registration is handled by our events platform (Luma), "
     "which shares your name and email address with us so we can run the session and send you joining details.</p>\n"
 )
@@ -400,7 +402,7 @@ def step_privacy():
     assert html.count(PRIVACY_25_ANCHOR) == 1, "privacy.html: 2.4 ending not found once"
     html = html.replace(PRIVACY_25_ANCHOR, PRIVACY_25_ANCHOR + PRIVACY_25)
     page.write_text(html)
-    print("  privacy policy updated (forms, sign-ups, Formspree, Luma), dated", PRIVACY_DATE)
+    print("  privacy policy updated (forms, sign-ups, Formspree, MailerLite, Luma), dated", PRIVACY_DATE)
 
 
 # --- Step: one line about data under the sign-up and booking forms --------------
