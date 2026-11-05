@@ -15,7 +15,7 @@
   "messages": {
     "contact": "Thank you. Your message has reached us and we will reply by email.",
     "booking": "Thank you. We have your booking request and will email you to confirm your place.",
-    "course": "Thank you, you are on the list. Look out for the first email.",
+    "course": "Thank you, you are on the list. Day one arrives when the course opens.",
     "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."
   },
   "_help_course": "For MailerLite (recommended newsletter tool): course_endpoint = the action URL of your MailerLite embed form (https://assets.mailerlite.com/jsonp/ACCOUNT/forms/FORM/subscribe), course_field_names = {\"email\": \"fields[email]\"}, course_extra_fields = {\"ml-submit\": \"1\", \"anticsrf\": \"true\"}, course_no_cors = false (its endpoint allows cross-site replies, so failures show). Test with a dummy address first."
