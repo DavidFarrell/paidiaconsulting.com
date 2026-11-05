@@ -7,7 +7,7 @@
      buttons go there instead of the email sign-up.
    - Booking: if a booking link is set (Maven), every [data-book] link goes there. */
 (function () {
-  var CONFIG = {"form_endpoint": "", "course_endpoint": "", "luma_url": "https://luma.com/paidia", "booking_url": "", "course_field_names": {}, "course_extra_fields": {}, "course_no_cors": false, "messages": {"contact": "Thank you. Your message has reached us and we will reply by email.", "booking": "Thank you. We have your booking request and will email you to confirm your place.", "course": "Thank you, you are on the list. Look out for the first email.", "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."}};
+  var CONFIG = {"form_endpoint": "https://formspree.io/f/mdeejlkj", "course_endpoint": "", "luma_url": "https://luma.com/paidia", "booking_url": "", "course_field_names": {}, "course_extra_fields": {}, "course_no_cors": false, "messages": {"contact": "Thank you. Your message has reached us and we will reply by email.", "booking": "Thank you. We have your booking request and will email you to confirm your place.", "course": "Thank you, you are on the list. Look out for the first email.", "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."}};
   var MSG = CONFIG.messages || {};
 
   function endpointFor(form) {
