@@ -1,6 +1,6 @@
 {
-  "_help": "Fill these in to switch things on; leave empty to keep Nikki's email-draft behaviour, then run site-src/publish.sh. form_endpoint: hosted form service (e.g. https://formspree.io/f/XXXX). course_endpoint: optional, for the two email-course forms (defaults to form_endpoint). luma_url: office-hours event page. booking_url: applies to any [data-book] link (none on the pages yet).",
-  "form_endpoint": "https://formspree.io/f/mdeejlkj",
+  "_help": "Fill these in to switch things on; leave empty to keep Nikki's email-draft behaviour, then run site-src/publish.sh. form_endpoint: hosted form service (Formspark: https://submit-form.com/FORM_ID). course_endpoint: optional, for the two email-course forms (defaults to form_endpoint). luma_url: office-hours event page. booking_url: applies to any [data-book] link (none on the pages yet).",
+  "form_endpoint": "https://submit-form.com/ivIHXUlW3",
   "course_endpoint": "https://assets.mailerlite.com/jsonp/2772038/forms/203317767813727334/subscribe",
   "luma_url": "https://luma.com/paidia",
   "booking_url": "",

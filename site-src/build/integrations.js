@@ -41,7 +41,9 @@
       data = renamed;
       Object.keys(CONFIG.course_extra_fields || {}).forEach(function (k) { data.append(k, CONFIG.course_extra_fields[k]); });
     } else {
-      data.append('_subject', form.getAttribute('data-subject') || 'Paidia website form');
+      // Formspark's names for the notification email's subject and sender name
+      data.append('_email.subject', form.getAttribute('data-subject') || 'Paidia website form');
+      data.append('_email.from', 'Paidia website');
       data.append('form', kind);
       data.append('page', location.pathname);
     }
