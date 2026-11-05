@@ -386,7 +386,7 @@ PRIVACY_25 = (
     "\n        <h3>2.5 Email Course, Updates and Events</h3>\n"
     "        <p>If you sign up for our free email course, or ask to receive updates or new blog posts, we collect your "
     "email address and use it only to send what you asked for. Sign-ups are handled by our mailing-list provider (MailerLite), "
-    "and you confirm by clicking a link in the first email. Every email includes a link to unsubscribe.</p>\n"
+    "and every email includes a link to unsubscribe.</p>\n"
     "        <p>If you register for our office hours or other events, registration is handled by our events platform (Luma), "
     "which shares your name and email address with us so we can run the session and send you joining details.</p>\n"
 )
