@@ -1,3 +1,7 @@
 # Client decks are kept out of this public repository.
 presentations/awin/
 presentations/gosh/
+
+# Build output of site-src/publish.sh (copied into the root, not served from here)
+site-src/dist/
+.DS_Store

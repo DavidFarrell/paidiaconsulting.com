@@ -1,1178 +1,211 @@
 <!doctype html>
 <html lang="en-GB">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Paidia Consulting - AI enablement and engineering</title>
-<meta name="description" content="Paidia Consulting helps organisations use AI - coaching people in the work they already do, and building safe AI systems that reach production. From the boardroom to the codebase." />
-
-<link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" href="/assets/images/favicon-96.png" sizes="96x96" />
-<link rel="icon" type="image/png" href="/assets/images/favicon-48.png" sizes="48x48" />
-<link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32" />
-<link rel="apple-touch-icon" href="/assets/images/favicon-180.png" />
-
-<!-- Preload the display + body faces so the hero headline (the LCP element)
-     swaps to its real face without a late font waterfall. -->
-<link rel="preload" href="/rz/fonts/archivo-black-latin.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="/rz/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
-
-<link rel="stylesheet" href="rz/fonts.css" />
-<link rel="stylesheet" href="rz/tokens.css" />
-<link rel="stylesheet" href="rz/components.css" />
-<link rel="stylesheet" href="rz/colors_and_type.css" />
-
-<style>
-  /* ----------------------------------------------------------------------
-     Page-local layout helpers ONLY. No new colours, no hardcoded hexes -
-     everything visual comes from the .rz-* classes and the token set.
-     ---------------------------------------------------------------------- */
-  /* The rz stylesheets assume border-box but ship no reset, so .rz-container
-     (width:100% + padding-inline) overflows the viewport by its padding on
-     narrow screens. Restore the intended box model and guard against any
-     stray horizontal scroll. */
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  /* ----------------------------------------------------------------------
-     FUNK, DIALLED DOWN. David's call: keep the riso character but read
-     "confident, not chaotic". Rotations roughly halved, halftone lightened,
-     offset blocks softened. Palette and type untouched. Override the funk
-     tokens here (after the linked tokens.css) rather than editing the
-     vendored system, so a future restore is a single block deletion.
-     ---------------------------------------------------------------------- */
-  :root {
-    --reveal: 0.55s;
-    --rz-rot-xs: -0.3deg;
-    --rz-rot-sm: -0.6deg;
-    --rz-rot-sm-cw: 0.7deg;
-    --rz-rot-md: -0.8deg;
-    --rz-rot-lg: -1deg;
-    --rz-rot-xl: -1.5deg;
-    --rz-rot-chip: -0.5deg;
-    --rz-rot-chip-cw: 0.5deg;
-    --rz-rot-fig-alt: 0.3deg;
-    --rz-rot-hover: -0.3deg;
-    --rz-skew: -5deg;
-    --rz-halftone-opacity: 0.10;
-    --rz-halftone-opacity-subtle: 0.05;
-    --rz-offset-pink: 5px 5px 0 0 var(--rz-pink);
-    --rz-offset-yellow: -5px 5px 0 0 var(--rz-yellow);
-    --rz-offset-sm-pink: 4px 4px 0 0 var(--rz-pink);
-    --rz-offset-sm-yellow: 4px 4px 0 0 var(--rz-yellow);
-  }
-  body { overflow-x: clip; }
-
-  .ui-actions { display: flex; gap: var(--rz-sp-4); flex-wrap: wrap; margin-top: var(--rz-sp-8); }
-  .ui-lead-split {
-    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: var(--rz-grid-gutter); align-items: end;
-  }
-  .ui-stack-12 { margin-bottom: var(--rz-sp-12); }
-  .ui-mt-4 { margin-top: var(--rz-sp-4); }
-  /* Bind a heading's spot-ink word to its full stop. The .rz-tilt mark is
-     display:inline-block, which opens a line-break opportunity before the
-     trailing period - on narrow screens the "." would orphan onto its own
-     line. nowrap glues the word + stop so they wrap together or not at all. */
-  .rz-bind { white-space: nowrap; }
-
-  /* Big display headlines (Archivo Black) carry very long words like
-     "organisations" / "codebase". On narrow viewports the clamp floor
-     (3.5rem) is wider than the content box, so allow them to break rather
-     than overflow the viewport. Purely a wrapping rule - no new colour/shadow. */
-  .rz-display, h1.rz-display, h2 { overflow-wrap: break-word; }
-  /* Hero headline runs very tight (lh 0.86); the "g" descender in
-     "organisations" was clipping into the yellow "use" highlight box below.
-     A touch more leading lets descenders clear the mark. */
-  .rz-hero .rz-display { line-height: 0.95; }
-
-  /* Trim the hero's large top padding so the eyebrow sits closer under the header. */
-  .rz-hero { padding-top: clamp(2rem, 4vw, 3rem); }
-
-  /* The yellow "use" highlight box: Archivo Black leaves a lot of ascent space
-     above the caps, so the block reads too tall on top (and crowds the g above).
-     Use a bottom-anchored gradient fill to set the box height precisely - trims
-     the top, keeps the bottom margin below the letters. */
-  .rz-hero .rz-mark {
-    background: linear-gradient(var(--rz-yellow), var(--rz-yellow)) no-repeat left bottom;
-    background-size: 100% 0.92em;
-    padding: 0 0.3em 0.04em;
-  }
-  @media (max-width: 520px) {
-    /* Tighten the display floor so the poster headline fits a small screen
-       without clipping, while staying as large as the column allows. */
-    .rz-hero .rz-display { font-size: clamp(2.5rem, 12vw, 3.5rem); }
-  }
-  .ui-mt-6 { margin-top: var(--rz-sp-6); }
-  .ui-mt-8 { margin-top: var(--rz-sp-8); }
-  @media (max-width: 768px) {
-    .ui-lead-split { grid-template-columns: 1fr; align-items: start; }
-  }
-
-  /* Hero stats sit on a hairline-topped row under the hero copy. */
-  .hero-stats {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: var(--rz-grid-gutter);
-    margin-top: var(--rz-sp-16);
-    padding-top: var(--rz-sp-8);
-    border-top: 1.5px solid var(--rz-rule-strong);
-    max-width: 46rem;
-  }
-  @media (max-width: 600px) {
-    .hero-stats { grid-template-columns: 1fr; gap: var(--rz-sp-8); }
-  }
-
-  /* Impact / case-study cards: a logo plate, a big riso metric, a description,
-     and chips. Built on .rz-card so it inherits the lift-and-tilt hover. */
-  .impact-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-12);
-  }
-  @media (max-width: 768px) { .impact-grid { grid-template-columns: 1fr; } }
-
-  .impact-card { display: flex; flex-direction: column; }
-  .impact-card--featured { grid-column: span 2; }
-  @media (max-width: 768px) { .impact-card--featured { grid-column: span 1; } }
-
-  .impact-logo {
-    height: 46px; max-width: 170px; width: auto; object-fit: contain;
-    object-position: left center; margin-bottom: var(--rz-sp-6);
-    /* logos are supplied light-on-transparent; keep them legible on purple */
-  }
-  .impact-metric {
-    font-family: var(--rz-display);
-    font-size: var(--rz-fs-h2); line-height: var(--rz-lh-h2);
-    letter-spacing: var(--rz-track-heading);
-    color: var(--rz-yellow);
-    margin: 0 0 var(--rz-sp-4);
-  }
-  .impact-card--featured .impact-metric { font-size: var(--rz-fs-h1); line-height: var(--rz-lh-h1); }
-  .impact-card .impact-desc { color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: var(--rz-lh-body); margin: 0 0 var(--rz-sp-6); max-width: 60ch; }
-  /* Impact cards as scannable bullets: yellow square for top level, pink dash
-     for the nested sub-points (Pearson). */
-  .impact-list { list-style: none; margin: 0 0 var(--rz-sp-6); padding: 0; display: grid; gap: var(--rz-sp-3); max-width: 60ch; }
-  .impact-list li { position: relative; padding-left: 1.1rem; color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: 1.45; }
-  .impact-list > li::before { content: ""; position: absolute; left: 0; top: 0.56em; width: 0.42rem; height: 0.42rem; background: var(--rz-yellow); }
-  .impact-list ul { list-style: none; margin: var(--rz-sp-3) 0 0; padding: 0; display: grid; gap: var(--rz-sp-2); }
-  .impact-list ul li { color: var(--rz-paper-70); font-size: 0.95em; }
-  .impact-list ul li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 0.5rem; height: 0; border-top: 1.5px solid var(--rz-pink); }
-  /* Quiet delivery-partner credit (NHS, Rimes via Hudson & Hayes). */
-  .impact-credit { font-family: var(--rz-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rz-paper-50); margin: 0 0 var(--rz-sp-6); }
-  .impact-chips { display: flex; gap: var(--rz-sp-3); flex-wrap: wrap; margin-top: auto; }
-
-  /* FCDO award line + the subtle, hover-revealed CYB credit. ------------- */
-  .fcdo-award { font-family: var(--rz-mono); font-size: 0.875rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rz-pink); margin: 0 0 var(--rz-sp-4); max-width: none; }
-  @media (max-width: 768px) { .fcdo-award { font-size: 0.8rem; } }
-
-  /* The credit is visually quiet by default (low-contrast, mono) and brightens
-     on hover/focus, with a tooltip that fully spells out the shared delivery. */
-  .cyb-credit {
-    position: relative; display: inline-block;
-    font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--rz-paper-50);
-    margin-top: var(--rz-sp-4);
-    border-bottom: 1px dotted var(--rz-rule-strong);
-    cursor: help; transition: color var(--rz-dur-base) var(--rz-ease);
-  }
-  .cyb-credit:hover, .cyb-credit:focus-visible { color: var(--rz-paper-85); outline: none; }
-  .cyb-credit__tip {
-    position: absolute; left: 0; bottom: calc(100% + 0.5rem);
-    width: max-content; max-width: 22rem;
-    background: var(--rz-purple-deep);
-    border: 1px solid var(--rz-rule-strong);
-    border-radius: var(--rz-radius);
-    padding: 0.6rem 0.8rem;
-    font-family: var(--rz-sans); font-size: 0.8125rem; letter-spacing: 0;
-    text-transform: none; line-height: 1.45; color: var(--rz-paper-85);
-    opacity: 0; visibility: hidden; transform: translateY(4px);
-    transition: opacity var(--rz-dur-base) var(--rz-ease), transform var(--rz-dur-base) var(--rz-ease), visibility var(--rz-dur-base);
-    z-index: 5;
-  }
-  .cyb-credit:hover .cyb-credit__tip,
-  .cyb-credit:focus-visible .cyb-credit__tip { opacity: 1; visibility: visible; transform: translateY(0); }
-  .cyb-credit a { color: var(--rz-yellow); }
-  /* Keep the revealed tooltip inside a small screen rather than poking past
-     the card's right edge. */
-  @media (max-width: 480px) {
-    .cyb-credit__tip { max-width: min(22rem, calc(100vw - 2 * var(--rz-container-pad))); }
-  }
-
-  /* Testimonials -------------------------------------------------------- */
-  /* One featured real quote (ZINC), then a row of real + pending slots. */
-  .quote-card--feature { max-width: 56rem; margin-top: var(--rz-sp-12); }
-  .quote-card--feature .rz-chip { margin-bottom: var(--rz-sp-6); }
-  /* Display blockquote now carries only a SHORT pull-quote, so it earns the
-     poster voice instead of running a whole paragraph through display type. */
-  .quote-card blockquote {
-    margin: 0;
-    font-family: var(--rz-display);
-    font-size: clamp(2rem, 4vw, var(--rz-fs-h3)); line-height: 0.98;
-    letter-spacing: var(--rz-track-tight);
-    color: var(--rz-ink);   /* deep purple ink on the paper plate */
-    max-width: 20ch;
-  }
-  /* Supporting-card quotes vary in length, so set them as readable body copy
-     (not display) to avoid slabs; the featured ZINC card keeps the display voice. */
-  .quote-card blockquote.quote-sm { font-family: var(--rz-sans); font-weight: 600; font-size: 1.05rem; line-height: 1.6; letter-spacing: 0; max-width: none; margin-bottom: 1.6em; }
-  /* The full quote reads as proper, comfortable body copy. */
-  .quote-card .quote-body { color: var(--rz-ink); margin: var(--rz-sp-6) 0 0; max-width: 58ch; font-family: var(--rz-sans); font-weight: 600; font-size: 1.05rem; line-height: 1.6; }
-  .quote-attrib { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rz-paper-70); margin-top: var(--rz-sp-6); line-height: 1.5; }
-  .quote-attrib strong { color: var(--rz-paper); }
-  .quote-attrib--ink { color: var(--rz-ink); opacity: 0.78; }
-  .quote-attrib--ink strong { color: var(--rz-ink); opacity: 1; }
-  /* Featured attribution as a ruled footer: logo left, person right. */
-  .quote-attrib--source { display: flex; align-items: center; justify-content: space-between; gap: var(--rz-sp-6); margin-top: var(--rz-sp-8); padding-top: var(--rz-sp-4); width: 100%; max-width: none; border-top: 1.5px solid color-mix(in srgb, var(--rz-ink) 16%, transparent); }
-  .quote-attrib__text { text-align: right; }
-  /* ZINC RE letterform logo (inline SVG, recoloured via currentColor). */
-  .zinc-logo { display: inline-block; line-height: 0; flex: 0 0 auto; }
-  .zinc-logo svg { display: block; width: 100%; height: auto; }
-  .zinc-logo--wall { color: var(--rz-paper); width: 116px; margin-bottom: var(--rz-sp-4); }
-  .zinc-logo--quote { color: var(--rz-ink); width: 118px; }
-  @media (max-width: 560px) {
-    .quote-attrib--source { align-items: flex-start; flex-direction: column; }
-    .quote-attrib__text { text-align: left; }
-    .zinc-logo--quote { width: 104px; }
-  }
-  .quote-row { display: grid; grid-template-columns: repeat(2, 1fr); max-width: 56rem; gap: var(--rz-grid-gutter); margin-top: var(--rz-grid-gutter); align-items: stretch; }
-  @media (max-width: 900px) { .quote-row { grid-template-columns: 1fr; } }
-  /* Pearson card spans the full row directly under the GOSH feature (placed
-     second overall), so the five quotes read as 1-wide + 2 + 2. */
-  .quote-row .quote-card--wide { grid-column: 1 / -1; }
-  .quote-card--wide .quote-foot { min-height: 0; }
-  /* Pending testimonials shown as honest, visibly-empty slots - not faked. */
-  .quote-card--placeholder { display: flex; flex-direction: column; border: 1.5px dashed var(--rz-rule-strong); border-radius: var(--rz-radius); padding: var(--rz-sp-8); }
-  .quote-ph-label { font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--rz-paper-50); }
-  .quote-ph-note { color: var(--rz-paper-50); margin: var(--rz-sp-4) 0 auto; }
-  .quote-more { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rz-paper-50); margin-top: var(--rz-sp-8); }
-  /* Small testimonial cards: a ruled footer with the client's logo above the
-     attribution, echoing the featured ZINC card's logo treatment. */
-  .quote-row .quote-card { display: flex; flex-direction: column; }
-  /* Fixed-height footer so the rule sits at the same level on every card:
-     logo pinned just under the rule, attribution pinned to the card base. */
-  .quote-foot { margin-top: auto; padding-top: var(--rz-sp-4); border-top: 1.5px solid color-mix(in srgb, var(--rz-ink) 16%, transparent); display: flex; flex-direction: column; min-height: 8.5rem; }
-  .quote-foot .card-logo { margin-bottom: auto; }
-  .quote-foot .quote-attrib { margin-top: var(--rz-sp-3); }
-  .card-logo { display: block; color: var(--rz-ink); }
-  .card-logo img { height: 32px; width: auto; display: block; }
-  .card-logo svg { height: 30px; width: auto; display: block; }
-  .card-logo--psc { font-family: var(--rz-display); font-size: 1.25rem; letter-spacing: -0.01em; line-height: 1; color: var(--rz-ink); }
-  /* Featured card logo (GOSH) sits in the source row - give it more presence. */
-  .card-logo--feature { flex: 0 0 auto; }
-  .card-logo--feature img { height: 50px; }
-  /* ZINC letterform is wide; trim it in the small footer for balance. */
-  .card-logo--zinc svg { height: 24px; }
-  @media (max-width: 560px) { .card-logo--feature img { height: 42px; } }
-
-  /* Clients logo wall --------------------------------------------------- */
-  .clients-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-12); }
-  @media (max-width: 900px) { .clients-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .clients-grid { grid-template-columns: 1fr; } }
-  .client-tile {
-    background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong);
-    border-radius: var(--rz-radius); padding: var(--rz-sp-8);
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-    transition: transform var(--rz-dur-base) var(--rz-ease);
-  }
-  .client-tile:hover { transform: translateY(-3px); }
-  .client-tile img { height: 44px; max-width: 150px; width: auto; object-fit: contain; margin-bottom: var(--rz-sp-4); }
-  .client-name { font-family: var(--rz-sans); font-weight: 700; font-size: 1rem; color: var(--rz-paper); }
-  .client-sector { font-family: var(--rz-mono); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rz-paper-50); margin-top: var(--rz-sp-2); }
-
-  /* Awards -------------------------------------------------------------- */
-  .awards-list { list-style: none; padding: 0; margin: var(--rz-sp-12) 0 0; display: grid; gap: var(--rz-sp-4); max-width: 56rem; }
-  .award-row {
-    display: grid; grid-template-columns: auto 1fr; gap: var(--rz-sp-6); align-items: baseline;
-    padding: var(--rz-sp-6) 0; border-top: 1.5px solid var(--rz-rule);
-  }
-  .award-row:first-child { border-top: none; }
-  .award-row .award-year { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; color: var(--rz-pink); white-space: nowrap; }
-  .award-row h3 { font-family: var(--rz-display); font-size: var(--rz-fs-h4); line-height: 1.1; letter-spacing: var(--rz-track-tight); margin: 0; }
-  .award-row p { margin: var(--rz-sp-2) 0 0; color: var(--rz-paper-70); font-size: var(--rz-fs-sm); }
-
-  /* Team ---------------------------------------------------------------- */
-  /* Type-forward, no photos (on-brand for the riso system): each person is a
-     spot-ink monogram tile + name + mono role line + a short bio. Founder gets
-     a wide feature card; associates sit in a three-up grid of deep-purple cards
-     matching the Services / Clients tiles. */
-  .team-monogram {
-    font-family: var(--rz-display); letter-spacing: var(--rz-track-tight);
-    color: var(--rz-ink); border-radius: var(--rz-radius); flex: 0 0 auto;
-    display: inline-flex; align-items: center; justify-content: center;
-  }
-  .team-monogram--yel { background: var(--rz-yellow); }
-  .team-monogram--pink { background: var(--rz-pink); }
-
-  .team-founder {
-    display: grid; grid-template-columns: auto 1fr; gap: var(--rz-grid-gutter);
-    align-items: center; margin-top: var(--rz-sp-12);
-    background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong);
-    border-radius: var(--rz-radius); padding: clamp(1.6rem, 3vw, 2.6rem);
-  }
-  .team-founder .team-monogram { width: 7rem; height: 7rem; font-size: 2rem; }
-  /* Founder portrait: kept black-and-white, framed with a hairline and a hard
-     riso offset block (no soft shadow). Aspect locked to the source so the face
-     is never cropped. */
-  .team-photo {
-    display: block; width: clamp(150px, 22vw, 240px);
-    aspect-ratio: 420 / 661; object-fit: cover; object-position: center top;
-    border-radius: var(--rz-radius); border: 1.5px solid var(--rz-rule-strong);
-    box-shadow: var(--rz-offset-sm-pink);
-    filter: grayscale(1) contrast(1.03);
-  }
-  @media (max-width: 640px) {
-    .team-founder { grid-template-columns: 1fr; align-items: start; }
-    .team-founder .team-monogram { width: 4.5rem; height: 4.5rem; font-size: 1.5rem; }
-    .team-photo { width: clamp(140px, 40vw, 180px); }
-  }
-
-  .team-name { font-family: var(--rz-display); line-height: 1.05; letter-spacing: var(--rz-track-tight); margin: 0; overflow-wrap: break-word; }
-  .team-founder .team-name { font-size: var(--rz-fs-h3); }
-  .team-role { font-family: var(--rz-mono); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rz-pink); margin: var(--rz-sp-3) 0 var(--rz-sp-5); }
-  .team-bio { color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: var(--rz-lh-body); margin: 0; max-width: 64ch; }
-  .team-bio + .team-bio { margin-top: var(--rz-sp-4); }
-
-  .team-assoc-label { display: block; margin: var(--rz-sp-16) 0 0; }
-  .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); margin-top: var(--rz-sp-8); }
-  @media (max-width: 860px) { .team-grid { grid-template-columns: 1fr; } }
-  .team-card { background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong); border-radius: var(--rz-radius); padding: clamp(1.4rem, 2.2vw, 2rem); display: flex; flex-direction: column; }
-  .team-card .team-monogram { width: 3.5rem; height: 3.5rem; font-size: 1.2rem; margin-bottom: var(--rz-sp-5); }
-  /* Associate headshots: kept B&W, hairline-framed, top-anchored so faces sit
-     high in the frame. 2:3 matches the generated portraits (Ross reads as the
-     three-quarter-length shot; Jon and Gus as head-and-shoulders). */
-  .team-card-photo {
-    display: block; width: 100%; aspect-ratio: 2 / 3;
-    object-fit: cover; object-position: center top;
-    border-radius: var(--rz-radius); border: 1.5px solid var(--rz-rule-strong);
-    filter: grayscale(1) contrast(1.03);
-    margin-bottom: var(--rz-sp-5);
-  }
-  .team-card .team-name { font-size: var(--rz-fs-h4); }
-  .team-card .team-bio { margin-top: var(--rz-sp-4); }
-  /* The office cats: their own two-up row so the human associates stay a clean
-     three. Narrower than the associate grid so the two cards match card width. */
-  .team-cats { grid-template-columns: repeat(2, 1fr); max-width: 46rem; }
-  @media (max-width: 860px) { .team-cats { grid-template-columns: 1fr; max-width: none; } }
-
-  /* Brand lockup in the header: fennec-fox emblem + PAIDIA wordmark. */
-  .rz-header__brand--logo { display: inline-flex; align-items: center; gap: var(--rz-sp-4); padding: var(--rz-sp-2) 0; }
-  .rz-header__brand--logo img { height: 90px; width: auto; display: block; }
-  .rz-header__brand--wordmark { font-family: var(--rz-display); font-size: 2.1rem; letter-spacing: var(--rz-track-tight); color: var(--rz-paper); line-height: 1; }
-  @media (max-width: 600px) {
-    .rz-header__brand--logo img { height: 56px; }
-    .rz-header__brand--wordmark { font-size: 1.5rem; }
-  }
-
-  /* The nav "Get in touch" is a yellow .rz-btn inside .rz-nav; the nav-link
-     colour (paper) was overriding the button's ink text, making it white on
-     yellow and unreadable. Restore deep-purple ink on the button. */
-  .rz-nav a.rz-btn,
-  .rz-nav a.rz-btn:hover { color: var(--rz-ink); }
-
-  /* Inline body links (e.g. named clients in the What We Do intro). Paper text,
-     pink underline, brightens to yellow on hover. */
-  .rz-link { color: var(--rz-paper); text-decoration: underline; text-decoration-color: var(--rz-pink); text-underline-offset: 3px; text-decoration-thickness: 2px; transition: color var(--rz-dur-fast) var(--rz-ease), text-decoration-color var(--rz-dur-fast) var(--rz-ease); }
-  .rz-link:hover { color: var(--rz-yellow); text-decoration-color: var(--rz-yellow); }
-
-  /* "What we do" lead-in sitting between the intro and the six service cards.
-     Lighter than a heading; closer to the boxes it introduces than to the prose. */
-  .services-label { display: block; margin: 0 0 var(--rz-sp-8); }
-  /* Service cards: two scannable bullets instead of a prose blurb. */
-  .svc-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--rz-sp-3); }
-  .svc-list li { position: relative; padding-left: 1.1rem; color: var(--rz-paper-85); font-size: var(--rz-fs-body); line-height: 1.45; }
-  .svc-list li::before { content: ""; position: absolute; left: 0; top: 0.58em; width: 0.42rem; height: 0.42rem; background: var(--rz-yellow); }
-  /* Bullets contrast with the card's number chip: yellow-number cards get
-     pink bullets; pink-number cards keep the default yellow. */
-  .svc-list--pink li::before { background: var(--rz-pink); }
-
-  /* "What we do" vertical-reveal grid: cards collapse to title + chip; on
-     hover/focus/tap the drawer opens downward, the + rotates to a yellow x,
-     and the border lightens. Row siblings stay collapsed (align-items:start)
-     so the opened card pushes the row below it down. */
-  .vg { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rz-grid-gutter); align-items: start; margin-top: var(--rz-sp-8); }
-  @media (max-width: 860px) { .vg { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .vg { grid-template-columns: 1fr; } }
-  .vcard { background: var(--rz-purple-deep); border: 1px solid var(--rz-rule-strong); border-radius: var(--rz-radius); padding: clamp(1.4rem, 2.2vw, 2rem); cursor: pointer; transition: border-color var(--reveal) var(--rz-ease); }
-  .vcard:hover, .vcard:focus-within, .vcard.is-open { border-color: var(--rz-paper-50); }
-  .vcard:focus-visible { outline: 3px solid var(--rz-yellow); outline-offset: 3px; }
-  .vcard__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
-  .vcard__more { font-family: var(--rz-mono); font-size: 1.5rem; line-height: 1; color: var(--rz-paper-50); transition: transform var(--reveal) var(--rz-ease), color var(--rz-dur-base) var(--rz-ease); }
-  .vcard:hover .vcard__more, .vcard:focus-within .vcard__more, .vcard.is-open .vcard__more { transform: rotate(45deg); color: var(--rz-yellow); }
-  /* Cross matches the card's number chip: pink-chip cards get a pink cross. */
-  .vcard:has(.rz-chip--pink):hover .vcard__more, .vcard:has(.rz-chip--pink):focus-within .vcard__more, .vcard:has(.rz-chip--pink).is-open .vcard__more { color: var(--rz-pink); }
-  .vcard__title { font-family: var(--rz-display); font-size: clamp(1.35rem, 1.9vw, 1.65rem); line-height: 1.05; letter-spacing: var(--rz-track-tight); margin: 0; }
-  .vcard__reveal { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--reveal) var(--rz-ease); }
-  .vcard:hover .vcard__reveal, .vcard:focus-within .vcard__reveal, .vcard.is-open .vcard__reveal { grid-template-rows: 1fr; }
-  .vcard__inner { overflow: hidden; } /* required for the 0fr->1fr trick */
-  .vcard__inner .svc-list { margin-top: 1.1rem; padding-top: 1.1rem; border-top: 1.5px solid var(--rz-rule); opacity: 0; transition: opacity calc(var(--reveal) * .8) var(--rz-ease); }
-  .vcard:hover .vcard__inner .svc-list, .vcard:focus-within .vcard__inner .svc-list, .vcard.is-open .vcard__inner .svc-list { opacity: 1; }
-  @media (prefers-reduced-motion: reduce) { .vcard, .vcard__reveal, .vcard__more, .vcard__inner .svc-list { transition: none; } }
-
-  /* Mobile nav: a simple disclosure. Nav links collapse behind a button. - */
-  .rz-nav__toggle { display: none; background: none; border: 0; cursor: pointer; padding: 0.5rem; }
-  .rz-nav__toggle span { display: block; width: 24px; height: 2px; background: var(--rz-paper); margin: 5px 0; transition: all var(--rz-dur-base) var(--rz-ease); }
-  @media (max-width: 768px) {
-    .rz-nav__toggle { display: block; }
-    .rz-nav {
-      display: none; position: absolute; top: 100%; left: 0; right: 0;
-      flex-direction: column; align-items: flex-start; gap: var(--rz-sp-6);
-      background: var(--rz-purple-deep); border-bottom: 1px solid var(--rz-rule);
-      padding: var(--rz-sp-8) var(--rz-container-pad);
-    }
-    .rz-nav.is-open { display: flex; }
-    .rz-header__inner { position: relative; }
-  }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>B4</title>
+<meta name="description" content="You are using AI like everyone else? Good, here's what's next. We show you what&rsquo;s possible, and get you there: the newest ways to work with AI, whatever your department, beyond generic prompting.">
+<meta name="theme-color" content="#fdf5f0">
+<link rel="icon" href="assets/brand/fox-logo-2.webp">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="assets/icons/favicon-48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-96.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/manrope-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 400; font-display: swap; src: url(assets/fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/manrope-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 500; font-display: swap; src: url(assets/fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/manrope-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 600; font-display: swap; src: url(assets/fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/manrope-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 700; font-display: swap; src: url(assets/fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 800; font-display: swap; src: url(assets/fonts/manrope-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}@font-face{font-family: 'Manrope'; font-style: normal; font-weight: 800; font-display: swap; src: url(assets/fonts/manrope-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}</style>
+<link rel="preload" href="assets/brand/fox-logo-3-222.webp" as="image">
+<link rel="preload" as="image" href="assets/hero/highlands-still.webp" imagesrcset="assets/hero/highlands-still-800.webp 800w, assets/hero/highlands-still-960.webp 960w, assets/hero/highlands-still-1280.webp 1280w, assets/hero/highlands-still.webp 1672w" imagesizes="100vw" fetchpriority="high">
+<style>:root{--ink:#263b30;--ink-2:#1d2e25;--paper:#fcfbf8;--sage:#eef0e9;--line:#d3d9cf;--rule:#263b30;--muted:#5b6a61;--lime:#c8dc7a;--lime-2:#b6cc63;--white:#ffffff;--f-display:"Playfair Display",Georgia,"Times New Roman",serif;--f-text:"Source Sans 3","Source Sans Pro","Helvetica Neue",Arial,system-ui,sans-serif;--wrap:1280px;--r:12px;--r-input:10px;--r-panel:22px;--r-photo:20px;--line-on-sage:#c9d0c4;--sec-y:clamp(64px,6.5vw,96px);--sec-y-tight:clamp(40px,4vw,56px);--mark:url("assets/brand/paidia-mark-legacy.png");color-scheme:light}*{box-sizing:border-box}.btn,.menu-btn,.nav.open,.person img,input,select,textarea{corner-shape:squircle}html{scroll-behavior:smooth;scroll-padding-top:90px}@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-text);font-size:1.1875rem;line-height:1.55;-webkit-font-smoothing:antialiased}img{max-width:100%;display:block;height:auto}a{color:inherit;text-decoration:underline;text-underline-offset:.18em;text-decoration-thickness:1px}a:hover{text-decoration-thickness:2px}p{margin:0}h1,h2,h3{margin:0;font-weight:400;text-wrap:balance}ol,ul{margin:0}.wrap{max-width:var(--wrap);margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:100;background:var(--ink);color:var(--paper);padding:8px 14px}.on-dark :focus-visible{outline-color:var(--lime)}.display{font-family:var(--f-display);font-weight:400;line-height:1.08;letter-spacing:0}.h-l{font-size:clamp(2rem,3.8vw,3rem)}.label{font-size:.875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}.muted{color:var(--muted)}.small{font-size:1rem}.read{max-width:70ch}.btn{display:inline-flex;align-items:center;text-decoration:none;font-size:1rem;font-weight:600;padding:13px 22px;border-radius:var(--r);border:1px solid var(--ink-2);cursor:pointer;font-family:inherit;line-height:1.2;color:var(--paper);background:linear-gradient(#30493c,var(--ink));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 0 rgba(0,0,0,.22),0 1px 2px rgba(16,22,56,.25),0 8px 24px -8px rgba(16,22,56,.45);transition:box-shadow .15s ease,transform .15s ease,background .15s ease}.btn:hover{background:linear-gradient(#365342,var(--ink-2));text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.22),0 2px 4px rgba(16,22,56,.25),0 12px 28px -8px rgba(16,22,56,.5)}.btn:active{transform:translateY(1px);box-shadow:inset 0 2px 4px rgba(0,0,0,.3),0 0 0 transparent}.btn-lime{background:linear-gradient(#d4e494,var(--lime));color:var(--ink);border-color:#a9bf58;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(0,0,0,.08),0 1px 2px rgba(16,22,56,.18),0 8px 24px -8px rgba(200,220,122,.6)}.btn-lime:hover{background:linear-gradient(#cfe08a,var(--lime-2))}.btn-lime:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.18)}.btn-ghost{background:0 0;color:inherit;border-color:currentColor;box-shadow:none}.btn-ghost:hover{background:rgba(16,22,56,.06);box-shadow:none}@media (prefers-reduced-motion:reduce){.btn{transition:none}}.on-dark .btn-ghost:hover{background:rgba(255,255,255,.1)}.tlink{font-weight:600}.row{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center}.site-header{position:sticky;top:0;padding-top:env(safe-area-inset-top,0);z-index:50;background:var(--paper);border-bottom:1px solid var(--line);transition:transform .3s ease,visibility .3s}.site-header.is-hidden{transform:translateY(-100%);visibility:hidden}@media (prefers-reduced-motion:reduce){.site-header{transition:none}}.site-header .bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px;position:relative}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}.brand-mark{width:34px;height:36px;background:var(--ink);-webkit-mask:var(--mark) center/contain no-repeat;mask:var(--mark) center/contain no-repeat;flex:0 0 auto}.brand-name{font-family:var(--f-display);font-size:1.75rem;line-height:.9;display:flex;flex-direction:column}.brand-name small{font-family:var(--f-text);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;margin-top:4px;font-weight:600}.nav{display:flex;align-items:center;gap:26px}.nav a{text-decoration:none;font-size:1rem;padding:6px 0;border-bottom:1px solid transparent}.nav a:hover{border-bottom-color:var(--ink)}.nav a[aria-current=page]{border-bottom-color:var(--ink)}.nav .btn{padding:9px 16px;font-size:.9375rem}.menu-btn{display:none;font:inherit;font-size:1rem;font-weight:600;background:0 0;color:var(--ink);border:1px solid var(--ink);border-radius:var(--r);padding:8px 14px;cursor:pointer}@media (max-width:900px){.menu-btn{display:inline-flex}.nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;background:var(--paper);border-bottom:1px solid var(--line);padding:8px max(20px,env(safe-area-inset-left,0px)) 16px;display:none}.nav.open{display:flex}.nav a{padding:12px 0;border-bottom:1px solid var(--line)}.nav a[aria-current=page]{font-weight:600}.nav .btn{margin-top:12px;justify-content:center}}.hero{padding:64px 40px 56px max(20px,env(safe-area-inset-left,0px));display:grid;gap:26px;align-content:center;justify-self:end;width:100%;max-width:calc(var(--wrap)/ 2)}.hero h1{font-family:var(--f-display);font-size:clamp(2.75rem,5vw,4.5rem);line-height:1.04;max-width:12ch}@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}@keyframes settle{from{opacity:0;transform:scale(1.045)}to{opacity:1;transform:none}}.hero>*{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}.hero>h1{animation-delay:.05s}.hero>.row{animation-delay:.38s}@media (prefers-reduced-motion:reduce){.hero>*{animation:none}}@media (max-width:900px){.hero{max-width:none;justify-self:stretch;padding:56px max(20px,env(safe-area-inset-right,0px)) 40px max(20px,env(safe-area-inset-left,0px))}}.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px 72px;align-items:start}.split>.sec-head{margin-bottom:0;position:sticky;top:96px}.split>.sec-head p{max-width:46ch}@media (max-width:900px){.split{grid-template-columns:1fr;gap:24px}.split>.sec-head{position:static;margin-bottom:8px}}.section{padding-block:var(--sec-y)}.section.sage{background:var(--sage)}.section.sage .faq details,.section.sage .offers li,.section.sage .split .path,.section.sage .steps li{border-color:var(--line-on-sage)}.section.sage .offers,.section.sage .quote,.section.sage .split .path:first-child,.section.sage .steps,.section.sage .team{border-top-color:var(--rule)}@media (max-width:700px){:root{--sec-y:48px;--sec-y-tight:32px}}.section.ink{background:var(--ink);color:var(--paper)}.section.ink .muted{color:rgba(255,255,255,.78)}.section.ink .label{color:var(--lime)}.sec-head{display:grid;grid-template-columns:56px minmax(0,1fr);gap:4px 16px;margin-bottom:36px;align-items:baseline}.sec-head h2{grid-column:2}.sec-head p{grid-column:2;color:var(--muted);max-width:70ch;margin-top:10px;font-size:1.25rem;line-height:1.5}.sec-head.plain{grid-template-columns:minmax(0,1fr)}.sec-head.plain h2,.sec-head.plain p{grid-column:1}@media (max-width:700px){.sec-head{grid-template-columns:minmax(0,1fr);gap:6px;margin-bottom:24px}.sec-head h2,.sec-head p{grid-column:1}}.logos{padding-block:28px 8px}.logos .trow{display:flex;gap:0;align-items:center;width:max-content;animation:marquee 36s linear infinite;will-change:transform;backface-visibility:hidden}.logos .trow>*{margin-right:64px}.logos .track{overflow:hidden;width:100%;min-height:44px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}.logos .track:focus-within .trow,.logos .track:hover .trow{animation-play-state:paused}.logos .trow img,.logos .trow span.dup,.logos .trow svg{height:34px;width:auto;object-fit:contain;filter:grayscale(1);opacity:.75;flex:0 0 auto}.logos .trow span.dup{display:flex;align-items:center}.logos-cap{color:var(--muted);font-size:1rem;margin-bottom:18px}.logos .trow .tmark{height:auto;filter:none;opacity:.75;color:#3a3a3a;flex:0 0 auto;white-space:nowrap;line-height:1}.tmark-psc{font-family:var(--f-display);font-size:1.75rem;letter-spacing:-.01em}.logos .trow .tmark-wg{display:flex;flex-direction:column;gap:3px;font-family:var(--f-text);font-weight:600;font-size:.8125rem;letter-spacing:.01em}@media (max-width:700px){.tmark-psc{font-size:1.375rem}.logos .trow .tmark-wg{font-size:.6875rem}.logos-cap{margin-bottom:14px}}@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}@media (prefers-reduced-motion:reduce){.logos .trow{animation:none;flex-wrap:wrap;width:auto;gap:28px 48px;will-change:auto}.logos .trow>*{margin-right:0}.logos .trow .dup,.logos .trow span.dup{display:none}}.logos .trow img[src*=gosh],.logos .trow img[src*=homes-england],.logos .trow img[src*=keele]{height:44px}.logos .trow img[src*=pearson]{height:24px}.logos .trow img[src*=merton]{height:28px}.logos .trow img[src*=nhs]{height:26px}.logos .trow svg{height:22px}@media (max-width:700px){.logos .track{-webkit-mask-image:none;mask-image:none}.logos .trow{animation:none;flex-wrap:wrap;width:auto;gap:22px 32px;justify-content:center;will-change:auto}.logos .trow>*{margin-right:0}.logos .trow .dup,.logos .trow span.dup{display:none}.logos .trow img,.logos .trow svg{height:26px}.logos .trow img[src*=gosh],.logos .trow img[src*=homes-england],.logos .trow img[src*=keele]{height:34px}.logos .trow img[src*=nhs]{height:20px}.logos .trow svg{height:18px}}mark{background:0 0;color:inherit;background-image:linear-gradient(transparent 62%,var(--lime) 62%,var(--lime) 92%,transparent 92%);padding:0 .06em;margin:0 -.06em;box-decoration-break:clone;-webkit-box-decoration-break:clone}.split .path{grid-template-columns:220px minmax(0,1fr);gap:4px 24px;padding:18px 0;border-top:1px solid var(--line)}.split .path:first-child{border-top-color:var(--rule)}@media (max-width:700px){.split .path{grid-template-columns:1fr}}.path{border-top:1px solid var(--rule);padding-top:14px;display:grid;gap:6px;align-content:start}.path b{font-weight:600;font-size:1.25rem}.path span{color:var(--muted)}.offers{list-style:none;padding:0;margin:0;border-top:1px solid var(--rule)}.offers li{display:grid;grid-template-columns:200px minmax(0,1fr) 220px;gap:6px 28px;padding:24px 0;border-bottom:1px solid var(--line)}.offers .t{font-weight:600;font-size:1.25rem}.offers .d{color:var(--muted);margin-top:2px}.offers .p{text-align:right;font-variant-numeric:tabular-nums}.offers .p a{font-weight:600}@media (max-width:820px){.offers li{grid-template-columns:1fr}.offers .p{text-align:left}}.split .offers li{grid-template-columns:220px minmax(0,1fr)}.split .offers .p{grid-column:2;text-align:left;margin-top:4px}@media (max-width:700px){.split .offers li{grid-template-columns:1fr}.split .offers .p{grid-column:1}}.quotes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}.split .quotes{grid-template-columns:1fr}.quotes.one{grid-template-columns:minmax(0,1fr);max-width:68ch}.quote{margin:0;border-top:1px solid var(--rule);padding:22px 0 10px;display:grid;gap:14px;align-content:start}.quote blockquote{margin:0;font-size:1.3125rem;line-height:1.5}.quote blockquote mark{background-image:linear-gradient(transparent 60%,var(--lime) 60%,var(--lime) 92%,transparent 92%)}.quote figcaption{font-size:1.0625rem;color:var(--muted)}.split .quotes.one{max-width:none}.quote.lead{padding-top:26px}.quote.lead blockquote{font-family:var(--f-display);font-size:clamp(1.5rem,2.2vw,1.875rem);line-height:1.35}.quote.lead blockquote mark{background-image:linear-gradient(transparent 66%,var(--lime) 66%,var(--lime) 94%,transparent 94%)}.lines{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}.lines li{border-bottom:1px solid var(--line-on-sage)}.lines a{display:grid;gap:2px;padding:16px 0;text-decoration:none}.lines .l{font-family:var(--f-display);font-size:1.3125rem;line-height:1.3}.lines .w{color:var(--muted);font-size:1rem}.lines a:hover .l{background-image:linear-gradient(transparent 62%,var(--lime) 62%,var(--lime) 92%,transparent 92%)}.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}.js .reveal.in{opacity:1;transform:none}@media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}}.quote figcaption b{color:var(--ink);font-weight:600;display:block}@media (max-width:820px){.quotes{grid-template-columns:1fr}}.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}input,select,textarea{font:inherit;font-size:1rem;padding:11px 14px;border:1px solid var(--ink);border-radius:var(--r-input);background:var(--white);color:var(--ink);min-width:0;box-shadow:inset 0 1px 2px rgba(16,22,56,.08)}input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:0;border-color:transparent}input[type=checkbox],input[type=radio]{width:22px;height:22px;accent-color:var(--ink);margin:0;flex:0 0 auto;padding:0}.cta-band{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:36px;align-items:center}.cta-band .mark{width:140px;height:148px;background:var(--paper);-webkit-mask:var(--mark) center/contain no-repeat;mask:var(--mark) center/contain no-repeat;justify-self:end;opacity:.9}.cta-band p.muted{margin-top:12px;max-width:62ch}.cta-band .actions{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;margin-top:20px}@media (max-width:760px){.cta-band{grid-template-columns:1fr}.cta-band .mark{justify-self:start;width:90px;height:96px}}.case{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:10px 72px;padding:28px 0;border-bottom:1px solid var(--line)}.case .client{font-size:.875rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted)}.case .figure{font-family:var(--f-display);font-size:clamp(2.2rem,4vw,3.25rem);line-height:1;margin:6px 0 8px}.case h3{font-size:1.375rem;font-weight:600;line-height:1.3}.case .body{display:grid;gap:10px;align-content:start}.case .body p{max-width:64ch}.case.first h3{font-family:var(--f-display);font-weight:400;font-size:clamp(1.75rem,2.6vw,2.125rem);line-height:1.2}@media (max-width:700px){.case .figure{font-size:1.875rem}}@media (max-width:820px){.case{grid-template-columns:1fr}}.pull{margin:48px 0 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--line);padding:28px 0;display:grid;grid-template-columns:360px minmax(0,1fr);gap:12px 56px;align-items:start}.pull blockquote{margin:0;font-family:var(--f-display);font-size:clamp(1.75rem,2.6vw,2.125rem);line-height:1.25;max-width:30ch;grid-column:2;grid-row:1}.pull figcaption{color:var(--muted);font-size:1rem;grid-column:1;grid-row:1;padding-top:8px}@media (max-width:860px){.pull{grid-template-columns:1fr}.pull blockquote{grid-column:1}.pull figcaption{grid-row:2;padding-top:0}}.team{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;border-top:1px solid var(--rule);padding-top:24px}.person{display:grid;gap:8px;align-content:start}.person img{aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;width:100%;max-width:300px;filter:grayscale(1);border-radius:var(--r-photo)}.person b{font-weight:600;font-size:1.25rem}.person .r{font-size:1rem;color:var(--muted)}.person p{color:var(--muted)}@media (max-width:860px){.team{grid-template-columns:1fr 1fr}}@media (max-width:520px){.team{grid-template-columns:1fr}}.ws-hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:48px;align-items:start;padding-block:84px 48px}.ws-hero h1{font-family:var(--f-display);font-size:clamp(2.6rem,5.6vw,4.5rem);line-height:1.04}@media (max-width:860px){.ws-hero{grid-template-columns:1fr;gap:28px}}.example{border-top:1px solid var(--rule);padding-top:18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}.example ol{padding-left:1.3em;display:grid;gap:8px}.example .cap{color:var(--muted)}@media (max-width:760px){.example{grid-template-columns:1fr}}.steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}.steps li{display:grid;grid-template-columns:140px minmax(0,300px) minmax(0,1fr);gap:20px;padding:18px 0;border-bottom:1px solid var(--line)}.steps .t{font-size:1rem;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:3px}.steps b{font-weight:600;font-size:1.25rem;line-height:1.3}.steps p{color:var(--muted)}.steps li.light b{color:var(--muted);font-weight:400}@media (max-width:760px){.steps li{grid-template-columns:1fr;gap:4px}}.faq{border-top:1px solid var(--rule)}.faq details{border-bottom:1px solid var(--line)}.faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 28px;gap:12px;padding:18px 0;font-weight:600;font-size:1.25rem}.faq summary::-webkit-details-marker{display:none}.faq details[open] .pm{transform:rotate(45deg)}.faq details p{color:var(--muted);max-width:66ch;padding-bottom:16px}label{display:grid;gap:6px;font-weight:600;font-size:1.0625rem}label.check{display:flex;gap:12px;align-items:center;font-weight:400;min-height:44px}textarea{min-height:140px;resize:vertical;field-sizing:content}.facts{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:12px 40px;border-top:1px solid var(--rule);padding-top:16px}.facts li{display:grid;gap:2px}.facts b{font-family:var(--f-display);font-weight:400;font-size:2rem;line-height:1}.facts span{color:var(--muted);font-size:1rem}.who{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;align-items:start}.who img{width:120px;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;filter:grayscale(1);border-radius:var(--r-photo);corner-shape:squircle}.who p{max-width:60ch}@media (max-width:520px){.who{grid-template-columns:88px minmax(0,1fr);gap:14px}.who img{width:88px}}.price{margin:0;border-top:1px solid var(--rule)}.price>div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 18px;padding:12px 0;border-bottom:1px solid var(--line-on-sage)}.price dt{color:var(--muted);font-size:1rem;padding-top:2px}.price dd{margin:0}.price b{font-weight:600}@media (max-width:520px){.price>div{grid-template-columns:1fr;gap:2px}}.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;padding-block:84px 80px}.contact form{display:grid;gap:14px;border-top:1px solid var(--rule);padding-top:20px}.radio{display:flex;gap:12px;align-items:center;font-weight:400;min-height:44px}@media (max-width:860px){.contact{grid-template-columns:1fr;gap:32px}}.site-footer{border-top:1px solid var(--rule);padding:40px 0 32px}.foot-bottom{display:grid;gap:6px;padding-top:18px;font-size:1rem;color:var(--muted)}.foot-bottom a{color:var(--muted)}.sec-head:not(.plain){grid-template-columns:auto minmax(0,1fr);gap:4px 22px;align-items:start}.sec-head:not(.plain) h2,.sec-head:not(.plain) p{grid-column:2}@media (max-width:700px){.sec-head:not(.plain){grid-template-columns:auto minmax(0,1fr);gap:6px 14px}.sec-head:not(.plain) h2{grid-column:2;align-self:end}.sec-head:not(.plain) p{grid-column:1/-1}}.contact form .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.contact form textarea{min-height:110px}@media (max-width:520px){.contact form .two{grid-template-columns:1fr}}.hand{position:absolute;left:calc(50% + 178px);top:-6px;font-family:Caveat,cursive;font-size:clamp(1.5rem,2.4vw,1.9rem);line-height:1;color:var(--lime);transform:rotate(-6deg);text-align:left}.hand svg{display:block;margin:6px 0 0 -10px;color:var(--lime)}@media (max-width:700px){.hand{right:auto;left:50%;top:0;transform:translateX(-10%) rotate(-5deg)}.hand svg{display:none}}.story{align-items:start}@media (max-width:520px){.who{grid-template-columns:1fr}.who img{width:120px}}.learn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 40px}.learn>div{border-top:1px solid var(--rule);padding-top:14px}.learn b{font-weight:600;font-size:1.25rem;display:block;margin-bottom:8px}.learn ul{padding-left:1.1em;display:grid;gap:6px;margin:0}@media (max-width:760px){.learn{grid-template-columns:1fr;gap:22px}}.cards{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.cards li{display:grid;gap:8px;align-content:start;padding:24px;border:1px solid var(--line);border-radius:var(--r-panel);corner-shape:squircle;background:var(--paper)}.cards b{font-weight:600;font-size:1.25rem;line-height:1.25}.cards p{color:var(--muted);margin:0;font-size:1.0625rem}.cards .p{margin-top:auto;padding-top:10px;font-weight:600;font-variant-numeric:tabular-nums}.cards a{font-weight:600;width:fit-content}.cards li{transition:border-color .18s ease}.cards li:hover{border-color:var(--rule)}@media (max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:600px){.cards{grid-template-columns:1fr}}.nav .new{position:absolute;right:calc(100% - 14px);top:-13px;font-family:Caveat,cursive;font-weight:600;font-size:1.15rem;line-height:1;color:#5f7a2e;transform:rotate(-12deg);transform-origin:right bottom;pointer-events:none;white-space:nowrap}@media (max-width:900px){.nav .new{position:static;display:inline-block;margin:0 8px 0 0;transform:rotate(-8deg);vertical-align:2px}}a:not(.btn):not(.brand):not(.skip):not(.nav a):not(.lines a){text-decoration:none;background-image:linear-gradient(currentColor,currentColor);background-repeat:repeat-x;background-position:0 100%;background-size:100% 1px;padding-bottom:.08em;box-decoration-break:clone;-webkit-box-decoration-break:clone}a:not(.btn):not(.brand):not(.skip):not(.nav a):not(.lines a):hover{background-size:100% 2px}.on-dark a:not(.btn):not(.brand):not(.skip):not(.nav a):not(.lines a){background-image:linear-gradient(currentColor,currentColor)}.lines a:hover .l,.quote blockquote mark,mark{background-image:linear-gradient(transparent 60%,var(--hl) 60%,var(--hl) 92%,transparent 92%);background-repeat:no-repeat;background-position:0 0;background-size:100% 100%;padding:0 .1em .02em;margin:0 -.1em}.display mark,.h-l mark,.quote.lead blockquote mark{background-image:linear-gradient(transparent 60%,var(--hl) 60%,var(--hl) 92%,transparent 92%);background-position:0 0;background-size:100% 100%}.lines a .l{box-decoration-break:clone;-webkit-box-decoration-break:clone;padding:0 .1em;margin:0 -.1em}.case-sec{padding-block:var(--sec-y)}.case-sec+.case-sec:not(.sage){border-top:1px solid var(--line)}@media (min-width:901px){.nav:hover a[aria-current=page]:not(:hover){border-bottom-color:transparent}}.site-footer .foot-bottom a:not(:hover){background-image:none!important;padding-bottom:0!important}#what .split{align-items:center}#what .split>.sec-head{align-self:center;position:static;top:auto}.policy{display:grid;gap:0}.policy h2{font-family:var(--f-display);font-weight:400;font-size:clamp(1.5rem,2.4vw,1.875rem);line-height:1.15}.policy h3{font-size:1.125rem;font-weight:600;margin-top:8px}.policy li,.policy p{color:var(--muted)}.policy ul{padding-left:1.1em;display:grid;gap:6px}.policy code{font-family:inherit;font-size:inherit}.qc{display:grid;gap:28px}.qc-count{font-variant-numeric:tabular-nums;color:var(--muted);min-width:3.5em;text-align:center;font-size:1rem}.qc-track{display:grid;grid-auto-flow:column;grid-auto-columns:min(760px,80%);gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding:2px 2px 8px;outline-offset:6px}.qc-track::-webkit-scrollbar{display:none}@media (max-width:700px){.qc-track{grid-auto-columns:88%;gap:14px}}#words{overflow:hidden}.tc{--tc-a:min(660px,56vw);--tc-s:290px;--tc-g:20px;display:grid;gap:28px}.tc-viewport{position:relative;margin-inline:calc(50% - 50vw);padding-inline:calc(50vw - 50%);overflow:hidden;touch-action:pan-y;outline-offset:-4px}.tc-track{display:flex;gap:var(--tc-g);align-items:stretch;transition:transform .65s cubic-bezier(.2,.75,.2,1);will-change:transform}.tc-track.is-drag{transition:none}.tc-ring{position:absolute;left:0;top:0;width:84px;height:84px;margin:-42px 0 0 -42px;border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8125rem;font-weight:600;letter-spacing:.04em;pointer-events:none;opacity:0;z-index:3;mix-blend-mode:difference;transition:opacity .2s}@media (hover:hover) and (pointer:fine) and (min-width:761px){.tc-viewport{cursor:none}.tc-viewport.is-over .tc-ring{opacity:1}}@media (max-width:760px){.tc-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:calc(50vw - 50%);scrollbar-width:none}.tc-viewport::-webkit-scrollbar{display:none}.tc-track{transform:none!important}.tc-ring{display:none}}@media (max-width:760px){.tc-viewport{margin-inline:-20px;padding-inline:20px;scroll-padding-inline:20px}}.tc-ring{display:none!important}@media (hover:hover) and (pointer:fine) and (min-width:761px){.tc-viewport{cursor:auto}}.w-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:6px}.w-sticky{position:fixed;left:50%;bottom:18px;z-index:60;display:flex;align-items:center;gap:18px;background:var(--ink);color:var(--paper);padding:8px 8px 8px 22px;border-radius:999px;box-shadow:0 10px 30px rgba(16,22,56,.25);transform:translate(-50%,160%);transition:transform .35s cubic-bezier(.2,.7,.2,1);max-width:calc(100% - 32px)}.w-sticky.is-on{transform:translate(-50%,0)}.w-sticky span{font-size:1rem;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.w-sticky span b{color:var(--paper);margin-right:10px}.w-sticky .btn{border-radius:999px;white-space:nowrap}@media (max-width:600px){.w-sticky{left:12px;right:12px;bottom:12px;transform:translateY(160%);max-width:none;justify-content:space-between}.w-sticky.is-on{transform:none}.w-sticky span b{display:none}}@media (max-width:600px){.w-sticky{padding:6px 6px 6px 16px;gap:10px}.w-sticky span{font-size:.875rem}.w-sticky .btn{padding:10px 16px;font-size:.9375rem}}main:has(.w-sticky){padding-bottom:88px}.w-sticky{left:0;right:0;bottom:0;transform:translateY(105%);max-width:none;border-radius:0;padding:0;background:rgba(255,255,255,.97);color:var(--ink);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(16,22,56,.06);display:block;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}.w-sticky.is-on{transform:translateY(0)}.w-sticky .btn{border-radius:var(--r);white-space:nowrap;flex:0 0 auto}@media (max-width:600px){.w-sticky{left:0;right:0;bottom:0;transform:translateY(105%)}.w-sticky.is-on{transform:none}.w-sticky .btn{padding:11px 16px;font-size:.9375rem}}.w-sticky{background:var(--paper);-webkit-backdrop-filter:none;backdrop-filter:none}#words,.tc-viewport{overflow:clip}@media (max-width:760px){.tc-viewport{overflow-x:auto;overflow-y:hidden}}.tc{grid-template-columns:minmax(0,1fr)}.tc-viewport{min-width:0}@media (max-width:760px){.tc-track::after{content:"";flex:0 0 6px}}.fx{margin-top:8px}.fx-stage{overflow:hidden;border-radius:var(--r-panel);background:#f0f0ec;border:1px solid var(--line)}.fx-belt{position:relative;display:flex;width:max(100%,1250px);transition:transform .9s cubic-bezier(.3,.7,.2,1)}.fx-img{display:block;width:20%;height:auto;flex:none;transition:opacity .5s,filter .5s}.fx.is-on .fx-img{opacity:.38;filter:grayscale(.8)}.fx.is-on .fx-img.is-cur{opacity:1;filter:none}.fx-doc{position:absolute;left:var(--x,9%);top:var(--y,36%);width:3.4%;aspect-ratio:3/4;background:#fff;border:1px solid #9aa596;border-radius:3px;box-shadow:0 6px 14px -6px rgba(16,22,56,.45);display:grid;align-content:start;gap:4px;padding:7px 5px;transform:translate(-50%,-50%) rotate(var(--r,-4deg));transition:left 1.1s cubic-bezier(.45,0,.2,1),top 1.1s cubic-bezier(.45,0,.2,1),transform 1.1s;z-index:2;opacity:0}.fx.is-on .fx-doc{opacity:1}.fx-doc i{display:block;height:2px;background:#c3cdbd;border-radius:2px}.fx-doc i:first-child{background:var(--lime);height:4px;width:70%}.fx-play{font:inherit;font-weight:600;display:inline-flex;align-items:center;gap:10px;padding:9px 18px 9px 14px;border-radius:999px;border:1px solid var(--ink);background:0 0;color:var(--ink);cursor:pointer}.fx-play:hover{background:var(--ink);color:var(--paper)}.fx-panel{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px 56px;align-items:start;animation:fx-in .45s ease both}@keyframes fx-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@media (max-width:860px){.fx-panel{grid-template-columns:1fr;gap:14px}}@media (max-width:620px){.fx-belt{width:1250px}.fx-play{width:100%;justify-content:center}.fx-doc{width:34px}}@media (prefers-reduced-motion:reduce){.fx-belt,.fx-doc,.fx-img{transition:none}.fx-panel{animation:none}}.cs-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px 24px;flex-wrap:wrap;margin-bottom:32px}.cs-head .sec-head{margin-bottom:0}.cs-head .label{display:block;margin-bottom:8px}.cs-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.cs-card{height:100%;display:grid;grid-template-rows:auto auto auto 1fr auto;gap:8px;padding:26px 26px 22px;border:1px solid var(--line);border-radius:var(--r-panel);background:var(--paper);color:var(--ink);text-decoration:none;transition:transform .25s cubic-bezier(.3,.7,.2,1),box-shadow .25s,border-color .25s}.cs-card:hover{transform:translateY(-4px);border-color:var(--ink);box-shadow:0 18px 34px -22px rgba(16,22,56,.45)}.cs-logo{height:34px;width:auto;max-width:150px;object-fit:contain;object-position:left center;margin-bottom:14px}.cs-client{font-size:.875rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted)}.cs-fig{font-family:var(--f-display);font-size:clamp(2.25rem,3.6vw,3rem);line-height:1;margin:2px 0}.cs-t{font-size:1.1875rem;font-weight:600;line-height:1.35}a.cs-card{background-image:none;padding-bottom:22px}@media (max-width:900px){.cs-grid{grid-template-columns:1fr}.cs-card{grid-template-rows:none}}@media (prefers-reduced-motion:reduce){.cs-card{transition:none}.cs-card:hover{transform:none}}.cs-sheet{width:min(880px,calc(100% - 32px));max-height:min(88vh,860px);margin:auto;padding:0;border:0;border-radius:var(--r-panel);background:var(--paper);color:var(--ink);box-shadow:0 30px 80px -20px rgba(16,22,56,.55);overflow:hidden}.cs-sheet::backdrop{background:rgba(16,22,56,.55);backdrop-filter:blur(3px)}.cs-sheet[open]{animation:cs-up .38s cubic-bezier(.2,.8,.2,1)}@keyframes cs-up{from{opacity:0;transform:translateY(40px) scale(.98)}to{opacity:1;transform:none}}.cs-sheet-in{display:grid;grid-template-rows:auto minmax(0,1fr) auto;max-height:inherit}.cs-sheet-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}.cs-count{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}.cs-sheet-nav{display:flex;gap:8px}.cs-sheet-nav button{font:inherit;font-weight:600;height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:1px solid var(--ink);background:0 0;color:var(--ink);cursor:pointer}.cs-sheet-nav button:hover:not(:disabled){background:var(--ink);color:var(--paper)}.cs-sheet-nav button:disabled{opacity:.3;cursor:default}.cs-body{overflow:auto;overscroll-behavior:contain;padding:28px clamp(20px,4vw,44px) 8px;touch-action:pan-y}.cs-story{display:grid;gap:10px;animation:fx-in .35s ease both}.cs-story h3{font-size:1.375rem;font-weight:600;line-height:1.3;max-width:34ch}.cs-result{font-family:var(--f-display);font-size:clamp(1.375rem,2.4vw,1.75rem);line-height:1.3;margin:8px 0 6px;text-wrap:pretty}.cs-dl{margin:6px 0 0;display:grid;border-top:1px solid var(--line)}.cs-dl>div{display:grid;grid-template-columns:160px minmax(0,1fr);gap:4px 20px;padding:12px 0;border-bottom:1px solid var(--line);font-size:1.0625rem;line-height:1.5}.cs-dl dt{font-weight:600;color:var(--muted);font-size:.9375rem;padding-top:2px}.cs-dl dd{margin:0}.cs-partner{color:var(--muted);margin:10px 0 0}.cs-sheet-foot{margin:0;padding:14px clamp(20px,4vw,44px) 22px;font-weight:600}@media (max-width:560px){.cs-sheet{width:100%;max-height:92vh;margin:auto 0 0;border-radius:var(--r-panel) var(--r-panel) 0 0}.cs-dl>div{grid-template-columns:1fr;gap:2px}}@media (prefers-reduced-motion:reduce){.cs-sheet[open],.cs-story{animation:none}}html:has(.cs-sheet[open]){overflow:hidden}.ab{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:32px 72px;align-items:center}.ab-photo{width:100%;max-width:400px;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;filter:grayscale(1);border-radius:var(--r-photo);corner-shape:squircle}.ab-copy{display:grid;gap:14px;align-content:start}.ab-copy .label{margin-bottom:-6px}.ab-lede{font-family:var(--f-display);font-size:clamp(1.375rem,2.3vw,1.75rem);line-height:1.35;max-width:36ch}.ab-copy .muted{max-width:58ch;font-size:1.125rem}.ab-team{list-style:none;margin:10px 0 4px;padding:18px 0 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.ab-team li{display:flex;align-items:center;gap:12px}.ab-team img{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 18%;filter:grayscale(1);flex:none}.ab-team span{display:grid;font-size:.9375rem;color:var(--muted);line-height:1.35}.ab-team b{color:var(--ink);font-weight:600;font-size:1rem}@media (max-width:900px){.ab{grid-template-columns:1fr}.ab-photo{max-width:300px}.ab-team{grid-template-columns:1fr}}.pl{display:grid;gap:10px;align-content:start;background:var(--paper);border:1px solid var(--line-on-sage);border-radius:var(--r-panel);padding:28px 26px 10px}.pl h3{font-size:clamp(1.75rem,2.5vw,2.125rem);line-height:1.1}.tf{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px 56px;align-items:start}.tf-other[hidden]{display:none}.tf-line{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--rule)}.tf-line li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);animation:fx-in .4s ease both}.tf-line li:nth-child(2){animation-delay:.08s}.tf-line li:nth-child(3){animation-delay:.16s}.tf-line li:nth-child(4){animation-delay:.24s}.tf-line img{width:96px;height:auto;border-radius:10px;background:#f0f0ec}.tf-line b{display:block;font-size:1.125rem}.tf-line p{margin:2px 0 0;color:var(--muted);font-size:1rem;line-height:1.5}.tf-line .you b::after{content:" \2713";color:var(--lime-2)}.tf-prompt{margin-top:24px;display:grid;gap:10px}.tf-prompt h3{font-family:var(--f-display);font-weight:400;font-size:clamp(1.5rem,2.4vw,1.875rem);line-height:1.15}.tf-prompt textarea{font:inherit;font-size:.9375rem;line-height:1.5;width:100%;box-sizing:border-box;min-height:220px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-input);background:#fff;color:var(--ink);resize:vertical}.tf-acts{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}.tf-copied{font-weight:600;color:var(--ink)}.tf-next{margin-top:8px;padding:20px 22px;border-radius:var(--r-panel);background:var(--ink);color:var(--paper);display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between}.tf-next p{margin:0;max-width:46ch;color:rgba(255,255,255,.86)}@media (max-width:900px){.tf{grid-template-columns:1fr}}@media (max-width:520px){.tf-line li{grid-template-columns:64px minmax(0,1fr);gap:12px}.tf-line img{width:64px}}@media (prefers-reduced-motion:reduce){.tf-line li{animation:none}}.fx-doc i:nth-child(n+3){transition:opacity .4s}.fx-doc[data-s="0"] i:nth-child(n+3){opacity:0}.fx-doc[data-s="0"] i:nth-child(2){width:80%}.fx-doc[data-s="1"] i:nth-child(4){opacity:0}.fx-doc[data-s="2"] i,.fx-doc[data-s="3"] i,.fx-doc[data-s="4"] i{background:#9fb08f}.fx-doc[data-s="2"] i:first-child,.fx-doc[data-s="3"] i:first-child,.fx-doc[data-s="4"] i:first-child{background:var(--lime)}@media (prefers-reduced-motion:reduce){.fx-doc i{transition:none}}.wd{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.wd li{position:relative;display:grid;gap:8px;align-content:start;background:var(--paper);border:1px solid var(--line-on-sage);border-radius:var(--r-panel);padding:24px 22px}.wd-n{font-family:var(--f-display);font-size:3rem;line-height:.8;color:#c4b0da}.wd h3{font-size:1.25rem;font-weight:600;line-height:1.3}.wd p{color:var(--muted);font-size:1rem;line-height:1.5}.wd-foot{margin:22px 0 0;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}.wd-foot a{color:var(--ink);font-weight:600}@media (max-width:1060px){.wd{grid-template-columns:1fr 1fr}}@media (max-width:600px){.wd{grid-template-columns:1fr}}.cs-4{grid-template-columns:repeat(4,minmax(0,1fr))}.cs-4 .cs-card{grid-template-rows:auto auto auto auto 1fr auto}.cs-4 .cs-fig{font-size:clamp(2rem,2.8vw,2.5rem)}.cs-4 .cs-t{font-size:1.0625rem}.cs-logo-svg{display:block;height:28px;margin-bottom:20px}.cs-logo-svg svg{height:100%;width:auto;display:block}@media (max-width:1180px){.cs-4{grid-template-columns:1fr 1fr}}@media (max-width:640px){.cs-4{grid-template-columns:1fr}}.qm{position:relative;overflow:hidden;border-block:1px solid var(--line);padding:22px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}.qm.is-paused .qm-track{animation-play-state:paused}.qm-set{display:flex;flex:none}.qm figure{margin:0 28px;padding-right:56px;border-right:1px solid var(--line);display:grid;gap:4px;max-width:480px}.qm blockquote{margin:0;font-family:var(--f-display);font-size:clamp(1.25rem,1.8vw,1.5rem);line-height:1.3}.qm figcaption{font-size:.9375rem;color:var(--muted)}.qm-btn{position:absolute;right:max(20px,env(safe-area-inset-right,0px));bottom:6px;font:inherit;font-size:.8125rem;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;opacity:.8}@keyframes qm-run{to{transform:translateX(-50%)}}@media (prefers-reduced-motion:reduce){.qm{-webkit-mask-image:none;mask-image:none}.qm-set{flex-wrap:wrap;justify-content:center;row-gap:20px}.qm-set[aria-hidden]{display:none}.qm-btn{display:none}.qm figure{border-right:0;padding-right:0}}.qm{padding:22px 0 44px}.qm-btn{left:50%;right:auto;bottom:10px;transform:translateX(-50%)}.btn-coral{display:inline-flex;align-items:center;background:var(--coral-soft);background-image:none;color:var(--deep);border:0;border-radius:999px;padding:13px 26px;font-weight:600;box-shadow:none;text-shadow:none}.btn-coral:hover{background:#f4a877;background-image:none;color:var(--deep);box-shadow:none}body:has(.hero-wc) .site-header{background:0 0;border-bottom-color:transparent;transition:background-color .25s,border-color .25s}body:has(.hero-wc) .site-header.is-scrolled{background:#e6d6f5;border-bottom-color:var(--line)}.nav a.btn{background:0 0;background-image:none;color:var(--ink);border:1px solid rgba(16,22,56,.55);box-shadow:none;text-shadow:none}.nav a.btn:hover{background:rgba(16,22,56,.06);background-image:none;color:var(--ink);border-color:var(--ink);box-shadow:none}.nav .new{color:#2843c5}@media (min-width:901px){.nav .new{position:absolute;right:0;top:-3px;margin:0;font-size:1.0625rem;transform:rotate(-8deg)}}:root{--ink:#101638;--ink-2:#0a0f28;--rule:#101638;--sage:#e6d6f5;--lime:#f8be93;--lime-2:#f4a877;--muted:#565a70;--hl:rgba(248,190,147,.38)}.btn{background:var(--ink);background-image:none;color:var(--paper);border:0;box-shadow:none;text-shadow:none}.btn:hover{background:var(--ink-2);background-image:none;color:var(--paper);box-shadow:none}.btn:active{box-shadow:none;transform:translateY(1px)}.btn-lime,.on-dark .btn-lime{background:var(--lime);background-image:none;color:var(--ink);border:0;box-shadow:none}.btn-lime:hover,.on-dark .btn-lime:hover{background:var(--lime-2);background-image:none;color:var(--ink);box-shadow:none}.btn-ghost{background:0 0;color:inherit;border:1px solid currentColor}.btn-ghost:hover{background:rgba(16,22,56,.06)}.on-dark .btn-ghost:hover{background:rgba(255,255,255,.1)}mark{background-image:linear-gradient(transparent 62%,var(--hl) 62%,var(--hl) 92%,transparent 92%)}.quote blockquote mark{background-image:linear-gradient(transparent 60%,var(--hl) 60%,var(--hl) 92%,transparent 92%)}.quote.lead blockquote mark{background-image:linear-gradient(transparent 66%,var(--hl) 66%,var(--hl) 94%,transparent 94%)}.nav .new{color:#2843c5}:root{--ink:#101638;--ink-2:#0a0f28;--rule:#101638;--sage:#e6d6f5;--paper:#ffffff;--lime:#f8be93;--lime-2:#f4a877;--rose:#f8be93;--plum:#2843c5;--hl:rgba(248,190,147,.42);--line:#d8cde0}body{background:var(--paper)}body:has(.hero-wc) .site-header.is-scrolled{background:var(--paper)}.btn-coral{background:var(--rose);color:var(--ink)}.btn-coral:hover{background:var(--lime-2);color:var(--ink)}.nav .new{color:var(--plum)}[hidden]:not([hidden=until-found i]){display:none!important}img{max-width:100%}.cs-card,.cs-card:hover{background-image:none!important;padding-bottom:revert-layer}.site-header,body:has(.hero-wc) .site-header,body:has(.hero-wc) .site-header.is-scrolled{background:0 0;border-bottom:0;padding-top:calc(12px + env(safe-area-inset-top,0px))}.site-header .bar{background:var(--ink);color:var(--paper);border-radius:999px;padding:10px 12px 10px 26px;box-shadow:0 10px 30px -14px rgba(16,22,56,.55)}.site-header .brand,.site-header .brand-name{color:var(--paper)}.site-header .brand-mark{background:var(--paper)}.site-header .brand-name{font-size:1.5rem}.site-header .menu-btn{color:var(--paper);border-color:rgba(255,255,255,.55);border-radius:999px}@media (min-width:901px){.site-header .nav a{color:rgba(255,255,255,.86)}.site-header .nav a:hover,.site-header .nav a[aria-current=page]{color:var(--paper);border-bottom-color:var(--lime)}.site-header .nav a.btn{background:var(--lime);color:var(--ink);border:0;border-radius:999px;padding:10px 20px;margin-top:0}.site-header .nav a.btn:hover{background:var(--lime-2);color:var(--ink)}.site-header .nav .new{color:var(--lime)}}@media (max-width:900px){.site-header .bar{padding:8px 8px 8px 20px}.site-header .nav{top:calc(100% + 8px);border-radius:22px;border:1px solid var(--line);box-shadow:0 16px 40px -18px rgba(16,22,56,.45);padding:8px 20px 16px}.site-header .nav a{color:var(--ink)}}@media (max-width:900px){.site-header .wrap.bar{margin-inline:12px;width:auto;max-width:none}}#work .cs-all,#work a,#work a.tlink{background-image:none!important;text-decoration:none!important;padding-bottom:0}#work a.cs-all:hover{color:var(--plum)}.site-footer{padding:20px 0}.site-footer .foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;padding-top:0;font-size:.9375rem}@media (min-width:901px){.wrap{padding-left:clamp(40px,6vw,104px);padding-right:clamp(40px,6vw,104px)}}.site-header,body .site-header,body .site-header.is-scrolled{background:0 0;border-bottom:0;padding-top:calc(10px + env(safe-area-inset-top,0px))}.site-header.is-hidden{transform:none!important;visibility:visible!important}.site-header .bar{background:rgba(255,255,255,.86);-webkit-backdrop-filter:saturate(1.2) blur(10px);backdrop-filter:saturate(1.2) blur(10px);color:var(--ink);border:1px solid rgba(16,22,56,.12);border-radius:999px;padding:8px 10px 8px 22px;box-shadow:0 6px 24px -18px rgba(16,22,56,.35)}.site-header .brand,.site-header .brand-name{color:var(--ink)}.site-header .brand-mark{background:var(--ink)}.site-header .brand-name{font-size:1.375rem}.site-header .menu-btn{corner-shape:round;background:0 0;color:var(--ink);border:1px solid rgba(16,22,56,.3);border-radius:999px;padding:8px 18px;font-weight:600;line-height:1.1}.site-header .menu-btn:hover{background:rgba(16,22,56,.05)}@media (min-width:901px){.site-header .nav{gap:24px}.site-header .nav a{color:var(--ink);opacity:.82;font-size:.9688rem}.site-header .nav a:hover,.site-header .nav a[aria-current=page]{opacity:1;color:var(--ink);border-bottom-color:var(--lime)}.site-header .wrap.bar{max-width:calc(min(var(--wrap),100vw) - 2 * clamp(40px,6vw,104px) + 44px)}.site-header .nav a.btn{opacity:1;background:var(--lime);color:var(--ink);border:0;border-radius:999px;padding:9px 18px}.site-header .nav a.btn:hover{background:var(--lime-2)}.site-header .nav .new{color:var(--plum)}}body{background:var(--paper)}.mo{position:relative;margin-top:-76px;background:var(--paper);overflow:hidden}.mo-copy{max-width:680px;position:relative;z-index:1}.mo-copy h1{font-family:var(--f-display);font-weight:600;color:var(--ink);font-size:clamp(2.375rem,4vw,3.75rem);line-height:1.08;letter-spacing:-.02em;margin:0 0 22px;text-wrap:balance}.mo-link{color:var(--ink)!important;font-weight:600;background-image:none!important;text-decoration:none}.mo-link:hover{color:var(--plum)!important}.mo-art{position:relative;aspect-ratio:756/712;width:100%;pointer-events:none;will-change:transform}.svc{background:var(--paper);padding:clamp(48px,6vw,80px) 0 clamp(56px,7vw,96px)}.svc-h{font-family:var(--f-display);font-weight:400;color:var(--ink);font-size:clamp(2rem,3.2vw,2.875rem);line-height:1.1;letter-spacing:-.015em;margin:0 0 clamp(32px,4vw,52px)}.svc-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,56px)}.svc-item{display:grid;grid-template-rows:auto auto;gap:16px;align-content:start;padding-top:24px;border-top:1px solid var(--line)}.svc-item img{width:auto;height:84px;max-width:96px;object-fit:contain;object-position:left bottom}.svc-item h3{font-family:var(--f-display);font-weight:400;font-size:1.5rem;line-height:1.2;color:var(--ink);margin:0 0 8px}.svc-item p{margin:0;font-size:1.0625rem;line-height:1.55;color:rgba(16,22,56,.76);max-width:34ch}.mo-cards{padding-top:clamp(48px,6vw,80px);padding-bottom:clamp(48px,6vw,80px)}.logos{padding-block:clamp(20px,3vw,36px) clamp(8px,2vw,20px);background:var(--paper)}.logos-cap{margin-bottom:18px}@media (max-width:900px){.mo{margin-top:-72px}.mo-art{order:-1;width:100%;height:300px;aspect-ratio:auto}.mo-copy{margin-top:-28px}.mo-copy h1{font-size:clamp(1.875rem,8.2vw,2.5rem)}.svc-list{grid-template-columns:1fr;gap:0}.svc-item{grid-template-columns:72px minmax(0,1fr);grid-template-rows:none;gap:16px;padding:24px 0}.svc-item img{height:64px;max-width:72px}.site-header .nav{background:var(--paper)}}.menu-btn,.site-header .menu-btn{min-height:44px;min-width:64px;padding:0 16px;align-items:center;justify-content:center}.pr{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--rule)}.pr li{display:grid;gap:8px;align-content:start;padding:24px clamp(16px,2vw,28px) 8px;border-left:1px solid var(--line)}.pr li:first-child{border-left:0;padding-left:0}.pr h3{font-size:1.1875rem;font-weight:600;line-height:1.3}.pr p{color:var(--muted);font-size:1rem;line-height:1.5;margin:0}.home #what .wd-foot{margin-top:28px}@media (max-width:900px){.pr{grid-template-columns:1fr}.pr li{grid-template-columns:2.75rem minmax(0,1fr);gap:2px 12px;padding:16px 0;border-left:0;border-bottom:1px solid var(--line)}.pr li>*{grid-column:2}.pr h3{font-size:1.0625rem}.pr p{font-size:.9375rem}}.home .ab-lede{font-size:clamp(1.25rem,1.9vw,1.5rem);line-height:1.4}.logos-more{display:none;margin:16px 0 0;text-align:center;font-size:.9375rem;font-weight:600}@media (max-width:700px){.home .logos .trow>:not(.lg-key){display:none}.home .logos-more{display:block}}.home .mo-copy h1 .h1-l{display:inline}@media (min-width:901px){.home .mo-copy h1 .h1-l{display:block}}.site-header .menu-btn{min-height:44px;padding:0 18px}.home .svc{padding-bottom:24px}.home #work.mo-cards{padding-top:clamp(48px,6.5vw,88px)}@media (max-width:900px){.home .mo-art{height:clamp(140px,36vw,190px)}.home .mo-copy{margin-top:-20px}}@media (min-width:901px){.home .mo-copy{container-type:inline-size}.home .mo-copy h1{font-size:min(clamp(2.375rem,4vw,3.75rem),9.6cqi)}.home .mo-copy h1 .h1-l{white-space:nowrap}}@media (max-width:900px){.home #work.mo-cards{padding-top:28px}}.home .svc-list{gap:clamp(16px,2vw,24px)}.home .svc-item{border:1px solid var(--line);border-top:1px solid var(--line);border-radius:var(--r-panel);background:var(--sage);padding:clamp(24px,2.4vw,32px);gap:18px}.home .svc-item p{max-width:none}@media (max-width:900px){.home .svc-list{gap:14px}.home .svc-item{padding:20px;gap:16px}}.home .mo-copy h1 .h1-l{display:block}.home .mo-copy h1 .rot{display:grid;width:max-content;max-width:100%;justify-items:start;color:rgba(40,67,197,.82)}.home .mo-copy h1 .rot-w{grid-area:1/1;white-space:nowrap}.home .mo-copy h1 .rot.is-ready .rot-w{opacity:0;transform:translateY(8px);visibility:hidden;transition:opacity .35s ease,transform .35s ease,visibility 0s linear .35s}.home .mo-copy h1 .rot.is-ready .rot-w.is-on{opacity:1;transform:none;visibility:visible;transition:opacity .35s ease,transform .35s ease,visibility 0s}.home .mo-copy h1 .rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-8px);visibility:visible}@media (prefers-reduced-motion:reduce){.home .mo-copy h1 .rot.is-ready .rot-w{transition:none}}.home .svc-item p.svc-lead{color:var(--ink);font-weight:600;margin-bottom:8px}.home #work .cs-4 .cs-card,.home .cs-4 .cs-card{grid-template-rows:none;align-content:start;gap:10px;padding-bottom:30px}.home .cs-4 .cs-logo{height:34px;margin-bottom:18px}.home .cs-4 .cs-logo-svg{display:flex;align-items:center}.home .cs-4 .cs-logo-svg svg{height:26px}.home .cs-4 .cs-fig{font-size:clamp(2.25rem,3.2vw,2.875rem)}.home .cs-4 .cs-t{font-weight:400;color:var(--ink);font-size:1.0625rem;line-height:1.45}.hq-track{display:flex;gap:28px;align-items:stretch;will-change:transform;outline:0;padding-block:12px}.hq-track{min-width:0}.hq-track{position:relative}.ab-h1 .ab-rot.is-ready .rot-w{opacity:0;transform:translateY(8px);visibility:hidden;transition:opacity .35s ease,transform .35s ease,visibility 0s linear .35s}.ab-h1 .ab-rot.is-ready .rot-w.is-on{opacity:1;transform:none;visibility:visible;transition:opacity .35s ease,transform .35s ease,visibility 0s}.ab-h1 .ab-rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-8px);visibility:visible}@media (prefers-reduced-motion:reduce){.ab-h1 .ab-rot.is-ready .rot-w{transition:none}}.aw{position:relative;display:grid;justify-items:center;text-align:center;gap:6px;align-content:start}.aw b{font-weight:600;font-size:1.0625rem;line-height:1.3;color:var(--ink)}@media (max-width:900px){.aw{grid-template-columns:calc(var(--aw-t) + 16px) minmax(0,1fr);justify-items:start;text-align:left;column-gap:16px;row-gap:2px}}.hq.hq-row .hq-track{overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:var(--hq-in,max(20px,calc((100vw - 1200px)/ 2)));padding:12px var(--hq-in,max(20px,calc((100vw - 1200px)/ 2))) 20px;scrollbar-width:none;transform:none!important}.hq.hq-row .hq-track::-webkit-scrollbar{display:none}.hq.hq-row .hq-track:focus-visible{outline:2px solid #2843c5;outline-offset:4px;border-radius:24px}.hq-nav{display:flex;align-items:center;gap:10px}.hq-nav[hidden]{display:none}.hq-count{font-size:.9375rem;color:var(--muted);margin-right:6px;font-variant-numeric:tabular-nums;min-width:3.2em;text-align:right}@media (max-width:900px){.hq-count{display:none}}.tw.is-typing .tw-c{visibility:hidden}.tw.is-typing .tw-c.on{visibility:visible}.tw-caret{display:inline-block;width:.06em;min-width:3px;height:.95em;margin-left:.04em;margin-right:-.1em;vertical-align:-.1em;background:#2843c5;animation:tw-blink 1s steps(1) infinite}.tw.is-typing:not(.is-done) .tw-caret{animation:none}.tw-caret.is-gone{opacity:0;transition:opacity .4s}@keyframes tw-blink{50%{opacity:0}}.cx{position:relative}.cx-mark{position:absolute;left:0;width:1px;height:1px;pointer-events:none}.cx-stage{position:sticky;top:var(--cx-top,96px);z-index:1;background:var(--paper)}.cx-deck{display:grid}.cx-deck>.case-sec,.cx-deck>.case-sec.sage{grid-area:1/1;align-self:start;padding:0;background:0 0;border:0;opacity:0;transform:translateY(14px);filter:blur(3px);pointer-events:none;visibility:hidden;transition:opacity .45s ease,transform .45s ease,filter .45s ease,visibility 0s linear .45s}.cx-deck>.case-sec.is-on{opacity:1;transform:none;filter:none;pointer-events:auto;visibility:visible;transition:opacity .45s ease .05s,transform .45s ease .05s,filter .45s ease .05s,visibility 0s}.cx-dots{position:absolute;top:50%;left:var(--cx-dots-x,24px);transform:translate(-50%,-50%);display:grid;gap:22px;justify-items:center;padding:2px 0}.cx-track{position:absolute;top:8px;bottom:8px;left:50%;width:2px;margin-left:-1px;background:rgba(16,22,56,.14);border-radius:2px;overflow:hidden}.cx-fill{position:absolute;inset:0;background:#2843c5;transform-origin:top center;transform:scaleY(0)}.cx-dot{position:relative;z-index:1;width:12px;height:12px;padding:0;border-radius:50%;border:2px solid rgba(16,22,56,.32);background:var(--paper);cursor:pointer;transition:background-color .25s,border-color .25s,transform .25s,box-shadow .25s}.cx-dot::before{content:"";position:absolute;inset:-9px}.cx-dot.is-done{background:#2843c5;border-color:#2843c5}.cx-dot[aria-current=true]{transform:scale(1.4);box-shadow:0 0 0 4px rgba(40,67,197,.16)}.cx-dot:hover{border-color:#2843c5}.cx-dot::after{content:attr(data-label);position:absolute;left:20px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:.8125rem;line-height:1;color:var(--ink);background:var(--paper);border:1px solid var(--line);padding:5px 8px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .15s}.cx-dot[aria-current=true]::after{transform:translateY(-50%) scale(.714);transform-origin:left center}.cx-dot:focus-visible::after,.cx-dot:hover::after{opacity:1}.cx-dot:focus-visible{outline:2px solid #2843c5;outline-offset:4px}.cx{margin-top:clamp(36px,4.5vw,72px)}.cx-next{display:flex;align-items:baseline;gap:10px;margin-top:clamp(28px,3.5vh,48px);padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.9375rem;text-decoration:none;background-image:none!important;width:max-content;max-width:100%}.cx-next b{color:var(--ink);font-weight:600}.cx-next::after{content:"\2193";color:#2843c5}.cx-next:hover b{color:#2843c5}.cx-next:focus-visible{outline:2px solid #2843c5;outline-offset:4px}.cx-deck .case-sec{border-top:0!important}.fx{position:absolute;inset:0;overflow:hidden;-webkit-mask-image:radial-gradient(48% 41.8% at 50% 51.2%,#000 68%,rgba(0,0,0,.85) 86%,transparent 100%);mask-image:radial-gradient(48% 41.8% at 50% 51.2%,#000 68%,rgba(0,0,0,.85) 86%,transparent 100%)}.fx img,.fx picture{display:block}.fx.is-paused .fx-s{animation-play-state:paused}@keyframes fx-slide{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}.lx-guide[open]>summary::after{content:" \2212"}.lx-guide-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding:0 20px 8px}.lx-guide-form label{display:flex;gap:8px;align-items:center;font-size:.9688rem;color:rgba(16,22,56,.85);cursor:pointer}.lx-guide-form input{accent-color:#2843c5}.lx-guide-out{padding:8px 20px 20px}.lx-rec{display:grid;gap:6px;justify-items:start;padding:18px 20px;border-radius:12px;background:var(--sage,#e6d6f5)}.lx-rec b{font-family:var(--f-display);font-weight:400;font-size:1.375rem;color:var(--ink)}.lx-rec p{margin:0 0 6px;color:rgba(16,22,56,.85)}.lx-tag{display:inline-block;font-size:.8125rem;font-weight:600;color:var(--muted)}.lx-in-text,.lx-out,.lx-prompt-text{margin:6px 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--f-text);font-size:.9375rem;line-height:1.5;color:var(--ink)}.lx-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.lx-step{display:grid;gap:6px;align-content:start;padding:14px;border-radius:14px;border:1px solid var(--line);background:#fff}.lx-step-head{display:flex;align-items:center;gap:8px}.lx-step-n{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:.8125rem;font-weight:600}.lx-step b{font-size:1.0625rem;line-height:1.25;color:var(--ink)}.lx-step p{margin:0;font-size:.875rem;line-height:1.45;color:var(--muted)}.lx-out{font-size:.875rem;padding-top:8px;border-top:1px solid var(--line)}.lx-prompt-text{color:#fff;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.875rem;opacity:.95}.lx-ws-leave ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line-on-sage)}.lx-ws-leave li{padding:12px 0;border-bottom:1px solid var(--line-on-sage);color:rgba(16,22,56,.85)}.lx-ws-leave li b{color:var(--ink)}.lx-ws-facts{display:grid;gap:12px;justify-items:start}.lx-ws-facts p{margin:0;color:rgba(16,22,56,.85);line-height:1.55}@media (max-width:1000px){.lx-steps{grid-template-columns:1fr 1fr}}@media (max-width:900px){.lx-guide-form{grid-template-columns:1fr}}@media (max-width:560px){.lx-steps{grid-template-columns:1fr}}.lx-in-text{max-width:80ch}.fx{-webkit-mask-image:url(assets/hero/hero-mask.webp);mask-image:url(assets/hero/hero-mask.webp);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.hq-deck .hq-card.is-top{cursor:pointer}.hq-deck .hq-card.is-top:active{cursor:grabbing}.hq-fan .hq-card.is-off{pointer-events:none}.hq-fan .hq-card.is-top{box-shadow:0 1px 2px rgba(16,22,56,.06),0 26px 50px -30px rgba(16,22,56,.55)}.hq-fan .hq-card.is-right:not(.is-top) .hq-pull,.hq-fan .hq-card.is-right:not(.is-top) figcaption{text-align:right}.site-header .brand-mark,.site-header .brand-name{display:none}.site-header .brand{position:relative;flex:0 0 auto;width:141px;height:56px;background:url(assets/brand/wordmark.webp) left center/contain no-repeat}.site-header .brand.wm-playing{background-image:none}.site-header .brand .brand-wm{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:left center;mix-blend-mode:multiply;filter:brightness(1.03);pointer-events:none}.site-header .bar{padding-top:4px;padding-bottom:4px}@media (max-width:900px){.site-header .brand{width:121px;height:48px}}.ab-h1 .ab-rot.is-ready{overflow:hidden;padding:.08em 0 .14em;margin:-.08em 0 -.14em;vertical-align:bottom}.ab-h1 .ab-rot.is-ready .rot-w,.ab-h1 .ab-rot.is-ready .rot-w.is-on,.ab-h1 .ab-rot.is-ready .rot-w.is-out{visibility:visible}.ab-h1 .ab-rot.is-ready .rot-w{opacity:0;transform:translateY(105%);transition:transform .7s cubic-bezier(.65,0,.35,1),opacity .45s ease}.ab-h1 .ab-rot.is-ready .rot-w.is-on{opacity:1;transform:translateY(0);transition:transform .7s cubic-bezier(.65,0,.35,1),opacity .5s ease .1s}.ab-h1 .ab-rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-105%);transition:transform .7s cubic-bezier(.65,0,.35,1),opacity .4s ease .15s}.ab-h1 .ab-rot.is-ready .rot-w.no-tr{transition:none}@media (prefers-reduced-motion:reduce){.ab-h1 .ab-rot.is-ready .rot-w{transition:none}}.ws-sec{padding-bottom:var(--sec-y-tight)}.ws-sec+#about{padding-top:var(--sec-y-tight)}.ws-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-bottom:28px}.ws-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.ws-q{margin:0;display:flex;flex-direction:column;gap:14px;padding:26px 24px 22px;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:0 16px 36px -30px rgba(16,22,56,.45)}.ws-mark{font-family:var(--f-display);font-size:3.5rem;line-height:.6;color:#2843c5;height:.5em}.ws-q blockquote{margin:0;font-family:var(--f-display);font-size:clamp(1.25rem,1.6vw,1.5rem);line-height:1.3;color:var(--ink);flex:1}.ws-q figcaption{font-size:.9375rem;color:var(--muted);line-height:1.4}.ws-q figcaption b{display:block;color:var(--ink);font-weight:600}@media (max-width:1000px){.ws-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:560px){.ws-grid{grid-template-columns:1fr}}#upcoming{padding-bottom:var(--sec-y-tight)}.mv-tabs{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-block:1px solid var(--line)}.mv-tabs .wrap{display:flex;gap:6px 26px;overflow-x:auto;padding-block:12px;scrollbar-width:none}.mv-tabs .wrap::-webkit-scrollbar{display:none}.mv-tabs a{white-space:nowrap;font-weight:600;font-size:.9375rem;color:var(--muted);text-decoration:none;background-image:none!important}.mv-tabs a:hover{color:#2843c5}.mv-week[open] .pm{transform:rotate(45deg)}.mv-tabs{top:82px;z-index:30;border-radius:999px;margin:0 auto;max-width:min(1160px,calc(100% - 32px));border:1px solid var(--line)}@media (max-width:900px){.mv-tabs{top:76px}}#faq .faq details{background:0 0}:root{--ink:#101638;--ink-2:#0a0f28;--rule:#101638;--paper:#ffffff;--sage:#e6d6f5;--white:#fff;--lime:#f8be93;--lime-2:#f4a877;--rose:#2843c5;--plum:#2843c5;--hl:rgba(248,190,147,.65);--line:#d8cde0;--line-on-sage:#cdbbdf;--muted:#565a70;--cobalt:#2843c5;--cobalt-h:#2036a6;--apricot:#f8be93;--lilac:#e6d6f5;--fox:#dd6327}body{background:var(--paper);color:var(--ink)}.btn,.btn-coral{background:var(--cobalt);background-image:none;color:#fff;border:0}.btn-coral:hover,.btn:hover{background:var(--cobalt-h);background-image:none;color:#fff}.btn-ghost{background:0 0;color:inherit;border:1px solid currentColor}.btn-ghost:hover{background:rgba(16,22,56,.06)}.on-dark .btn-ghost:hover{background:rgba(255,255,255,.12)}.btn-lime,.on-dark .btn-lime{background:var(--apricot);color:var(--ink)}.btn-lime:hover,.on-dark .btn-lime:hover{background:var(--lime-2);color:var(--ink)}@media (min-width:901px){.site-header .nav a.btn{background:var(--cobalt);color:#fff}.site-header .nav a.btn:hover{background:var(--cobalt-h);color:#fff}.site-header .nav a:hover,.site-header .nav a[aria-current=page]{border-bottom-color:var(--cobalt)}}.on-dark :focus-visible{outline-color:#fff}main .tlink,main .wd-foot a,main a:not(.btn):not([class]){color:var(--cobalt)}.mo-link{color:var(--cobalt)!important}.mo-link:hover{color:var(--cobalt-h)!important}.on-dark .tlink,.on-dark a:not(.btn):not([class]){color:#fff}.section.ink{background:var(--cobalt);color:#fff}.section.ink .muted{color:rgba(255,255,255,.9)}.cta-band .mark{background:#fff}.ws-mark{color:var(--fox)}.tw-caret{background:var(--fox)}.site-header .brand{width:60px;height:56px;background-image:url(assets/brand/fox-logo.webp)}.site-header .brand.wm-playing{background-image:none}.site-header .brand .brand-wm{filter:none}@media (max-width:900px){.site-header .brand{width:52px;height:48px}}.home .mo-copy h1 .rot{color:var(--cobalt)}.home .mo-copy h1 .rot.is-ready .rot-w{transition:opacity .15s ease,transform .2s ease,visibility 0s linear .2s}.home .mo-copy h1 .rot.is-ready .rot-w.is-on{transition:opacity .3s ease .15s,transform .3s ease .15s,visibility 0s}.home .mo-copy h1 .rot.is-ready .rot-w.is-out{transition:opacity .15s ease,transform .2s ease,visibility 0s linear .2s}.ab-h1 .ab-rot.is-ready .rot-w{transition:transform .45s cubic-bezier(.65,0,.35,1),opacity .3s ease}.ab-h1 .ab-rot.is-ready .rot-w.is-on{transition:transform .45s cubic-bezier(.65,0,.35,1),opacity .3s ease .06s}.ab-h1 .ab-rot.is-ready .rot-w.is-out{transition:transform .45s cubic-bezier(.65,0,.35,1),opacity .25s ease .1s}:root{--ivory:#fdf5f0;--navy:#101638;--cobalt:#2843c5;--cobalt-h:#2036a6;--cobalt-a:#192c88;--lilac:#e6d6f5;--apricot:#f8be93;--fox:#dd6327;--muted:#565a70;--divider:#d8cde0;--control:#77728a;--ink:#101638;--ink-2:#0a0f28;--rule:#101638;--paper:#fdf5f0;--sage:#fdf5f0;--line:#d8cde0;--line-on-sage:#d8cde0;--lime:#f8be93;--lime-2:#f4a877;--plum:#2843c5;--rose:#2843c5;--hl:rgba(248,190,147,.6);--white:#fff;--f-display:"Manrope",Arial,sans-serif;--f-text:"Manrope",Arial,sans-serif;--r:8px;--r-input:8px;--r-panel:12px;--r-photo:12px;--wrap:1280px;--sec-y:96px;--sec-y-tight:56px}@media (max-width:700px){:root{--sec-y:60px;--sec-y-tight:40px}}body,html{background:var(--ivory)}body{font-family:var(--f-text);font-size:1.125rem;line-height:1.6;color:var(--navy)}@media (max-width:700px){body{font-size:1.0625rem}}.btn,.menu-btn,.nav.open,.person img,input,select,textarea{corner-shape:round}.site-header .wrap.bar,.wrap{max-width:1280px;padding-left:48px;padding-right:48px}@media (max-width:1024px){.site-header .wrap.bar,.wrap{padding-left:32px;padding-right:32px}}@media (max-width:600px){.site-header .wrap.bar,.wrap{padding-left:20px;padding-right:20px}}.display,.svc-h,h1,h2,h3{font-family:var(--f-display);color:var(--navy);text-wrap:balance}.contact h1.display,h1{font-weight:800;letter-spacing:-.035em;line-height:1.08;font-size:clamp(2.375rem,1.2rem + 3.6vw,4.25rem)!important}.display.h-l,.h-l,.svc-h,h2{font-weight:800;letter-spacing:-.025em;line-height:1.15;font-size:clamp(1.875rem,1.2rem + 1.7vw,2.75rem)}h3{font-weight:700;letter-spacing:-.01em;line-height:1.25}.policy h2,.svc-item h3,.tf-prompt h3{font-family:var(--f-display);font-weight:700;font-size:clamp(1.375rem,1.1rem + .6vw,1.625rem);letter-spacing:-.015em;line-height:1.25}.ab-lede,.cs-fig,.cs-result,.quote blockquote,.wd-n,.ws-mark,.ws-q blockquote{font-family:var(--f-display)}.cs-fig{font-weight:800;letter-spacing:-.03em;color:var(--navy)}.wd-n{font-weight:800;letter-spacing:-.03em}.ab-lede,.cs-result{font-weight:600;letter-spacing:-.015em;line-height:1.4}.quote blockquote,.ws-q blockquote{font-weight:600;letter-spacing:-.01em;line-height:1.4}.sec-head p{font-size:clamp(1.125rem,1rem + .4vw,1.375rem);line-height:1.5;color:var(--muted)}dd,li,p{max-width:none}.cs-client,.label{letter-spacing:.02em;text-transform:none;font-size:.9375rem}.hand{font-family:var(--f-display);font-weight:700;transform:rotate(-3deg)}.cs-sheet-foot a,.faq a,.logos-more a,.policy a,main dd a,main li a:not(.btn):not([class]),main p a:not(.btn){color:var(--cobalt);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em;background-image:none!important;padding-bottom:0}main li a:not(.btn):not([class]):hover,main p a:not(.btn):hover{color:var(--cobalt-h);text-decoration-thickness:2px}.cs-all,.mo-link,.tlink,.wd-foot a{color:var(--cobalt)!important;text-decoration:underline!important;text-decoration-thickness:1px!important;text-underline-offset:.18em;background-image:none!important;padding-bottom:0!important;font-weight:700}#work a.cs-all{text-decoration:underline!important}.btn,.btn-coral,.btn-lime,.on-dark .btn-lime{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:8px!important;font-family:var(--f-text);font-size:1.0625rem;font-weight:700;line-height:1.2;background:var(--cobalt);background-image:none;color:#fff;border:2px solid var(--cobalt);box-shadow:none;text-shadow:none;transition:background-color .15s,border-color .15s}.btn-coral:hover,.btn-lime:hover,.btn:hover,.on-dark .btn-lime:hover{background:var(--cobalt-h);border-color:var(--cobalt-h);color:#fff}.btn-coral:active,.btn-lime:active,.btn:active{background:var(--cobalt-a);border-color:var(--cobalt-a);transform:none}.btn-ghost{background:var(--ivory);color:var(--navy);border:2px solid var(--navy)}.btn-ghost:hover{background:var(--lilac);color:var(--navy);border-color:var(--navy)}.btn-ghost:active{background:#d9c4ef;color:var(--navy)}.btn[disabled]{background:#e9e5eb;border-color:#e9e5eb;color:var(--muted);cursor:not-allowed}.on-dark :focus-visible{outline:3px solid var(--navy)!important;outline-offset:3px!important;box-shadow:0 0 0 3px #fff}input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--navy)!important;outline-offset:2px!important;border-color:var(--navy)}.site-header,body .site-header,body .site-header.is-scrolled,body:has(.hero-wc) .site-header{position:sticky;top:0;background:var(--ivory)!important;border-bottom:1px solid transparent;padding-top:env(safe-area-inset-top,0);transition:border-color .2s}.site-header.is-scrolled{border-bottom-color:var(--divider)!important}.site-header .bar,.site-header .wrap.bar{background:0 0!important;border:0!important;border-radius:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;min-height:92px;padding-top:16px!important;padding-bottom:16px!important;margin-inline:auto!important;width:auto}.site-header .brand{width:60px;height:56px}@media (min-width:901px){.site-header .nav{gap:32px}.site-header .nav a{color:var(--navy);opacity:1;font-size:1.0625rem;font-weight:600;padding:8px 0;border-bottom:2px solid transparent}.site-header .nav a:hover,.site-header .nav a[aria-current=page]{color:var(--navy);border-bottom-color:var(--cobalt)}.site-header .nav a.btn{border:2px solid var(--cobalt);border-bottom:2px solid var(--cobalt);padding:0 22px;min-height:48px;color:#fff;background:var(--cobalt)}.site-header .nav a.btn:hover{background:var(--cobalt-h);border-color:var(--cobalt-h)}}.site-header .menu-btn{min-height:48px;padding:0 18px;border:2px solid var(--navy);border-radius:8px;color:var(--navy);background:var(--ivory);font-weight:700}@media (max-width:900px){.site-header .bar,.site-header .wrap.bar{min-height:76px;padding-top:10px!important;padding-bottom:10px!important}.site-header .brand{width:52px;height:48px}.site-header .nav{top:100%;left:0;right:0;border-radius:0 0 12px 12px;border:0;border-bottom:1px solid var(--divider);box-shadow:0 12px 24px -20px rgba(16,22,56,.4);background:var(--ivory);padding:8px 20px 20px}.site-header .nav a{color:var(--navy);font-weight:600;min-height:48px;display:flex;align-items:center}.site-header .nav a[aria-current=page]{color:var(--cobalt)}.site-header .nav .btn{color:#fff;justify-content:center;margin-top:14px}}.site-header.is-hidden{transform:none!important;visibility:visible!important}.hl-hero{position:relative;background:var(--ivory);overflow:hidden}.hl-hero-in{position:relative;z-index:2;display:flex;align-items:center;min-height:clamp(540px,44vw,660px);padding-top:32px;padding-bottom:40px}.hl-copy{width:48%;max-width:620px;display:grid;gap:24px;justify-items:start}.hl-copy h1{margin:0;font-size:clamp(2.75rem,1.5rem + 2.6vw,4rem)!important}.hl-intro{margin:0;font-size:clamp(1.25rem,1.05rem + .5vw,1.5rem);line-height:1.5;color:var(--navy);max-width:28ch}.hl-actions{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px}.hl-media{position:absolute;z-index:1;top:50%;right:0;transform:translateY(-50%);width:calc(53vw + 1px);max-width:1100px;aspect-ratio:1672/940;background:#d9c9d9}.hl-media::before{content:"";position:absolute;z-index:1;inset:0 auto 0 0;width:9%;background:linear-gradient(90deg,var(--ivory),rgba(253,245,240,0));pointer-events:none}.hl-video{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 50%}@media (min-width:1600px){.hl-media{width:calc(50vw - 40px + ((100vw - 1280px)/ 2) * .3)}}@media (max-width:959px){.hl-hero-in{display:block;min-height:0;padding-top:32px;padding-bottom:32px}.hl-copy{width:auto;max-width:640px}.hl-copy h1{font-size:clamp(2.375rem,1.6rem + 3.4vw,3.25rem)!important}.hl-media{position:relative;top:auto;right:auto;transform:none;width:100%;max-width:none}.hl-media::before{display:none}}@media (max-width:420px){.hl-actions{flex-direction:column;align-items:stretch}.hl-actions .btn{width:100%}}.section.sage{background:var(--ivory)}.section.sage>.wrap{position:relative}.section+.section.sage,.section.sage+.section{border-top:1px solid var(--divider)}.hl-lilac,.section.hl-lilac{background:var(--lilac)!important;border-top:0!important}.hl-lilac+.section{border-top:0}#learn{background:var(--lilac)!important}.contact form,.cs-card,.cs-sheet,.home .svc-item,.lx-step,.svc-item,.wd li,.ws-q{border-radius:12px;box-shadow:none!important}.cs-card,.wd li,.ws-q{background:#fff;border:1px solid var(--divider)}.home .svc-item{background:var(--lilac);border:1px solid var(--divider);padding:32px}.cs-card:hover{transform:none;box-shadow:none;border-color:var(--navy)}.ws-q{gap:12px}.ws-mark{font-weight:800;color:var(--fox);height:.45em}input,select,textarea{min-height:48px;border:1.5px solid var(--control);border-radius:8px;background:#fff;color:var(--navy);box-shadow:none;font-family:var(--f-text);font-size:1rem}textarea{min-height:120px}input[type=checkbox],input[type=radio]{min-height:0;accent-color:var(--cobalt)}.section.ink{background:var(--apricot)!important;color:var(--navy)}.section.ink .display,.section.ink h2{color:var(--navy)}.section.ink .muted{color:rgba(16,22,56,.82)}.section.ink a:not(.btn){color:var(--navy)!important;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em;background-image:none!important;font-weight:700}.section.ink .btn-ghost{background:0 0;color:var(--navy);border-color:var(--navy)}.section.ink .btn-ghost:hover{background:rgba(255,255,255,.45)}.cta-band .mark{background:var(--navy);opacity:.85}.site-footer{background:var(--navy);color:var(--ivory);border-top:0;padding:32px 0}.site-footer .foot-bottom,.site-footer .foot-bottom a{color:rgba(253,245,240,.9)!important}.site-footer .foot-bottom a{text-decoration:underline!important;text-underline-offset:.18em}.site-footer .foot-bottom a:hover{color:#fff!important}.site-footer :focus-visible{outline-color:#fff!important;box-shadow:0 0 0 3px var(--navy)}.mv-tabs{top:92px;border-radius:0;max-width:none;border-inline:0;background:rgba(253,245,240,.97);-webkit-backdrop-filter:none;backdrop-filter:none}@media (max-width:900px){.mv-tabs{top:76px}}.mv-tabs a{color:var(--navy)}.mv-tabs a:hover{color:var(--cobalt)}.w-sticky{background:var(--ivory);border-top:1px solid var(--divider)}.hand{color:var(--apricot)}.cx-dot.is-done,.cx-fill{background:var(--cobalt)}.cx-dot.is-done{border-color:var(--cobalt)}.ab-photo,.person img{border-radius:12px}.lx-tag{border-radius:6px}@media (min-width:960px){.hl-media{left:calc(max(0px,(100vw - 1280px)/ 2) + 48px + (min(100vw,1280px) - 96px) * .48 + 16px);right:0;width:auto;max-width:1100px;margin-left:auto}}.site-header .brand{width:65px;height:56px;background-image:url(assets/brand/fox-logo-2.webp)}.site-header .brand .brand-wm{mix-blend-mode:normal;filter:none}@media (max-width:900px){.site-header .brand{width:56px;height:48px}}.hl-hero{position:relative;overflow:hidden;background:#d9c9d9}.hl-hero-in{min-height:clamp(560px,46vw,720px);padding-top:64px;padding-bottom:64px}.hl-media{position:absolute;inset:0;left:0;right:0;top:0;bottom:0;transform:none;width:auto;max-width:none;margin:0;aspect-ratio:auto;background:0 0}@media (min-width:960px){.hl-media{left:0;right:0;width:auto;max-width:none;margin-left:0}}.hl-video{width:100%;height:100%;object-fit:cover;object-position:50% 70%}.hl-media::before{display:block;inset:0;width:auto;background:linear-gradient(90deg,rgba(253,245,240,.97) 0,rgba(253,245,240,.94) 30%,rgba(253,245,240,.78) 44%,rgba(253,245,240,.35) 56%,rgba(253,245,240,0) 68%)}@media (max-width:959px){.hl-hero{background:var(--ivory)}.hl-hero-in{display:block;min-height:0;padding-top:40px;padding-bottom:calc(56.25vw * .82)}.hl-media{top:auto;height:calc(56.25vw + 0px)}.hl-video{object-position:50% 50%}.hl-media::before{display:block;background:linear-gradient(180deg,#fdf5f0 0,rgba(253,245,240,0) 34%)}}:root{--sec-y:96px;--sec-y-tight:96px}@media (max-width:700px){:root{--sec-y:64px;--sec-y-tight:64px}}.case-sec,.home .svc,.logos,.section,.svc,.ws-sec{padding-top:var(--sec-y)!important;padding-bottom:var(--sec-y)!important}.case-sec+.case-sec:not(.sage),.section+.section.sage,.section.sage+.section{border-top:0!important}.sec-join{padding-top:0!important}.logos{padding-top:64px!important}@media (max-width:700px){.logos{padding-top:48px!important}}.svc-h{margin-bottom:48px}.case-sec{padding-top:48px!important;padding-bottom:48px!important}.case-sec+.case-sec{border-top:1px solid var(--divider)!important}.case-sec+.case-sec.sec-join{padding-top:48px!important}.cx-deck>.case-sec{padding:0!important;border:0!important}main>.sec-join.sec-join.sec-join{padding-top:0!important}main>.case-sec+.case-sec.sec-join.sec-join.sec-join,main>.case-sec.sec-join.sec-join.sec-join+.case-sec{padding-top:48px!important}.hl-intro{max-width:36ch}@media (min-width:960px){.hl-media::before{background:linear-gradient(90deg,rgba(253,245,240,.97) 0,rgba(253,245,240,.93) 36%,rgba(253,245,240,.8) 46%,rgba(253,245,240,.38) 58%,rgba(253,245,240,0) 70%)}}@media (max-width:959px){.hl-hero-in{padding-bottom:calc(56.25vw * .9 + 16px)}.hl-intro{max-width:none}}.cta-band .mark{-webkit-mask:none;mask:none;background:url(assets/brand/fox-logo-2.webp) center/contain no-repeat;opacity:1;width:150px;height:130px}@media (max-width:760px){.cta-band .mark{width:96px;height:84px}}.home .hl-copy h1 .h1-l{display:block}.home .hl-copy h1 .rot{display:inline-grid;vertical-align:baseline;width:max-content;max-width:100%;justify-items:start;color:var(--cobalt)}.home .hl-copy h1 .rot-w{grid-area:1/1;white-space:nowrap}.home .hl-copy h1 .rot.is-ready .rot-w{opacity:0;transform:translateY(8px);visibility:hidden;transition:opacity .15s ease,transform .2s ease,visibility 0s linear .2s}.home .hl-copy h1 .rot.is-ready .rot-w.is-on{opacity:1;transform:none;visibility:visible;transition:opacity .3s ease .15s,transform .3s ease .15s,visibility 0s}.home .hl-copy h1 .rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-8px);visibility:visible;transition:opacity .15s ease,transform .2s ease,visibility 0s linear .2s}@media (prefers-reduced-motion:reduce){.home .hl-copy h1 .rot.is-ready .rot-w{transition:none}}.hl-actions{align-items:center;gap:16px 32px}.hl-actions .mo-link{font-weight:700;font-size:1.0625rem}.tw-caret{background:var(--cobalt)}.logos{background:var(--ivory)}.logos-cap{max-width:none;font-size:1.0625rem;color:var(--muted)}.site-header,body .site-header,body .site-header.is-scrolled,body:has(.hero-wc) .site-header{background:0 0!important;border-bottom:0!important;padding-top:calc(12px + env(safe-area-inset-top,0px))}.site-header .bar,.site-header .wrap.bar{background:linear-gradient(100deg,#fff 0,#fbf6ff 45%,#efe4fa 100%)!important;border:1px solid rgba(16,22,56,.1)!important;border-radius:999px!important;box-shadow:0 10px 30px -18px rgba(16,22,56,.35)!important;min-height:0;padding:6px 10px 6px 22px!important;max-width:calc(min(1280px,100vw) - 96px + 24px)!important;margin-inline:auto!important}@media (min-width:901px){.site-header .nav a.btn{border-radius:999px}}@media (max-width:1024px){.site-header .bar,.site-header .wrap.bar{max-width:calc(100vw - 40px)!important}}@media (max-width:900px){.site-header .bar,.site-header .wrap.bar{padding:6px 8px 6px 16px!important;max-width:calc(100vw - 24px)!important}.site-header .menu-btn{border-radius:999px}.site-header .nav{top:calc(100% + 8px);border-radius:20px;border:1px solid var(--divider)}}.mv-tabs{top:96px}@media (max-width:900px){.mv-tabs{top:84px}}.hl-hero{margin-top:0}.site-header .brand{position:relative;width:74px;height:64px;overflow:visible;background:url(assets/brand/fox-logo-3-222.webp) left center/contain no-repeat}.site-header .brand.wm-playing{background-image:none}.site-header .brand .brand-wm{position:absolute;inset:auto;width:205.9%;height:140.9%;left:-48.2%;top:-23.2%;max-width:none;object-fit:fill;mix-blend-mode:multiply;filter:none;pointer-events:none;z-index:2}@media (max-width:900px){.site-header .brand{width:60px;height:52px}}#about.hl-lilac,#what.hl-lilac{background:var(--lilac)!important}.hq.hq-row .hq-track{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--hq-in);padding:4px var(--hq-in) 16px;scrollbar-width:none;height:auto!important}.hq-nav{gap:12px}.hq-count{display:inline!important}.cx-dots .cx-next.cx-next-dot{position:relative;display:grid;justify-items:center;gap:2px;margin-top:10px;padding:6px 0 0;border:0;width:auto;max-width:none;font-size:.8125rem;font-weight:700;color:var(--navy);text-decoration:none!important;background:0 0!important}.cx-dots .cx-next.cx-next-dot::after{content:none}.cx-next-arrow{color:var(--cobalt);font-size:1rem;line-height:1}.cx-dots .cx-next.cx-next-dot::before{content:attr(data-label);position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);white-space:nowrap;font-size:.8125rem;font-weight:600;color:var(--navy);background:#fff;border:1px solid var(--divider);padding:5px 8px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .15s}.cx-dots .cx-next.cx-next-dot:focus-visible::before,.cx-dots .cx-next.cx-next-dot:hover::before{opacity:1}.cx-dots .cx-next.cx-next-dot:hover{color:var(--cobalt)}@media (max-width:900px){.site-header .nav a.btn{background:var(--cobalt)!important;color:#fff!important;border:2px solid var(--cobalt);border-radius:999px;min-height:48px}.site-header .nav a.btn:hover{background:var(--cobalt-h)!important}}@media (max-width:600px){.home .svc-item{grid-template-columns:1fr!important;padding:24px!important;gap:16px}.home .svc-item img{height:56px;max-width:64px}.home .svc-item h3{margin-bottom:12px}}:root{--sec-y:80px;--sec-y-tight:80px}@media (max-width:700px){:root{--sec-y:56px;--sec-y-tight:56px}}main>.sec-join.sec-join.sec-join{padding-top:24px!important}@media (max-width:700px){main>.sec-join.sec-join.sec-join{padding-top:0!important}}.cs-head,.sec-head,.ws-head{margin-bottom:36px}@media (max-width:700px){.cs-head,.sec-head,.svc-h,.ws-head{margin-bottom:28px}}.wd{gap:32px}.wd li{background:0 0!important;border:0!important;border-top:2px solid var(--navy)!important;border-radius:0!important;padding:20px 0 0!important;grid-template-rows:auto auto minmax(3.4em,auto) auto;align-content:start}.wd-n{color:var(--cobalt);font-size:2.25rem}.wd h3{align-self:start}@media (max-width:600px){.wd{gap:0}.wd li{grid-template-columns:2.5rem minmax(0,1fr);grid-template-rows:none;column-gap:12px;padding:16px 0!important;border-top:1px solid var(--divider)!important}.wd li>*{grid-column:2}.wd-n{grid-column:1!important;grid-row:1/span 3;font-size:1.75rem}}.ws-grid{gap:40px}.ws-q{background:0 0!important;border:0!important;border-radius:0!important;padding:0!important;border-left:3px solid var(--apricot)!important;padding-left:20px!important}.hl-copy{gap:0}.hl-copy h1{margin-bottom:28px!important}.hl-intro{max-width:30rem;margin-bottom:32px!important}@media (max-width:959px){.hl-intro{max-width:none;font-size:1.1875rem;line-height:1.5}}@media (max-width:480px){.hl-actions{flex-direction:column;align-items:stretch;gap:14px}.hl-actions .btn{width:100%}.hl-actions .mo-link{align-self:flex-start}}.logos .trow img[src*=rimes]{filter:grayscale(1) brightness(.55);opacity:.8}.home .ab-lede{font-size:clamp(1.25rem,1.1rem + .3vw,1.375rem);font-weight:500}.section.ink .btn-ghost{background:var(--cobalt)!important;border-color:var(--cobalt)!important;color:#fff!important}.section.ink .btn-ghost:hover{background:var(--cobalt-h)!important;border-color:var(--cobalt-h)!important}.section.ink .actions a:not(.btn){text-decoration:underline!important;text-underline-offset:.2em}.cta-band .mark{width:120px;height:104px}.site-header .brand .brand-wm{clip-path:inset(8px 0 4px 13px round 39px 0 0 39px)}@media (max-width:900px){.site-header .brand .brand-wm{clip-path:inset(5px 0 2px 12px round 33px 0 0 33px)}}#what.hl-lilac{background:#f1eaf8!important}.site-header .bar,.site-header .brand,.site-header .nav a.btn{transition:padding .25s ease,width .25s ease,height .25s ease,min-height .25s ease}.site-header.is-compact{padding-top:calc(8px + env(safe-area-inset-top,0px))}.site-header.is-compact .bar,.site-header.is-compact .wrap.bar{padding-top:3px!important;padding-bottom:3px!important}.site-header.is-compact .brand{width:60px;height:52px}.site-header.is-compact .brand .brand-wm{clip-path:inset(8px 0 5px 6px round 30px 0 0 30px)}@media (min-width:901px){.site-header.is-compact .nav a.btn{min-height:42px;padding:0 18px}.site-header.is-compact .nav a{font-size:1rem}}@media (max-width:900px){.site-header.is-compact .brand{width:51px;height:44px}.site-header.is-compact .brand .brand-wm{clip-path:inset(6px 0 4px 8px round 26px 0 0 26px)}.site-header.is-compact .menu-btn{min-height:40px}}@media (prefers-reduced-motion:reduce){.site-header .bar,.site-header .brand,.site-header .nav a.btn{transition:none}}.site-footer{position:relative}.fox-walk{position:absolute;left:0;right:0;bottom:100%;height:52px;overflow:hidden;pointer-events:none;z-index:1}.fox-walk span{position:absolute;left:0;bottom:-1px;height:52px;aspect-ratio:218/104;background:url(assets/brand/fox-walk.webp) 0 0/2300% 100% no-repeat;transform:translateX(100vw);animation:fox-gait .958s steps(23) infinite,fox-cross var(--fox-dur,46s) linear infinite;animation-play-state:paused}.fox-walk.is-on span{animation-play-state:running}@keyframes fox-gait{to{background-position:104.5455% 0}}@keyframes fox-cross{0%{transform:translateX(100vw)}82%{transform:translateX(-100%)}100%{transform:translateX(-100%)}}@media (max-width:700px){.fox-walk{height:40px}.fox-walk span{height:40px}}@media (prefers-reduced-motion:reduce){.fox-walk span{animation:none;transform:none;left:auto;right:6%}}.site-header .brand .brand-wm{opacity:0}.site-header .brand.wm-playing .brand-wm{opacity:1}.cta-band .mark{display:none!important}.cta-band{grid-template-columns:minmax(0,1fr)}@keyframes fox-cross{0%{transform:translateX(100vw) scaleX(1)}49.99%{transform:translateX(-100%) scaleX(1)}50%{transform:translateX(-100%) scaleX(-1)}100%{transform:translateX(100vw) scaleX(-1)}}@media (min-width:901px){.site-header .nav a.btn,.site-header.is-compact .nav a.btn{border-radius:999px!important;min-height:48px}.site-header .bar,.site-header .wrap.bar{padding-right:14px!important}.site-header.is-compact .nav a.btn{min-height:42px}.site-header.is-compact .bar,.site-header.is-compact .wrap.bar{padding-right:8px!important}}@media (max-width:900px){.site-header.is-compact .bar,.site-header.is-compact .wrap.bar{padding-right:5px!important}}.hl-media .hl-still,.hl-media .hl-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%;display:block}.hl-media .hl-video{opacity:0;transition:opacity .4s ease;z-index:0}.hl-media.is-playing .hl-video{opacity:1}.hl-media .hl-still{z-index:0}.hl-media::before{z-index:2}@media (max-width:959px){.hl-media .hl-still,.hl-media .hl-video{object-position:50% 50%}}.fox-walk span{background-image:none}.fox-walk.is-near span{background-image:url(assets/brand/fox-walk.webp)}@media (min-width:901px){.site-header .bar,.site-header .wrap.bar{transition:max-width .4s cubic-bezier(.2,.7,.2,1),padding .25s,height .25s,min-height .25s}.site-header.is-compact .bar,.site-header.is-compact .wrap.bar{max-width:var(--pill-w,100%)!important}}@media (prefers-reduced-motion:reduce){.site-header .bar,.site-header .wrap.bar{transition:none}}@media (min-width:1101px){.team{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}}@media (min-width:861px) and (max-width:1100px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (min-width:601px){.ab-team{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:900px){.home .svc-item{transform:none!important;opacity:1!important;background-color:var(--lilac)!important;rotate:none!important;scale:none!important}}@media (max-width:600px){.home .svc-item{grid-template-columns:48px minmax(0,1fr)!important;column-gap:14px!important;row-gap:0!important;align-items:center}.home .svc-item>div{display:contents}.home .svc-item img{grid-column:1;grid-row:1;width:48px;height:48px;max-width:48px;object-position:center}.home .svc-item h3{grid-column:2;grid-row:1;margin:0!important}.home .svc-item p{grid-column:1/-1}.home .svc-item p.svc-lead{margin:16px 0 8px}}.hl-intro>p{display:inline}@media (max-width:959px){.hl-intro>p{display:block}.hl-intro>p+p{margin-top:.75em}}@media (max-width:480px){.hl-actions{justify-self:stretch;width:100%;gap:12px!important}.cta-band .actions .btn,.hl-actions .btn{min-height:48px;width:100%;justify-content:center;text-align:center;padding-top:10px;padding-bottom:10px}.cta-band .actions a:not(.btn),.hl-actions .mo-link{display:inline-flex;align-items:center;min-height:44px}.cta-band .actions{flex-direction:column;align-items:stretch;gap:8px}.cta-band .actions a:not(.btn){align-self:flex-start}}@media (min-width:901px){.home .ab{grid-template-columns:minmax(0,4fr) minmax(0,7fr);grid-template-rows:1fr auto auto 1fr;row-gap:0;align-items:start}.home .ab>.ab-photo{grid-column:1;grid-row:1/5;align-self:center}.home .ab>h2{grid-column:2;grid-row:2;margin:0}.home .ab>.ab-copy{grid-column:2;grid-row:3;margin-top:14px}}@media (max-width:900px){.home .ab{row-gap:24px}.home .ab>.ab-photo{max-width:260px}}@media (max-width:600px){.home .ab>.ab-photo{max-width:200px}}.ab-h1 .ab-rot.is-ready .rot-w{transition:transform .35s cubic-bezier(.65,0,.35,1),opacity .25s ease}.ab-h1 .ab-rot.is-ready .rot-w.is-on{transition:transform .35s cubic-bezier(.65,0,.35,1),opacity .25s ease .05s}.ab-h1 .ab-rot.is-ready .rot-w.is-out{transition:transform .35s cubic-bezier(.65,0,.35,1),opacity .2s ease .08s}.ab-h1 .ab-rot.is-ready .rot-w.no-tr{transition:none}@media (prefers-reduced-motion:reduce){.ab-h1 .ab-rot.is-ready .rot-w{transition:none}}.home .logos+.svc{padding-top:0!important}@font-face{font-family:"Manrope Fallback";font-style:normal;font-weight:400;src:local("Arial"),local("ArialMT"),local("Liberation Sans"),local("LiberationSans");size-adjust:103.0%;ascent-override:103.5%;descent-override:29.1%;line-gap-override:0%}@font-face{font-family:"Manrope Fallback";font-style:normal;font-weight:500;src:local("Arial"),local("ArialMT"),local("Liberation Sans"),local("LiberationSans");size-adjust:104.9%;ascent-override:101.6%;descent-override:28.6%;line-gap-override:0%}@font-face{font-family:"Manrope Fallback";font-style:normal;font-weight:600;src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("LiberationSans-Bold");size-adjust:99.0%;ascent-override:107.6%;descent-override:30.3%;line-gap-override:0%}@font-face{font-family:"Manrope Fallback";font-style:normal;font-weight:700;src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("LiberationSans-Bold");size-adjust:100.7%;ascent-override:105.8%;descent-override:29.8%;line-gap-override:0%}@font-face{font-family:"Manrope Fallback";font-style:normal;font-weight:800;src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("LiberationSans-Bold");size-adjust:102.5%;ascent-override:104.0%;descent-override:29.3%;line-gap-override:0%}:root{--f-display:"Manrope","Manrope Fallback",Arial,sans-serif;--f-text:"Manrope","Manrope Fallback",Arial,sans-serif}@media (min-width:601px) and (max-width:900px){.home .ab{grid-template-columns:220px minmax(0,1fr);column-gap:32px;row-gap:14px}.home .ab>h2{grid-column:1/-1;margin-bottom:10px}.home .ab>.ab-photo{grid-column:1;grid-row:2/4;max-width:none;align-self:start}.home .ab>.ab-copy{display:contents}.home .ab-copy>.ab-lede{grid-column:2;grid-row:2}.home .ab-copy>.muted{grid-column:2;grid-row:3;align-self:start}.home .ab-copy>.ab-team,.home .ab-copy>p:last-child{grid-column:1/-1}}@media (max-width:560px){.cs-sheet{max-width:100%;max-width:100vw;left:0;right:0}}.cx-dot::before{inset:-11px -16px}@media (min-width:1181px){.home .cs-4 .cs-fig{min-height:2lh}}.ws-nav .site-header{transition:transform .3s ease,padding .25s ease}.ws-nav.ws-tucked .site-header,.ws-nav.ws-tucked .site-header.is-hidden{transform:translateY(calc(-100% - 12px))!important}.ws-nav .mv-tabs{top:var(--ws-tabs-top,96px);transition:transform .3s ease;margin:0 auto;max-width:calc(min(1280px,100vw) - 72px);border:1px solid rgba(16,22,56,.1)!important;border-radius:999px;background:linear-gradient(100deg,#fff 0,#fbf6ff 45%,#efe4fa 100%);box-shadow:0 10px 30px -18px rgba(16,22,56,.35);overflow:hidden;-webkit-backdrop-filter:none;backdrop-filter:none}.ws-nav.ws-tucked .mv-tabs{transform:translateY(calc(12px + env(safe-area-inset-top,0) - var(--ws-tabs-top,96px)))}.ws-nav .mv-tabs .wrap{max-width:none;padding-left:22px;padding-right:22px}@media (max-width:1024px){.ws-nav .mv-tabs{max-width:calc(100vw - 40px)}}@media (max-width:900px){.ws-nav .mv-tabs{max-width:calc(100vw - 24px)}.ws-nav .mv-tabs .wrap{padding-left:16px;padding-right:16px}}.ws-nav .mv-tabs a{position:relative}.ws-nav .mv-tabs a[aria-current=location]{color:var(--cobalt)!important;text-decoration:underline!important;text-decoration-thickness:2px!important;text-underline-offset:6px}.ws-nav .mv-sec{scroll-margin-top:0}@media (prefers-reduced-motion:reduce){.ws-nav .mv-tabs,.ws-nav .site-header{transition:none}}</style>
 </head>
-<body class="rz">
-
-<!-- HEADER --------------------------------------------------------------- -->
-<header class="rz-header">
-  <div class="rz-container rz-header__inner">
-    <a class="rz-header__brand rz-header__brand--logo" href="#top" aria-label="Paidia Consulting - home">
-      <img src="assets/images/paidia-logo-paper.png" alt="" data-no-zoom />
-      <span class="rz-header__brand--wordmark">PAIDIA</span>
-    </a>
-    <button class="rz-nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
-      <span></span><span></span><span></span>
-    </button>
-    <nav class="rz-nav" id="primary-nav">
-      <a href="#services">Services</a>
-      <a href="#impact">Impact</a>
-      <a href="#testimonials">Testimonials</a>
-      <a href="#clients">Clients</a>
-      <a href="#team">Team</a>
-      <a href="#contact" class="rz-btn">Get in touch</a>
-    </nav>
+<body class="home">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap bar">
+  <a class="brand" href="./" aria-label="Paidia Consulting home"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">paidia<small>Consulting</small></span></a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+  <nav class="nav" id="nav" aria-label="Main"><a href="index.html" aria-current="page">Home</a><a href="work.html">Our work</a><a href="learn.html">Learn</a><a href="about.html">About</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
+</div></header>
+<main id="main">
+<section class="hl-hero" id="mo" aria-labelledby="mo-h1">
+  <div class="wrap hl-hero-in">
+    <div class="hl-copy">
+      <h1 id="mo-h1"><span class="h1-l">We show you what&rsquo;s <span class="vh">possible.</span><span class="rot" data-words="possible.|useful.|next." aria-hidden="true"><span class="rot-w is-on">possible.</span></span></span> <span class="h1-l">And get you&nbsp;there.</span></h1>
+      <div class="hl-intro"><p>We are an AI consultancy that goes beyond generic prompting, whatever your department.</p> <p>We&rsquo;re the architects behind the UK Foreign Office&rsquo;s award-winning AI service, trusted by teams in enterprise tech, financial services and real estate.</p></div>
+      <div class="hl-actions"><a class="btn" href="learn.html#upcoming">Free Monday office hours</a><a class="mo-link" href="work.html">Explore our work <span aria-hidden="true">&rarr;</span></a></div>
+    </div>
   </div>
-</header>
-
-<!-- HERO ----------------------------------------------------------------- -->
-<!--
-  HEADLINE OPTIONS - swap freely.
-  Flat, declarative, British, no "actually". Emphasis = ONE .rz-mark word.
-  Option A is LIVE in the <h1> below. To swap, lift the words from any option
-  into the <h1>, keeping the <span class="rz-mark rz-tilt"> on the marked word.
-
-  Option A (LIVE):
-    We help organisations use AI [well].
-
-  Option B:
-    AI that reaches production - and people who can [run] it.
-
-  Option C:
-    Strategy, people and working systems. By the same people who [build] them.
-
-  Option D:
-    From cautious to [capable]. AI enablement and engineering, end to end.
-
-  (Square brackets mark which word gets the spot-ink highlighter.)
--->
-<section class="rz-hero" id="top">
-  <div class="rz-wash"></div>
-  <div class="rz-container rz-hero__inner">
-    <span class="rz-eyebrow">AI enablement &middot; engineering &middot; coaching</span>
-    <h1 class="rz-display ui-mt-4">
-      We help organisations use AI
-      <span class="rz-bind"><span class="rz-mark rz-tilt">well</span>.</span>
-    </h1>
-    <p class="rz-lead ui-mt-6">
-      We are AI experts who love everything from coaching and embedded AI
-      enablement through to agentic app architecture and engineering. With a
-      proven track record from large government projects to SMEs, we'd love to
-      help you achieve your AI ambitions.
-    </p>
-    <div class="ui-actions">
-      <a href="#contact" class="rz-btn">Start a conversation</a>
-      <a href="#impact" class="rz-btn rz-btn--ghost">See the work</a>
-    </div>
-
-    <div class="hero-stats">
-      <div class="rz-stat">
-        <div class="rz-stat__value rz-yel">70M+</div>
-        <div class="rz-stat__label">Users served annually</div>
-      </div>
-      <div class="rz-stat">
-        <div class="rz-stat__value rz-pink">95%</div>
-        <div class="rz-stat__label">Accuracy in production</div>
-      </div>
-      <div class="rz-stat">
-        <div class="rz-stat__value rz-yel">20+</div>
-        <div class="rz-stat__label">Years shipping products</div>
-      </div>
-    </div>
+  <div class="hl-media">
+    <img class="hl-still" src="assets/hero/highlands-still.webp" srcset="assets/hero/highlands-still-800.webp 800w, assets/hero/highlands-still-960.webp 960w, assets/hero/highlands-still-1280.webp 1280w, assets/hero/highlands-still.webp 1672w" sizes="100vw" width="1672" height="940" alt="" fetchpriority="high" decoding="async">
+    <video class="hl-video" muted loop playsinline preload="none" width="1672" height="940" aria-hidden="true" data-src="assets/hero/highlands-light-loop.mp4"></video>
   </div>
 </section>
 
-<!-- SERVICES ------------------------------------------------------------- -->
-<section class="rz-section rz-deep" id="services">
-  <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
-  <div class="rz-container">
-    <h2 class="ui-stack-12">From the boardroom to the <span class="rz-bind"><span class="rz-mark rz-tilt">codebase</span>.</span></h2>
 
-    <p class="services-label rz-eyebrow rz-eyebrow--yellow">What we do</p>
-
-    <div class="vg">
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--yel">01</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">AI strategy &amp; advisory</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list svc-list--pink">
-            <li>Board-level guidance on where AI creates real value</li>
-            <li>Focus on the few use cases that drive most of the impact</li>
-          </ul>
-        </div></div>
-      </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--pink">02</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Coaching &amp; mentoring</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list">
-            <li>Individual and team coaching that reshapes mental models</li>
-            <li>Understand AI's jagged frontier - where it excels and where it fails</li>
-          </ul>
-        </div></div>
-      </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--yel">03</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Transformation &amp; training</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list svc-list--pink">
-            <li>Sustainable AI capability from boardroom to frontline</li>
-            <li>A workforce taken from zero use to 70% adoption in 12 weeks</li>
-          </ul>
-        </div></div>
-      </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--pink">04</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Architecture &amp; engineering</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list">
-            <li>Production-grade systems built for accuracy, security and scale</li>
-            <li>Retrieval pipelines to agentic workflows, designed not to hallucinate when it matters</li>
-          </ul>
-        </div></div>
-      </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--yel">05</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">Rapid prototyping</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list svc-list--pink">
-            <li>Working demos in days, not quarters</li>
-            <li>Build fast to prove value, then hand off or scale to production</li>
-          </ul>
-        </div></div>
-      </article>
-      <article class="vcard" tabindex="0">
-        <div class="vcard__top">
-          <span class="rz-chip rz-chip--pink">06</span>
-          <span class="vcard__more" aria-hidden="true">+</span>
-        </div>
-        <h3 class="vcard__title">AI governance</h3>
-        <div class="vcard__reveal"><div class="vcard__inner">
-          <ul class="svc-list">
-            <li>Frameworks that enable rather than block</li>
-            <li>Risk tiers, approvals and transparency aligned with UK Government best practice</li>
-          </ul>
-        </div></div>
-      </article>
-    </div>
-  </div>
+<section class="logos" aria-labelledby="logos-cap"><div class="wrap">
+  <p class="logos-cap" id="logos-cap">We&rsquo;ve solved problems for teams in government, health, charities, education and finance</p>
+  <div class="track"><div class="trow">
+    <img class="lg-key" src="assets/clients/fcdo-ink.webp" srcset="assets/clients/fcdo-ink-h96.webp 2x, assets/clients/fcdo-ink-h144.webp 3x" alt="Foreign, Commonwealth and Development Office">
+    <img class="lg-key" src="assets/clients/nhs.png" alt="NHS">
+    <img class="lg-key" src="assets/clients/gosh-ink.webp" srcset="assets/clients/gosh-ink-h96.webp 2x, assets/clients/gosh-ink-h144.webp 3x" alt="Great Ormond Street Hospital Charity">
+    <img class="lg-key" src="assets/clients/homes-england-ink.webp" srcset="assets/clients/homes-england-ink-h96.webp 2x, assets/clients/homes-england-ink-h144.webp 3x" alt="Homes England">
+    <span class="tmark tmark-wg"><span>Llywodraeth Cymru</span><span>Welsh Government</span></span>
+    <img class="lg-key" src="assets/clients/pearson-ink.webp" alt="Pearson">
+    <img class="lg-key" src="assets/clients/awin-ink.webp" srcset="assets/clients/awin-ink-h96.webp 2x, assets/clients/awin-ink-h144.webp 3x" alt="Awin">
+    <img loading="lazy" decoding="async" src="assets/clients/rimes.webp" srcset="assets/clients/rimes-h96.webp 2x, assets/clients/rimes-h144.webp 3x" alt="Rimes">
+    <img loading="lazy" decoding="async" src="assets/clients/merton.png" alt="London Borough of Merton">
+    <span class="tmark tmark-psc">The PSC</span>
+    <img loading="lazy" decoding="async" src="assets/clients/keele-ink.webp" srcset="assets/clients/keele-ink-h96.webp 2x, assets/clients/keele-ink-h144.webp 3x" alt="Keele University">
+    <svg role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" fill="#1d1d1b"><path d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"/><path d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"/><path d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"/><path d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"/></svg>
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/fcdo-ink.webp" srcset="assets/clients/fcdo-ink-h96.webp 2x, assets/clients/fcdo-ink-h144.webp 3x" alt="">
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/nhs.png" alt="">
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/gosh-ink.webp" srcset="assets/clients/gosh-ink-h96.webp 2x, assets/clients/gosh-ink-h144.webp 3x" alt="">
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/homes-england-ink.webp" srcset="assets/clients/homes-england-ink-h96.webp 2x, assets/clients/homes-england-ink-h144.webp 3x" alt="">
+    <span aria-hidden="true" class="dup tmark tmark-wg"><span>Llywodraeth Cymru</span><span>Welsh Government</span></span>
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/pearson-ink.webp" alt="">
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/awin-ink.webp" srcset="assets/clients/awin-ink-h96.webp 2x, assets/clients/awin-ink-h144.webp 3x" alt="">
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/rimes.webp" srcset="assets/clients/rimes-h96.webp 2x, assets/clients/rimes-h144.webp 3x" alt="">
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/merton.png" alt="">
+    <span aria-hidden="true" class="dup tmark tmark-psc">The PSC</span>
+    <img class="dup" aria-hidden="true" loading="lazy" decoding="async" src="assets/clients/keele-ink.webp" srcset="assets/clients/keele-ink-h96.webp 2x, assets/clients/keele-ink-h144.webp 3x" alt="">
+    <span class="dup" aria-hidden="true"><svg role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" fill="#1d1d1b"><path d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"/><path d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"/><path d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"/><path d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"/></svg></span>
+  </div></div>
+  <p class="logos-more"><a href="work.html">See all our clients</a></p>
+</div>
 </section>
 
-<!-- IMPACT --------------------------------------------------------------- -->
-<section class="rz-section" id="impact">
-  <div class="rz-wash rz-wash--subtle"></div>
-  <div class="rz-container">
-    <div class="ui-stack-12">
-      <span class="rz-eyebrow">Selected work</span>
-      <h2 class="ui-mt-4">AI with real <span class="rz-bind"><span class="rz-mark rz-tilt">impact</span>.</span></h2>
-    </div>
-
-    <div class="impact-grid">
-
-      <!-- FCDO (featured). Corrected wording: "first public-facing LLM-powered
-           service". Subtle, hover-revealed CYB credit at the foot of the card. -->
-      <article class="rz-card impact-card impact-card--featured" id="fcdo-impact">
-        <img loading="lazy" decoding="async" src="assets/images/clients/fcdo.webp?v=2" alt="FCDO" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">The UK Government's first public-facing LLM-powered service</div>
-        <p class="impact-desc">
-          Live on GOV.UK and on every British Embassy website. Turned a 10-day
-          email queue into a 5-second response, at 95% accuracy in production -
-          exceeding the human agent baseline. Saving &pound;3.6M over 5 years
-          while serving 500,000+ citizens annually.
-        </p>
-        <p class="fcdo-award">Winner &middot; Digital Leaders AI Award 2025 &middot; Featured on AI.gov.uk</p>
-        <p class="impact-credit">In partnership with Caution Your Blast (CYB)</p>
-        <div class="impact-chips">
-          <span class="rz-chip rz-chip--pink">LLM architecture</span>
-          <span class="rz-chip rz-chip--ghost">Hallucination-safe design</span>
-          <span class="rz-chip rz-chip--ghost">Production deployment</span>
-        </div>
-      </article>
-
-      <!-- GOSH. 70% / 12 weeks kept (verified). -->
-      <article class="rz-card impact-card">
-        <img loading="lazy" decoding="async" src="assets/images/clients/gosh.webp" alt="GOSH Charity" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">70% adoption in 12 weeks</div>
-        <ul class="impact-list">
-          <li>From zero usage to 70% adoption across the charity in 12 weeks</li>
-          <li>Strategy through to coaching, building sustainable capability across the whole organisation</li>
-          <li>One-to-one coaching with the C-suite and senior leaders</li>
-          <li>Architecture and engineering on priority workflows</li>
-          <li>Weekly AI Lab sessions co-designing GPTs with teams across the charity</li>
-        </ul>
-        <div class="impact-chips">
-          <span class="rz-chip rz-chip--pink">AI transformation</span>
-          <span class="rz-chip rz-chip--ghost">Training</span>
-        </div>
-      </article>
-
-      <!-- NHS - delivered via Hudson & Hayes. 90,000 framed as an illustrative
-           "pathway to"; figures kept to publishable claims. -->
-      <article class="rz-card impact-card">
-        <img loading="lazy" decoding="async" src="assets/images/clients/nhs.png" alt="NHS" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">11 ICBs, one diagnostics discovery</div>
-        <ul class="impact-list">
-          <li>AI and automation discovery across 11 Integrated Care Boards in the NHS Midlands region</li>
-          <li>Workshops narrowed 41 opportunities to a prioritised shortlist</li>
-          <li>Modelled how a 1% cut in missed appointments could free a pathway to roughly 90,000 diagnostic appointments a year</li>
-          <li>Secured funding for pilot projects and reached a working prototype within weeks</li>
-        </ul>
-        <p class="impact-credit">In partnership with Hudson &amp; Hayes</p>
-        <div class="impact-chips">
-          <span class="rz-chip rz-chip--pink">Discovery</span>
-          <span class="rz-chip rz-chip--ghost">Business case</span>
-        </div>
-      </article>
-
-      <!-- AWIN - live client. Matcher metric + Magic Eye, per David 9 Jun 2026. -->
-      <article class="rz-card impact-card">
-        <img loading="lazy" decoding="async" src="assets/images/clients/awin.webp?v=3" alt="Awin" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">10 Days &rarr; 2 Hours</div>
-        <ul class="impact-list">
-          <li>Publisher matching tool - 1,500 vendors in 2 hours, down from 10 days</li>
-          <li>Automated ad-placement verification, giving individuals back full days of work</li>
-          <li>Coaching engineers on building and using AI agents</li>
-          <li>Outbound sales tool that surfaces strong prospects and has helped land new clients</li>
-          <li>Security analysis of the MCP risk surface, plus a secure Claude Code rollout to engineers</li>
-        </ul>
-        <div class="impact-chips">
-          <span class="rz-chip rz-chip--pink">Rapid prototyping</span>
-          <span class="rz-chip rz-chip--ghost">Automation</span>
-        </div>
-      </article>
-
-      <!-- PEARSON. Earlier platform work + ongoing early-careers/NEET programme.
-           Framed high-level; confidential client and bid detail withheld. -->
-      <article class="rz-card impact-card">
-        <img loading="lazy" decoding="async" src="assets/images/clients/pearson.webp?v=4" alt="Pearson" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">A platform strategy and architecture</div>
-        <ul class="impact-list">
-          <li>AI strategy and platform architecture for the FTSE 100 education company
-            <ul>
-              <li>A single front-door platform</li>
-              <li>AI-agent and MCP architecture unifying fragmented delivery systems</li>
-              <li>One coherent learner experience</li>
-            </ul>
-          </li>
-          <li>Supporting Pearson's early-careers ambitions, including the national NEET challenge (not in education, employment or training)</li>
-        </ul>
-        <div class="impact-chips">
-          <span class="rz-chip rz-chip--pink">Platform architecture</span>
-          <span class="rz-chip rz-chip--ghost">MCP framework</span>
-        </div>
-      </article>
-
-      <!-- RIMES - delivered via Hudson & Hayes. Roadmap + MCP approach + developer
-           tooling rollout; unevidenced figures withheld. -->
-      <article class="rz-card impact-card">
-        <img loading="lazy" decoding="async" src="assets/images/clients/rimes.webp?v=2" alt="Rimes" class="impact-logo" data-no-zoom />
-        <div class="impact-metric">A roadmap and the tooling to use it</div>
-        <ul class="impact-list">
-          <li>AI transformation roadmap for a private-equity-backed financial-data firm targeting 3x growth</li>
-          <li>An MCP-based approach to make legacy systems AI-accessible</li>
-          <li>Developer-tooling programme across a ~50-strong engineering team, with onboarding and process-design workshops</li>
-        </ul>
-        <p class="impact-credit">In partnership with Hudson &amp; Hayes</p>
-        <div class="impact-chips">
-          <span class="rz-chip rz-chip--pink">Roadmap</span>
-          <span class="rz-chip rz-chip--ghost">Developer enablement</span>
-        </div>
-      </article>
-
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS (NEW) --------------------------------------------------- -->
-<section class="rz-section rz-deep" id="testimonials">
-  <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
-  <div class="rz-container">
-    <span class="rz-eyebrow rz-eyebrow--yellow">In their words</span>
-    <h2 class="ui-mt-4">From cautious to <span class="rz-bind"><span class="rz-mark rz-tilt">capable</span>.</span></h2>
-
-    <!-- GOSH - Richard Grove. Featured. Approved; names David by name (the company
-         is not a lecturer, so the personal credit is the point here). -->
-    <div class="rz-plate rz-plate--paper quote-card quote-card--feature">
-      <span class="rz-chip rz-chip--pink">Children's hospital charity</span>
-      <blockquote>&ldquo;This isn't change management, it's EQ and IQ.&rdquo;</blockquote>
-      <p class="quote-body">
-        &ldquo;Paidia's coaching has been unique in helping us actually
-        understand and use AI. David's experience as both a lecturer and an AI
-        expert is the perfect blend - this isn't change management, it's EQ and
-        IQ, giving people <span class="rz-mark">the confidence to try things</span> and feel comfortable with
-        AI, so the whole organisation gets the best from it.&rdquo;
-      </p>
-      <p class="quote-attrib quote-attrib--ink quote-attrib--source">
-        <span class="card-logo card-logo--feature"><img loading="lazy" decoding="async" src="assets/images/clients/gosh-ink.webp" alt="GOSH Charity" data-no-zoom></span>
-        <span class="quote-attrib__text"><strong>Richard Grove</strong>, CTO, GOSH Charity</span>
-      </p>
-    </div>
-
-    <div class="quote-row">
-      <!-- Pearson - Michelle Chu. Her own final wording, approved by email
-           10 Jun 2026 (she revised David's draft and sent this back). Placed
-           second overall (full-width, directly under the GOSH feature). -->
-      <div class="rz-plate rz-plate--paper quote-card quote-card--wide">
-        <span class="rz-chip rz-chip--pink">FTSE 100 education</span>
-        <blockquote class="quote-sm">
-          &ldquo;David combines deep AI expertise with a rare ability to
-          <span class="rz-mark">make the future feel practical</span>. He moves
-          effortlessly between board-level strategy and the technical detail of
-          how things actually get built. His workshops and materials helped us
-          understand not just what AI could do, but what it could change - in our
-          processes, our platform strategy and the way we work. I'd recommend
-          Paidia without hesitation.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo"><img loading="lazy" decoding="async" src="assets/images/clients/pearson-ink.webp" alt="Pearson" data-no-zoom></span>
-          <p class="quote-attrib quote-attrib--ink"><strong>Michelle Chu</strong>, Principal, Programme Management, Pearson</p>
-        </div>
-      </div>
-
-      <!-- ZINC RE - Gary Roberts. Fully approved, consented written testimonial. -->
-      <div class="rz-plate rz-plate--paper quote-card">
-        <span class="rz-chip rz-chip--pink">Real Estate Asset Management</span>
-        <blockquote class="quote-sm">
-          &ldquo;I brought Paidia Consulting in to get my team - a small senior
-          team at a real estate investment firm - genuinely capable with AI, not
-          just curious about it. Over four days they did exactly that. The training
-          was practical, well-paced, and pitched perfectly for people who needed to
-          apply this to real work the next morning, not sit through theory. The team
-          came away noticeably more confident and we're already using what they
-          taught us. <span class="rz-mark">We've asked them back.</span> If you want a partner who can take a team
-          from cautious to capable quickly, I'd recommend them without hesitation.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo card-logo--zinc"><svg fill="currentColor" role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" xml:space="preserve"><g class="letter" ><path id="Shape" class="st0" d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"></path></g><g class="letter" ><path id="Shape_1_" class="st0" d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_2_" class="st0" d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_3_" class="st0" d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"></path></g></svg></span>
-          <p class="quote-attrib quote-attrib--ink"><strong>Gary Roberts</strong>, CEO</p>
-        </div>
-      </div>
-
-      <!-- London Borough of Merton - Roger Todd. AI governance engagement
-           (Merton & Croydon). Supplied and approved 9 Jun 2026. -->
-      <div class="rz-plate rz-plate--paper quote-card">
-        <span class="rz-chip rz-chip--pink">Local government</span>
-        <blockquote class="quote-sm">
-          &ldquo;David and the team at Paidia gave us the governance to be
-          confident in how we procure, build and use AI. For a local authority
-          that matters enormously, and what they delivered was practical, not
-          abstract policy: clear AI procurement clauses and a checklist our
-          service owners can apply themselves. <span class="rz-mark">We're now on much firmer footing</span>
-          to adopt AI responsibly. I'd recommend them without hesitation.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo"><img loading="lazy" decoding="async" src="assets/images/clients/merton-ink.png" alt="London Borough of Merton" data-no-zoom></span>
-          <p class="quote-attrib quote-attrib--ink"><strong>Roger Todd</strong>, Head of Digital &amp; Products</p>
-        </div>
-      </div>
-
-      <!-- PSC - Antonio Weiss. Approved by email 8 Jun 2026 (David: "I love it"). -->
-      <div class="rz-plate rz-plate--paper quote-card">
-        <span class="rz-chip rz-chip--pink">Public-service consultancy</span>
-        <blockquote class="quote-sm">
-          &ldquo;David and team run <span class="rz-mark">engaging, innovative and high-impact
-          hackathons</span>. We could feel the enthusiasm in the room and confidence
-          and capability being built.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo card-logo--psc">The PSC</span>
-          <p class="quote-attrib quote-attrib--ink">
-            <strong>Antonio Weiss</strong>, Senior Partner<br>
-            author of &ldquo;AI Demystified&rdquo; (Financial Times Press)
-          </p>
-        </div>
-      </div>
-
-      <!-- Numerical Partners - James Bentley. Approved by email 9 Jun 2026
-           (James: "write anything you like"). Credited as Founder, Numerical Partners. -->
-      <div class="rz-plate rz-plate--paper quote-card">
-        <span class="rz-chip rz-chip--pink">Enterprise AI</span>
-        <blockquote class="quote-sm">
-          &ldquo;I worked alongside Paidia Consulting for the best part of a
-          year embedding AI into a large enterprise. They were excellent
-          partners at taking real-world problems and quickly building working
-          prototypes that the team could actually try. Several of these
-          prototypes grew into full AI workflows, and the tools they delivered
-          are <span class="rz-mark">now in real use, driving measurable value</span>. I'd recommend them
-          highly.&rdquo;
-        </blockquote>
-        <div class="quote-foot">
-          <span class="card-logo"><svg class="logo-mark" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numerical Partners"><path d="M8 7 L20 7 M17.5 5 L20 7 L17.5 9" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><text x="3" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">(</text><text x="9" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-style="italic" fill="currentColor">n</text><text x="18" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" fill="currentColor">)</text></svg></span>
-          <p class="quote-attrib quote-attrib--ink"><strong>James Bentley</strong>, Founder, Numerical Partners</p>
-        </div>
-      </div>
-    </div>
-
-    <p class="quote-more">More references available on request.</p>
-  </div>
-</section>
-
-<!-- CLIENTS -------------------------------------------------------------- -->
-<section class="rz-section" id="clients">
-  <div class="rz-wash rz-wash--subtle"></div>
-  <div class="rz-container">
-    <div class="ui-lead-split ui-stack-12">
-      <div>
-        <span class="rz-eyebrow">Our clients</span>
-        <h2 class="ui-mt-4">Trusted across <span class="rz-bind"><span class="rz-mark rz-tilt">sectors</span>.</span></h2>
-      </div>
-      <div>
-        <p>
-          From central government to global enterprises, we work with
-          organisations from first experiments through to scaled deployment.
-        </p>
-      </div>
-    </div>
-
-    <div class="clients-grid">
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/fcdo.webp?v=2" alt="FCDO" data-no-zoom />
-        <div class="client-name">Foreign, Commonwealth &amp; Development Office</div>
-        <div class="client-sector">UK Government</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/nhs.png" alt="NHS" data-no-zoom />
-        <div class="client-name">NHS</div>
-        <div class="client-sector">Healthcare</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/gosh.webp" alt="GOSH Charity" data-no-zoom />
-        <div class="client-name">GOSH Charity</div>
-        <div class="client-sector">Charity</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/homes-england.webp?v=2" alt="Homes England" data-no-zoom />
-        <div class="client-name">Homes England</div>
-        <div class="client-sector">Public Sector</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/awin.webp?v=3" alt="Awin" data-no-zoom />
-        <div class="client-name">Awin</div>
-        <div class="client-sector">Global Tech</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/rimes.webp?v=2" alt="Rimes" data-no-zoom />
-        <div class="client-name">Rimes</div>
-        <div class="client-sector">Financial Data</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/pearson.webp?v=4" alt="Pearson" data-no-zoom />
-        <div class="client-name">Pearson</div>
-        <div class="client-sector">FTSE 100 Education</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/merton.png" alt="London Borough of Merton" data-no-zoom />
-        <div class="client-name">London Borough of Merton</div>
-        <div class="client-sector">Local Government</div>
-      </div>
-      <div class="client-tile">
-        <img loading="lazy" decoding="async" src="assets/images/clients/keele.webp" alt="Keele University" data-no-zoom />
-        <div class="client-name">Keele University</div>
-        <div class="client-sector">Higher Education</div>
-      </div>
-      <!-- ZINC RE - their own letterform logo (vector, lifted from zincre.com),
-           recoloured to paper via currentColor. -->
-      <div class="client-tile">
-        <span class="zinc-logo zinc-logo--wall"><svg fill="currentColor" role="img" aria-label="ZINC RE" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" xml:space="preserve"><g class="letter" ><path id="Shape" class="st0" d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"></path></g><g class="letter" ><path id="Shape_1_" class="st0" d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_2_" class="st0" d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"></path></g><g class="letter" ><path id="Shape_3_" class="st0" d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"></path></g></svg></span>
-        <div class="client-name">ZINC RE</div>
-        <div class="client-sector">Real Estate Asset Management</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- AWARDS --------------------------------------------------------------- -->
-<section class="rz-section rz-deep" id="awards">
-  <div class="rz-container">
-    <span class="rz-eyebrow rz-eyebrow--yellow">Recognition</span>
-    <h2 class="ui-mt-4">Award-winning <span class="rz-bind"><span class="rz-mark rz-tilt">work</span>.</span></h2>
-    <p class="rz-lead ui-mt-6">
-      Our recent work with the FCDO and CYB has been recognised across government
-      and industry.
-    </p>
-
-    <ul class="awards-list">
-      <li class="award-row">
-        <span class="award-year">Winner &middot; 2025</span>
-        <div>
-          <h3>Digital Leaders AI Excellence Award</h3>
-          <p>Privacy &amp; Security</p>
-        </div>
-      </li>
-      <li class="award-row">
-        <span class="award-year">Nominated &middot; 2025</span>
-        <div>
-          <h3>Computing Digital Technology Leaders</h3>
-          <p>Best AI Project</p>
-        </div>
-      </li>
-      <li class="award-row">
-        <span class="award-year">Nominated &middot; 2025</span>
-        <div>
-          <h3>Government Innovator Award</h3>
-          <p>Civil Service Awards</p>
-        </div>
-      </li>
-      <li class="award-row">
-        <span class="award-year">Featured</span>
-        <div>
-          <h3>Featured in "AI Demystified"</h3>
-          <p>Pearson FT &middot; Amazon Bestseller</p>
-        </div>
-      </li>
-      <li class="award-row">
-        <span class="award-year">Featured</span>
-        <div>
-          <h3>Featured case study</h3>
-          <p>AI.gov.uk &middot; UK Government AI Use Case Library</p>
-        </div>
-      </li>
+<section class="sec-join svc" aria-labelledby="wc3-h">
+  <div class="wrap">
+    <h2 class="svc-h" id="wc3-h">You are using AI like everyone else? Good, here&rsquo;s what&rsquo;s next.</h2>
+    <ul class="svc-list">
+      <li class="svc-item"><img src="assets/icon-workshops.webp" alt="" width="116" height="108" loading="lazy"><div><h3>Hands-on workshops</h3><p class="svc-lead">Learn what the best AI users do differently.</p><p>Work alongside people who build AI systems for a living. See how they brief agents, check what comes back and join single prompts into workflows. Then try it on your own work, and pull ahead while everyone else is still typing prompts.</p></div></li>
+      <li class="svc-item"><img src="assets/icon-consultancy.webp" alt="" width="112" height="117" loading="lazy"><div><h3>Expert consultancy</h3><p class="svc-lead">Put ambitious ideas into practice.</p><p>We solve your business problems and show you what&rsquo;s possible. We don&rsquo;t just vibe code and do what everyone else does. We show you the opportunities, the risks and the challenges, so your business and your skills move forward.</p></div></li>
+      <li class="svc-item"><img src="assets/icon-capability.webp" alt="" width="128" height="143" loading="lazy"><div><h3>Lasting capability</h3><p class="svc-lead">Make that expertise part of your team.</p><p>We don&rsquo;t teach one-off tricks. We show you how to think with AI, how to work with it and how to build your own ideas on it, so your team keeps getting better long after we&rsquo;ve left.</p></div></li>
     </ul>
   </div>
 </section>
 
-<!-- TEAM ----------------------------------------------------------------- -->
-<section class="rz-section" id="team">
-  <div class="rz-wash rz-wash--subtle"></div>
-  <div class="rz-container">
-    <span class="rz-eyebrow">Who we are</span>
-    <h2 class="ui-mt-4">Meet the <span class="rz-bind"><span class="rz-mark rz-tilt">team</span>.</span></h2>
-
-    <!-- Founder. First-person voice, from David's own words. B&W portrait kept
-         monochrome, lifted off the card with a hard riso offset block. -->
-    <div class="team-founder">
-      <img class="team-photo" loading="lazy" decoding="async"
-           src="assets/images/team/david-bio.webp"
-           alt="Dr David Gérouville-Farrell" data-no-zoom />
-      <div>
-        <h3 class="team-name">Dr David Gérouville-Farrell</h3>
-        <p class="team-role">Founder &middot; AI strategy, architecture</p>
-        <p class="team-bio">
-          I spent fifteen years in academia as a university lecturer in computer
-          science, with thirty published papers and a background that runs from
-          web and game development through to service design, delivery and product
-          management. AI was my hobby long before ChatGPT - I spent my spare time
-          training computer vision models and fine-tuning diffusion models. When
-          ChatGPT arrived I couldn't stop thinking about the change about to hit
-          the world, so I built Paidia to help bring AI to the public and private
-          sector.
-        </p>
-        <p class="team-bio">
-          I had the privilege of architecting and engineering the UK Government's
-          first public-facing LLM service, for the FCDO. Since then I have led
-          Paidia's work with clients ranging from national institutions like the
-          NHS and Great Ormond Street Hospital Charity to SMEs and large
-          enterprises across the private sector. I work across the whole stack,
-          from boardroom strategy to hands-on architecture to one-to-one coaching.
-          I'm obsessed with AI.
-        </p>
+<section class="sec-join section mo-cards" id="work" aria-labelledby="work-h"><div class="wrap">
+  <div class="cs-head">
+    <h2 class="display h-l" id="work-h">What changed for our clients.</h2>
+    <a class="tlink cs-all" href="work.html">Read the stories <span aria-hidden="true">&rarr;</span></a>
+  </div>
+  <ul class="cs-grid cs-4" data-cs>
+    <li><a class="cs-card" href="work.html#fcdo" data-case="0" aria-label="UK Foreign Office: £3.6M saved by answering citizens’ questions in five seconds, not ten days. Read the story">
+      <img class="cs-logo" src="assets/clients/fcdo-ink.webp" srcset="assets/clients/fcdo-ink-h96.webp 2x, assets/clients/fcdo-ink-h144.webp 3x" alt="" width="240" height="80" loading="lazy">
+      <span class="cs-fig">&pound;3.6M</span>
+      <span class="cs-t">saved by answering citizens&rsquo; questions in five seconds, not ten days.</span>
+    </a></li>
+    <li><a class="cs-card" href="work.html#gosh" data-case="1" aria-label="Great Ormond Street Hospital Charity: 70% using AI in their everyday work, up from zero in twelve weeks. Read the story">
+      <img class="cs-logo" src="assets/clients/gosh-ink.webp" srcset="assets/clients/gosh-ink-h96.webp 2x, assets/clients/gosh-ink-h144.webp 3x" alt="" width="240" height="80" loading="lazy">
+      <span class="cs-fig">70%</span>
+      <span class="cs-t">of the charity using AI in their everyday work, up from zero in twelve weeks.</span>
+    </a></li>
+    <li><a class="cs-card" href="work.html#awin" data-case="2" aria-label="Awin: 97% less time to match 1,500 vendors to publishers, so the team gets full days of work back. Read the story">
+      <img class="cs-logo" src="assets/clients/awin-ink.webp" srcset="assets/clients/awin-ink-h96.webp 2x, assets/clients/awin-ink-h144.webp 3x" alt="" width="240" height="80" loading="lazy">
+      <span class="cs-fig">97% less time</span>
+      <span class="cs-t">to match 1,500 vendors to publishers, so the team gets full days of work back.</span>
+    </a></li>
+    <li><a class="cs-card" href="work.html#zinc" data-case="3" aria-label="ZINC, real estate asset management: 4 days from curious to capable, a senior team using AI on its real work the next morning. Read the story">
+      <span class="cs-logo cs-logo-svg"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 878.6 202.3" fill="#1d1d1b"><path d="M0 202.3v-2.6L91.3 47.4C96.1 35.7 113 3.9 91 .6h49.9l-120 201.7H0zm121.1-.9H110c-7 0-15.2-.1-24.7 0 56-3.7 60.8-34.4 66.6-48.3L141 201.5c.2 0-6.4-.1-19.9-.1zM12.8 0s6.6.1 20.1.1h11c7 0 15.3.1 24.7 0C12.6 3.8 7.8 34.5 2 48.4L12.8 0z"/><path d="M254.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zM255.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"/><path d="M430.5 201.8c13.9-5.7 22.6-13.2 26.3-69.8 3.4 56.3 12.5 64.1 26.3 69.8h-52.6zm176.1-.8L453.8 15.8C445.6 6 437.7 2.9 423.5 0H466l143.2 174.1V201h-2.6zM569.3.3h52.6c-13.9 5.8-22.8 10.3-26.3 67-3.7-56-12.5-61.2-26.3-67z"/><path d="M740.9 165.1a102.1 102.1 0 0 1-20.4-62.1c0-22.3 7.1-44 20.1-62 13-17.9 31.3-31.2 52.4-38-29.7 15.5-49.8 55.8-49.8 98.9 0 43.8 20.7 84.8 51.2 99.7-21.4-5.9-40.2-18.8-53.5-36.5zM878.6 151v39.4c-12.9 4.9-24.5 9.5-38.1 10.6 15.7-7.5 29.1-27.6 38.1-50zM840.5.7c13.6 1.1 25.2 5.7 38.1 10.6v39.3c-9-22.3-22.4-42.4-38.1-49.9z"/></svg></span>
+      <span class="cs-fig">4 days</span>
+      <span class="cs-t">from curious to capable: a senior team using AI on its real work the next morning. They&rsquo;ve asked us back.</span>
+    </a></li>
+  </ul>
+    <dialog class="cs-sheet" aria-labelledby="cs-title">
+    <div class="cs-sheet-in">
+      <div class="cs-sheet-top">
+        <span class="cs-count" aria-live="polite">1 / 4</span>
+        <div class="cs-sheet-nav">
+          <button type="button" class="cs-prev" aria-label="Previous case study">&larr;</button>
+          <button type="button" class="cs-next" aria-label="Next case study">&rarr;</button>
+          <button type="button" class="cs-close" aria-label="Close">Close</button>
+        </div>
       </div>
+      <div class="cs-body">
+        <article class="cs-story" data-s="0">
+          <span class="cs-client">UK Foreign Office (FCDO), with Caution Your Blast</span>
+          <p class="cs-fig">£3.6M saved</p>
+          <h3 id="cs-title">The UK Government&rsquo;s first public-facing AI service</h3>
+          <p class="cs-result">A five-second reply at 95% accuracy in production, above the human agent baseline. The FCDO estimates £3.6M saved in staff time over five years.</p>
+          <dl class="cs-dl"><div><dt>The job</dt><dd>Answer the consular enquiries of 500,000 citizens a year, reliably, in every embassy.</dd></div><div><dt>What they had tried</dt><dd>Human agents working an email queue, with replies taking ten days.</dd></div><div><dt>What we did</dt><dd>Designed, built and deployed the AI service, with Caution Your Blast on service design and delivery. Live on GOV.UK and on every British Embassy website.</dd></div></dl>
+          <p class="cs-partner">Winner of the Digital Leaders AI Excellence Award 2025, and a case study in the UK Government&rsquo;s AI Use Case Library.</p>
+        </article>
+        <article class="cs-story" data-s="1" hidden>
+          <span class="cs-client">Great Ormond Street Hospital Charity</span>
+          <p class="cs-fig">70% adoption</p>
+          <h3>From first experiments to everyday use in twelve weeks</h3>
+          <p class="cs-result">Adoption went from zero to 70% in twelve weeks. The CTO: &ldquo;this isn&rsquo;t change management, it&rsquo;s EQ and IQ.&rdquo;</p>
+          <dl class="cs-dl"><div><dt>The job</dt><dd>Get a whole charity, not just the keen few, using AI in their everyday work. The tools were already paid for and in people&rsquo;s hands, and the senior team wanted them used, not admired.</dd></div><div><dt>What they had tried</dt><dd>One-off sessions and recordings. People liked them on the day and weeks later could not rebuild what they had learnt.</dd></div><div><dt>What we did</dt><dd>One-to-one coaching with the senior team, engineering on the priority workflows, and a weekly AI Lab where teams designed their own assistants on their own tasks.</dd></div></dl>
+        </article>
+        <article class="cs-story" data-s="2" hidden>
+          <span class="cs-client">Awin</span>
+          <p class="cs-fig">2 hours</p>
+          <h3>Publisher matching in two hours, not ten days</h3>
+          <p class="cs-result">Matching runs in two hours. The placement checks gave people back full days of work.</p>
+          <dl class="cs-dl"><div><dt>The job</dt><dd>Match 1,500 vendors to publishers, and check ad placements, without people losing days to it.</dd></div><div><dt>What they had tried</dt><dd>Doing it by hand: ten days per matching run.</dd></div><div><dt>What we did</dt><dd>A matching tool and automated ad-placement checks. We coached the engineers on building AI that does multi-step work, reviewed the security of connecting AI to their systems, and rolled out Claude Code safely.</dd></div></dl>
+        </article>
+        <article class="cs-story" data-s="3" hidden>
+          <span class="cs-client">Real estate asset management</span>
+          <p class="cs-fig">4 days</p>
+          <h3>A small senior team, from curious to capable</h3>
+          <p class="cs-result">&ldquo;We&rsquo;ve asked them back.&rdquo; Gary Roberts, CEO.</p>
+          <dl class="cs-dl"><div><dt>The job</dt><dd>Get a senior team past scratching the surface of the AI licence they had bought.</dd></div><div><dt>What they had tried</dt><dd>Using it on their own: one person good, everyone else going down rabbit holes.</dd></div><div><dt>What we did</dt><dd>Four days of practical training on real work, pitched so people could use it at their desks the next morning.</dd></div></dl>
+        </article>
+      </div>
+      <p class="cs-sheet-foot"><a href="work.html">All eight case studies</a></p>
     </div>
+  </dialog>
+</div></section>
 
-    <p class="team-assoc-label rz-eyebrow rz-eyebrow--yellow">Associates</p>
+<section class="section hl-lilac" id="what" aria-labelledby="what-h"><div class="wrap">
+  <div class="sec-head plain"><h2 class="display h-l" id="what-h">An unfair advantage, brought to your team</h2><p>You keep hearing what AI is doing for other teams. We take the best ways of working from the world&rsquo;s leading AI companies and put them to work in your organisation, so you head to where things are going, not where they are now.</p></div>
+  <ol class="wd">
+    <li><span class="wd-n">1</span><span class="label">Diagnose</span><h3>See where you really stand</h3><p>What&rsquo;s working, what isn&rsquo;t, and the quick wins, like bringing your least confident AI users up to your best. We check your tools, connections and data too.</p></li>
+    <li><span class="wd-n">2</span><span class="label">Prioritise</span><h3>Decide what&rsquo;s worth doing</h3><p>Where AI will change your work, in order of value, with the rules to do it safely.</p></li>
+    <li><span class="wd-n">3</span><span class="label">Prove</span><h3>See it working, fast</h3><p>Working prototypes on your real problems in days, then systems built to run and handed to your team.</p></li>
+    <li><span class="wd-n">4</span><span class="label">Change</span><h3>Change how your team works</h3><p>From doing every step by hand to directing AI that does the steps. Not fewer people: the same people getting far more done.</p></li>
+  </ol>
+  <p class="wd-foot">Strategy, governance, prototyping, engineering, training and coaching. <a href="contact.html">Not sure where to start? Tell us what you&rsquo;re trying to do</a></p>
+</div></section>
 
-    <div class="team-grid">
-      <!-- Dr Jonathan Sykes - delivery/transformation lead (Wild UX); led delivery
-           on the Merton & Croydon AI governance work. "Dr" per David - unverified
-           in notes, confirm. -->
-      <article class="team-card">
-        <img class="team-card-photo" loading="lazy" decoding="async"
-             src="assets/images/team/jon-sykes.webp" alt="Dr Jonathan Sykes" data-no-zoom />
-        <h3 class="team-name">Dr Jonathan Sykes</h3>
-        <p class="team-role">Delivery &amp; transformation</p>
-        <p class="team-bio">
-          Jon leads delivery and transformation on our public-sector engagements,
-          most recently the AI governance frameworks for a London borough. He
-          combines years of experience across a huge swathe of central and local
-          government departments with a research background in human behaviour and
-          HCI, and a strong grounding in service design - turning AI policy into
-          something teams can actually use.
-        </p>
-      </article>
+<section class="section ws-sec" id="say" aria-labelledby="say-h"><div class="wrap">
+  <div class="ws-head"><h2 class="display h-l" id="say-h">What people say</h2><a class="tlink" href="work.html#testimonials">Read them in full <span aria-hidden="true">&rarr;</span></a></div>
+  <div class="ws-grid"><figure class="ws-q"><span class="ws-mark" aria-hidden="true">&ldquo;</span><blockquote>Practical, not abstract policy.</blockquote><figcaption><b>Roger Todd</b>Head of Digital and Products, London Borough of Merton</figcaption></figure><figure class="ws-q"><span class="ws-mark" aria-hidden="true">&ldquo;</span><blockquote>This isn&rsquo;t change management, it&rsquo;s EQ and IQ.</blockquote><figcaption><b>Richard Grove</b>CTO, Great Ormond Street Hospital Charity</figcaption></figure><figure class="ws-q"><span class="ws-mark" aria-hidden="true">&ldquo;</span><blockquote>Moves effortlessly between board-level strategy and the technical detail.</blockquote><figcaption><b>Michelle Chu</b>Principal, Programme Management, Pearson</figcaption></figure><figure class="ws-q"><span class="ws-mark" aria-hidden="true">&ldquo;</span><blockquote>We&rsquo;ve asked them back.</blockquote><figcaption><b>Gary Roberts</b>CEO, real estate asset management</figcaption></figure></div>
+</div></section>
 
-      <!-- Gus Laios - product & delivery manager. Bio grounded in his CV
-           (received 5 Jun 2026): 12+ yrs digital transformation, heavy UK gov /
-           GDS track record (ONS, BEIS, NHS, DIT, RBK), CSPO / PRINCE2 / ITIL. -->
-      <article class="team-card">
-        <img class="team-card-photo" loading="lazy" decoding="async"
-             src="assets/images/team/gus-laios.webp" alt="Gus Laios" data-no-zoom />
-        <h3 class="team-name">Gus Laios</h3>
-        <p class="team-role">Product &amp; delivery</p>
-        <p class="team-bio">
-          Gus Laios is a Product Manager and digital transformation leader with
-          over 15 years' experience delivering complex technology programmes
-          across the public and private sectors. He specialises in turning
-          strategic objectives into practical, user-centred solutions, leading
-          multidisciplinary teams to deliver products and services that create
-          measurable business value.
-        </p>
-        <p class="team-bio">
-          With a background spanning product management, delivery leadership, and
-          large-scale digital transformation, Gus brings a pragmatic approach to
-          solving complex challenges, helping organisations navigate change,
-          improve services, and realise the benefits of emerging technologies,
-          including AI.
-        </p>
-      </article>
-
-      <!-- Ross Anderson - software engineer & game developer (Paidia Games /
-           GuardIAS). 1st-class Computing Science, Glasgow. -->
-      <article class="team-card">
-        <img class="team-card-photo" loading="lazy" decoding="async"
-             src="assets/images/team/ross-anderson.webp" alt="Ross Anderson" data-no-zoom />
-        <h3 class="team-name">Ross Anderson</h3>
-        <p class="team-role">AI engineering</p>
-        <p class="team-bio">
-          Ross is our AI engineer, with experience spanning web and game
-          development and full-stack work across retrieval, agentic architecture,
-          web development and database design. Ross helps us build quickly and
-          efficiently, and has a relentless eye for detail.
-        </p>
-      </article>
-    </div>
-
-    <p class="team-assoc-label rz-eyebrow rz-eyebrow--yellow">The office cats</p>
-    <div class="team-grid team-cats">
-      <article class="team-card">
-        <img class="team-card-photo" loading="lazy" decoding="async"
-             src="assets/images/team/apollonia.webp" alt="Apollonia" data-no-zoom />
-        <h3 class="team-name">Apollonia</h3>
-        <p class="team-role">Chief Charisma Officer</p>
-        <p class="team-bio">
-          Apollonia is in charge of ensuring good vibes, no matter how much work
-          is on.
-        </p>
-      </article>
-      <article class="team-card">
-        <img class="team-card-photo" loading="lazy" decoding="async"
-             src="assets/images/team/bowie.webp" alt="Bowie" data-no-zoom />
-        <h3 class="team-name">Bowie</h3>
-        <p class="team-role">Chief Operating Officer</p>
-        <p class="team-bio">
-          Bowie keeps operations tight: he ensures we are awake every morning at
-          5am, and that breakfast, lunch and dinner are served at exactly the same
-          time, every day, without exception.
-        </p>
-      </article>
-    </div>
+<section class="section hl-lilac" id="about" aria-labelledby="about-h"><div class="wrap ab">
+  <h2 class="display h-l" id="about-h">Experts in AI, and in helping people use it.</h2>
+  <img class="ab-photo" src="assets/team/david-portrait-bw.webp" srcset="assets/team/david-portrait-bw-420.webp 420w, assets/team/david-portrait-bw-600.webp 600w, assets/team/david-portrait-bw.webp 840w" sizes="(max-width:900px) 300px, 400px" alt="Dr David Gérouville-Farrell" width="840" height="1050" loading="lazy" decoding="async">
+  <div class="ab-copy">
+    <p class="ab-lede">Fifteen years of university teaching, then the UK Government&rsquo;s first public AI service. We build AI that goes into production, and we teach your people to run it without us.</p>
+    <p class="muted">We keep the team deliberately small, so everyone you work with is an expert in their field and can explain it clearly. Founded by Dr David Gérouville-Farrell.</p>
+    <ul class="ab-team" aria-label="Who else you will work with">
+      <li><img src="assets/team/jon-sykes.webp" srcset="assets/team/jon-sykes-160.webp 160w, assets/team/jon-sykes-320.webp 320w, assets/team/jon-sykes.webp 480w" sizes="56px" alt="" width="480" height="720" loading="lazy" decoding="async"><span><b>Dr Jonathan Sykes</b>Delivery and transformation</span></li>
+      <li><img src="assets/team/gus-laios.webp" srcset="assets/team/gus-laios-160.webp 160w, assets/team/gus-laios-320.webp 320w, assets/team/gus-laios.webp 480w" sizes="56px" alt="" width="480" height="720" loading="lazy" decoding="async"><span><b>Gus Laios</b>Product and delivery</span></li>
+      <li><img src="assets/team/ross-anderson.webp" srcset="assets/team/ross-anderson-160.webp 160w, assets/team/ross-anderson-320.webp 320w, assets/team/ross-anderson.webp 480w" sizes="56px" alt="" width="480" height="720" loading="lazy" decoding="async"><span><b>Ross Anderson</b>AI engineering</span></li>
+      <li><img src="assets/team/steve-mcintyre.webp" srcset="assets/team/steve-mcintyre-160.webp 160w, assets/team/steve-mcintyre-320.webp 320w, assets/team/steve-mcintyre.webp 480w" sizes="56px" alt="" width="480" height="600" loading="lazy" decoding="async"><span><b>Steve McIntyre</b>Interaction design</span></li>
+    </ul>
+    <p><a class="tlink" href="about.html">More about us</a></p>
   </div>
-</section>
+</div></section>
 
-<!-- CONTACT -------------------------------------------------------------- -->
-<section class="rz-section rz-deep" id="contact">
-  <div class="rz-wash rz-wash--pink rz-wash--subtle"></div>
-  <div class="rz-container">
-    <span class="rz-eyebrow">Get started</span>
-    <h2 class="ui-mt-4" style="max-width: 20ch;">
-      Let's build something that works
-      <span class="rz-bind"><span class="rz-mark--pink rz-tilt">for you</span>.</span>
-    </h2>
-    <p class="rz-lead ui-mt-6">
-      Whether you're exploring AI strategy, need hands-on architecture help, or
-      want to change how your organisation uses AI - let's talk.
-    </p>
-    <div class="ui-actions">
-      <a href="mailto:info@paidiaconsulting.com" class="rz-btn">info@paidiaconsulting.com</a>
-      <a href="#top" class="rz-btn rz-btn--ghost">Back to top</a>
-    </div>
-  </div>
-</section>
 
-<!-- FOOTER --------------------------------------------------------------- -->
-<footer class="rz-footer">
-  <div class="rz-container rz-grid" style="--rz-cols: 12; --rz-cols-mobile: 1;">
-    <div style="grid-column: span 6;">
-      <a class="rz-header__brand" href="#top">PAIDIA</a>
-      <p class="ui-mt-4" style="color: var(--rz-paper-70); max-width: 38ch;">
-        AI enablement and engineering. We help organisations use AI - from the
-        boardroom to the codebase.
-      </p>
-    </div>
-    <div style="grid-column: span 3;">
-      <h4>Explore</h4>
-      <ul>
-        <li><a href="#services">Services</a></li>
-        <li><a href="#impact">Impact</a></li>
-        <li><a href="#testimonials">Testimonials</a></li>
-        <li><a href="#clients">Clients</a></li>
-        <li><a href="#team">Team</a></li>
-      </ul>
-    </div>
-    <div style="grid-column: span 3;">
-      <h4>Contact</h4>
-      <ul>
-        <li><a href="mailto:info@paidiaconsulting.com">Email</a></li>
-        <li><a href="privacy.html">Privacy Policy</a></li>
-      </ul>
-    </div>
-    <div style="grid-column: span 12;" class="rz-footer__rule">
-      &copy; 2026 Paidia Consulting Ltd &middot; London, UK
-    </div>
-  </div>
-</footer>
 
-<script>
-  // Mobile nav disclosure.
-  (function () {
-    var toggle = document.querySelector('.rz-nav__toggle');
-    var nav = document.getElementById('primary-nav');
-    if (toggle && nav) {
-      toggle.addEventListener('click', function () {
-        var open = nav.classList.toggle('is-open');
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-      nav.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function () {
-          nav.classList.remove('is-open');
-          toggle.setAttribute('aria-expanded', 'false');
-        });
-      });
-    }
-  })();
-
-  // "What we do" cards: tap-to-open on touch (desktop is pure-CSS hover/focus).
-  document.querySelectorAll('.vcard').forEach(function (card) {
-    card.addEventListener('click', function () { card.classList.toggle('is-open'); });
-  });
-</script>
-
-<!-- Click-to-zoom image lightbox (system default). Load LAST. -->
-<script src="rz/lightbox.js" defer></script>
+<section class="section ink on-dark"><div class="wrap cta-band">
+  <div><h2 class="display h-l">Got something you want AI to do for you?</h2><p class="muted">Have a chat with us, with absolutely no pressure. Drop us an email, or pop into our AI office hours, every Monday from 5 to 6pm UK. Bring any problem and we&rsquo;ll help, free.</p>
+  <div class="actions"><a class="btn btn-ghost" href="contact.html">Contact us</a><a href="learn.html#upcoming">Join office hours</a></div></div>
+  <div class="mark" aria-hidden="true"></div>
+</div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div class="foot-bottom"><span>© 2026 Paidia Consulting Ltd, London, UK. <a href="mailto:info@paidiaconsulting.com">info@paidiaconsulting.com</a></span><a href="privacy.html">Privacy</a></div>
+</div></footer>
+<script src="assets/site.min.js"></script>
+<script src="assets/hero-words.min.js" defer></script>
+<script src="assets/highlands-hero.min.js" defer></script>
+<script src="assets/vendor/gsap.min.js" defer></script>
+<script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/motion.min.js" defer></script>
+<script>(function(){var h=document.querySelector('.site-header');if(!h)return;function f(){h.classList.toggle('is-scrolled',window.scrollY>8)}window.addEventListener('scroll',f,{passive:true});f()})();</script>
 </body>
 </html>

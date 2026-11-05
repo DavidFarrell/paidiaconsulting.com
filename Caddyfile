@@ -40,7 +40,7 @@
 	}
 
 	# Infrastructure files aren't content - don't serve them.
-	@infra path /server/* /start.sh /Caddyfile /railpack.json /nixpacks.toml
+	@infra path /server/* /site-src/* /start.sh /Caddyfile /railpack.json /nixpacks.toml /README.md /.gitignore
 	respond @infra 404
 
 	file_server

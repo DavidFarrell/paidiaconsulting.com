@@ -1,0 +1,160 @@
+/* Learn page (learn.html), 2 Nov 2026, 3.45pm.
+   1. The three-question guide: recommends one starting point straight away, no email asked for.
+   2. "One task, worked through": three worked examples (supplier emails, meeting notes, weekly report) showing what
+      comes in, what AI does at each step, what needs checking and where a person decides, plus a first-step prompt
+      to copy. The examples are written out here; nothing is sent anywhere.
+   3. Office hours: works out the next Monday 5 to 6pm UK, shows it (and in the visitor's own time zone if different),
+      and offers a repeating calendar entry (.ics download and a Google Calendar link).
+   Without JavaScript the page still reads: routes link to the right sections and the office hours line says
+   "Every Monday, 5 to 6pm UK time". */
+(function () {
+  /* ---------- 1. guide ---------- */
+  var gf = document.querySelector('.lx-guide-form'), gout = document.querySelector('.lx-guide-out');
+  var REC = {
+    course: { t: 'Start with the seven-day email course', w: 'Ten minutes a day gives you enough understanding to use AI well and question what it tells you.', h: 'course.html', l: 'See the course' },
+    hours: { t: 'Bring it to office hours on Monday', w: 'Tell us the problem and leave with a practical next step on your own task. Free, and you can just listen first.', h: '#upcoming', l: 'Next office hours' },
+    try: { t: 'Try the worked example, then come to office hours', w: 'Get one step working on your own task this week. If you get stuck, Monday is the place to bring it.', h: '#try', l: 'Try it now' },
+    workshop: { t: 'Build it in the workshop', w: 'Two sessions this month turn a weekly task into a workflow you can run and check.', h: '#workshop', l: 'Build your AI factory' },
+    team: { t: 'Talk to us about a private programme', w: 'From a board briefing to hands-on sessions: we find the right tasks with your people, practise on real work and agree the checks together.', h: '#team', l: 'For your organisation' }
+  };
+  function recommend() {
+    if (!gf) return;
+    var v = function (n) { var e = gf.querySelector('input[name="' + n + '"]:checked'); return e ? e.value : ''; };
+    var exp = v('g-exp'), aim = v('g-aim'), time = v('g-time'), k;
+    if (aim === 'team') k = 'team';
+    else if (aim === 'understand') k = 'course';
+    else if (aim === 'fix') k = 'hours';
+    else k = (time === 'more' && exp !== 'new') ? 'workshop' : (exp === 'new' ? 'course' : 'try');
+    var r = REC[k];
+    gout.innerHTML = '';
+    var box = document.createElement('div'); box.className = 'lx-rec';
+    var t = document.createElement('b'); t.textContent = r.t;
+    var p = document.createElement('p'); p.textContent = r.w;
+    var a = document.createElement('a'); a.className = 'btn btn-coral'; a.href = r.h; a.textContent = r.l;
+    box.appendChild(t); box.appendChild(p); box.appendChild(a); gout.appendChild(box);
+  }
+  if (gf) { gf.addEventListener('change', recommend); recommend(); }
+
+  /* ---------- 2. worked examples ---------- */
+  var EX = {
+    supplier: {
+      input: 'Hi Sam,\nFollowing our call, we can deliver the 40 replacement filters by 18 November if we have your order by Friday. Unit price stays at £12.50, but delivery is now £45 rather than free.\nCan you confirm the quantity and whether the delivery charge is OK?\nThanks, Priya (Hartwell Supplies)',
+      steps: [
+        { k: 'ai', t: 'Extract the facts', d: 'AI pulls out who, what, how much and by when.', o: 'Supplier: Hartwell Supplies (Priya)\nAsking for: an order for 40 filters by Friday\nAmounts and dates: £12.50 each; delivery £45 (was free); delivered by 18 Nov\nNeeds a decision: the new £45 delivery charge' },
+        { k: 'ai', t: 'Draft a response', d: 'AI writes the reply in your usual tone and a line for your tracker.', o: '"Hi Priya, thanks for this. We would like 40 filters for delivery by 18 November. Before we confirm, can you tell us why delivery is now £45? ..."\nTracker: Hartwell, 40 filters, waiting on delivery charge' },
+        { k: 'check', t: 'Check the rules', d: 'A second step tests the draft against your rules.', o: 'Polite and in our tone: yes\nPromises a price we have not agreed: no\nConfirms the order before the delivery charge is agreed: flagged, reworded to ask first' },
+        { k: 'you', t: 'You decide', d: 'A person makes the call and presses send.', o: 'Accept the £45, or ask for it to be waived. Then send.' }
+      ],
+      prompt: 'You will read an email from a supplier. Pull out four things and list them under these headings:\n1. Who it is from\n2. What they are asking us for\n3. Any amounts and dates\n4. Anything that needs a decision from us\nIf something is not in the email, write "not stated". Do not guess or add anything that is not there.'
+    },
+    notes: {
+      input: 'Ops catch-up, 4 Nov\nTom: December rota still not done, will do.\nAgreed to move the supplier review to January.\nAisha to price two cleaning firms.\nOvertime cap: Sara to raise with finance?\nBudget left this quarter: £6k.',
+      steps: [
+        { k: 'ai', t: 'Extract decisions and actions', d: 'AI separates what was decided from who does what, by when.', o: 'Decided: supplier review moves to January\nActions: Tom, December rota (no date); Aisha, price two cleaning firms (no date); Sara, overtime cap with finance (owner unclear)\nFigures: £6k budget left this quarter' },
+        { k: 'ai', t: 'Draft the follow-up', d: 'AI writes a short follow-up email to everyone who was there.', o: '"Thanks all. Decided: the supplier review moves to January. Actions: Tom, December rota; Aisha, quotes from two cleaning firms; Sara, overtime cap with finance. Budget left this quarter: £6k."' },
+        { k: 'check', t: 'Check before it goes', d: 'Every action needs an owner and a date, and nothing may be invented.', o: 'Tom\'s rota has no date: flagged\nSara\'s action was a question in the notes: flagged, confirm she owns it\nNothing added that was not in the notes: yes' },
+        { k: 'you', t: 'You decide', d: 'You fill the gaps and send.', o: 'Add the two missing dates, confirm Sara, then send.' }
+      ],
+      prompt: 'Here are my rough notes from a meeting. Turn them into three lists:\n1. Decisions made\n2. Actions, each with an owner and a due date\n3. Open questions\nIf an action has no owner or no date, write "missing" rather than guessing. Do not add anything that is not in my notes.'
+    },
+    report: {
+      input: 'Calls answered: 1,284 (last week 1,190)\nAverage wait: 3m 10s (last week 2m 40s)\nComplaints: 2, both about callbacks\nStaffing: 1 off sick',
+      steps: [
+        { k: 'ai', t: 'Pull out the numbers', d: 'AI lists each figure next to last week\'s.', o: 'Calls answered: up 94 (+8%)\nAverage wait: up 30 seconds (+19%)\nComplaints: 2, both about callbacks\nStaffing: one person off sick' },
+        { k: 'ai', t: 'Draft the summary', d: 'AI writes a three-line summary for your manager.', o: '"Busier week: calls up 8% with one person off sick, so waits rose by 30 seconds. Both complaints were about callbacks."' },
+        { k: 'check', t: 'Check the figures', d: 'Every number must match the source, and every cause must be one you know.', o: 'Figures match the source: yes\n"so waits rose": the draft assumes the sickness caused it; flagged, say what you know' },
+        { k: 'you', t: 'You decide', d: 'You add the context only you have, and sign it off.', o: 'Confirm the cause of the longer waits, add what you are doing about callbacks, sign off.' }
+      ],
+      prompt: 'Here are this week\'s figures and last week\'s. For each figure, give this week, last week and the change as a number and a percentage. Then write a three-line summary for my manager. Only state causes that are in the figures; if you are guessing at a cause, say so.'
+    }
+  };
+  var ex = document.querySelector('[data-ex]');
+  if (ex) {
+    var tabs = [].slice.call(ex.querySelectorAll('[data-k]'));
+    var inTxt = ex.querySelector('.lx-in-text'), list = ex.querySelector('.lx-steps'), pr = ex.querySelector('.lx-prompt-text'), copy = ex.querySelector('.lx-copy');
+    var LABEL = { ai: 'AI does', check: 'Needs checking', you: 'A person decides' };
+    function show(k) {
+      var e = EX[k];
+      tabs.forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-k') === k ? 'true' : 'false'); });
+      inTxt.textContent = e.input; pr.textContent = e.prompt; list.innerHTML = '';
+      e.steps.forEach(function (s, i) {
+        var li = document.createElement('li'); li.className = 'lx-step lx-s-' + s.k;
+        var head = document.createElement('div'); head.className = 'lx-step-head';
+        var n = document.createElement('span'); n.className = 'lx-step-n'; n.textContent = i + 1;
+        var tag = document.createElement('span'); tag.className = 'lx-tag'; tag.textContent = LABEL[s.k];
+        head.appendChild(n); head.appendChild(tag);
+        var b = document.createElement('b'); b.textContent = s.t;
+        var d = document.createElement('p'); d.textContent = s.d;
+        var o = document.createElement('pre'); o.className = 'lx-out'; o.textContent = s.o;
+        li.appendChild(head); li.appendChild(b); li.appendChild(d); li.appendChild(o); list.appendChild(li);
+      });
+      if (copy) copy.textContent = 'Copy the prompt';
+    }
+    tabs.forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-k')); }); });
+    if (copy) copy.addEventListener('click', function () {
+      var text = pr.textContent;
+      function done() { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy the prompt'; }, 2000); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+      function fallback() { var r = document.createRange(); r.selectNodeContents(pr); var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); copy.textContent = 'Selected: press Ctrl or Cmd + C'; }
+    });
+    show('supplier');
+  }
+
+  /* ---------- 3. office hours: next date and calendar ---------- */
+  var dEl = document.querySelector('[data-oh-date]');
+  if (dEl && window.Intl) {
+    var LON = 'Europe/London';
+    function londonParts(date) {
+      var f = new Intl.DateTimeFormat('en-GB', { timeZone: LON, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', weekday: 'short' });
+      var o = {}; f.formatToParts(date).forEach(function (p) { o[p.type] = p.value; }); return o;
+    }
+    function londonToDate(y, m, d, h) { // the instant when London's wall clock shows y-m-d h:00
+      var guess = Date.UTC(y, m - 1, d, h);
+      var p = londonParts(new Date(guess));
+      var shown = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
+      return new Date(guess - (shown - guess));
+    }
+    var now = new Date(), start = null;
+    for (var i = 0; i < 8 && !start; i++) {
+      var p = londonParts(new Date(now.getTime() + i * 86400000));
+      if (p.weekday === 'Mon') {
+        var s = londonToDate(+p.year, +p.month, +p.day, 17);
+        if (s.getTime() + 3600000 > now.getTime()) start = s;
+      }
+    }
+    if (start) {
+      var end = new Date(start.getTime() + 3600000);
+      var dayTxt = new Intl.DateTimeFormat('en-GB', { timeZone: LON, weekday: 'long', day: 'numeric', month: 'long' }).format(start);
+      var live = start.getTime() <= now.getTime();
+      var today = londonParts(now), sp = londonParts(start), isToday = today.year === sp.year && today.month === sp.month && today.day === sp.day;
+      dEl.textContent = (live ? 'On now: ' : (isToday ? 'Today, ' : 'Next: ')) + dayTxt + ', 5 to 6pm UK time';
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      var loc = document.querySelector('[data-oh-local]');
+      if (loc && tz && tz !== LON) {
+        var lt = new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
+        loc.textContent = 'That is ' + lt.format(start) + ' to ' + lt.format(end) + ' where you are.';
+        loc.hidden = false;
+      }
+      var ymd = londonParts(start), stamp = ymd.year + ymd.month + ymd.day;
+      var details = 'Free AI office hours with Paidia Consulting, every Monday. Bring a question or just listen. We email the joining link: info@paidiaconsulting.com';
+      var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Paidia Consulting//Office hours//EN', 'CALSCALE:GREGORIAN',
+        'BEGIN:VTIMEZONE', 'TZID:Europe/London',
+        'BEGIN:DAYLIGHT', 'TZOFFSETFROM:+0000', 'TZOFFSETTO:+0100', 'TZNAME:BST', 'DTSTART:19700329T010000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU', 'END:DAYLIGHT',
+        'BEGIN:STANDARD', 'TZOFFSETFROM:+0100', 'TZOFFSETTO:+0000', 'TZNAME:GMT', 'DTSTART:19701025T020000', 'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU', 'END:STANDARD',
+        'END:VTIMEZONE',
+        'BEGIN:VEVENT', 'UID:paidia-office-hours@paidiaconsulting.com', 'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, ''),
+        'DTSTART;TZID=Europe/London:' + stamp + 'T170000', 'DTEND;TZID=Europe/London:' + stamp + 'T180000', 'RRULE:FREQ=WEEKLY;BYDAY=MO',
+        'SUMMARY:Paidia AI office hours (free)', 'DESCRIPTION:' + details.replace(/,/g, '\\,'), 'LOCATION:Online', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+      /* 4 Nov 2026, 8.25pm (Nikki): the main button is now "Sign up for Monday", an email to us; name the date in it */
+      var su = document.querySelector('[data-oh-signup]');
+      if (su) su.href = 'mailto:info@paidiaconsulting.com?subject=' + encodeURIComponent('AI office hours: please sign me up for ' + dayTxt) +
+        '&body=' + encodeURIComponent('Hello Paidia,\n\nPlease sign me up for your free AI office hours on ' + dayTxt + ', 5 to 6pm UK time, and send me the joining link.\n\nThanks');
+      var icsA = document.querySelector('[data-oh-ics]');
+      if (icsA) icsA.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+      var g = document.querySelector('[data-oh-google]');
+      if (g) g.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent('Paidia AI office hours (free)') +
+        '&dates=' + stamp + 'T170000/' + stamp + 'T180000&ctz=Europe/London&recur=' + encodeURIComponent('RRULE:FREQ=WEEKLY;BYDAY=MO') +
+        '&details=' + encodeURIComponent(details) + '&location=Online';
+    }
+  }
+})();
