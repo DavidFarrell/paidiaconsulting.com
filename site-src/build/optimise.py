@@ -311,12 +311,34 @@ def step_integrations():
 HOME_TITLE = "Paidia Consulting | AI consultancy"
 
 
+# The course page's description used straight quotes inside the attribute, which ended it at
+# "AI, from zero to ". Curly quotes keep the whole sentence (David, 5 Nov).
+COURSE_DESC_BROKEN = 'content="AI, from zero to "I get it": a free'
+COURSE_DESC_FIXED = 'content="AI, from zero to “I get it”: a free'
+
+# Desktop menu: when the header slides back in after scrolling up, the pill can be briefly narrower
+# than its contents, and "Our work" / "Contact us" broke onto two lines (the pill grew taller and
+# stayed that way). Menu labels never wrap on desktop; nothing else changes. Appended to the
+# stylesheet before the css step, so it is inlined like the rest.
+MENU_NOWRAP_CSS = "\n@media (min-width:901px){.site-header .nav a{white-space:nowrap}}\n"
+
+
 def step_fixes():
     home = OUT / "index.html"
     html = home.read_text()
     if "<title>B4</title>" in html:
         home.write_text(html.replace("<title>B4</title>", f"<title>{HOME_TITLE}</title>", 1))
         print("  home page title:", HOME_TITLE)
+    course = OUT / "course.html"
+    html = course.read_text()
+    if COURSE_DESC_BROKEN in html:
+        course.write_text(html.replace(COURSE_DESC_BROKEN, COURSE_DESC_FIXED, 1))
+        print("  course page description: curly quotes round “I get it”")
+    css = OUT / "assets" / "site.min.css"
+    if ".site-header .nav a{white-space:nowrap}" not in css.read_text():
+        with css.open("a") as f:
+            f.write(MENU_NOWRAP_CSS)
+        print("  desktop menu labels: no line breaks")
 
 
 # --- Step: link previews (LinkedIn, WhatsApp, Slack...) -------------------------
