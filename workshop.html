@@ -172,6 +172,7 @@
   <div class="foot-bottom"><span>© 2026 Paidia Consulting Ltd, London, UK. <a href="mailto:info@paidiaconsulting.com">info@paidiaconsulting.com</a></span><a href="privacy.html">Privacy</a></div>
 </div></footer>
 <script src="assets/site.min.js"></script>
+<script src="assets/integrations.js" defer></script>
 <script src="assets/workshop-nav.min.js" defer></script>
 <script>(function(){var el=document.querySelector('[data-countdown]');if(!el)return;var t=Date.parse(el.getAttribute('data-countdown'));var n={};['d','h','m','s'].forEach(function(k){n[k]=el.querySelector('[data-u="'+k+'"]')});function p(v){return (v<10?'0':'')+v}function tick(){var ms=t-Date.now();if(ms<=0){el.classList.add('cd-done');el.querySelector('.cd-t').textContent='The first cohort has started. Ask us about the next one.';return clearInterval(iv)}var s=Math.floor(ms/1000);n.d.textContent=p(Math.floor(s/86400));n.h.textContent=p(Math.floor(s%86400/3600));n.m.textContent=p(Math.floor(s%3600/60));n.s.textContent=p(s%60)}var iv=setInterval(tick,1000);tick()})();</script>
 </body>
