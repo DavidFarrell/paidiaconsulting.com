@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Learn | Paidia Consulting</title>
+<title>What we offer | Paidia Consulting</title>
 <meta name="description" content="Learn to do real work with AI. Understand the basics in a seven-day email course, bring a problem to free office hours every Monday, or build a workflow you can run and check in our online workshop.">
 <meta name="theme-color" content="#fdf5f0">
 <link rel="icon" href="assets/brand/fox-logo-2.webp">
@@ -11,13 +11,52 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="preload" href="assets/brand/fox-logo-3-222.webp" as="image">
 <link rel="stylesheet" href="assets/site.min.css">
+<style id="nikki-wide-2026-11-06">
+/* 6 Nov 2026: wider page, full-bleed hero image (Nikki) */
+@media (min-width:1024px){
+ :root{--side:48px}
+ .wrap{max-width:1440px;padding-left:var(--side);padding-right:var(--side)}
+ .site-header:not(.is-compact) .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side) + 32px)!important}
+}
+/* type, after the ChatGPT width review (6 Nov 2026) */
+.hl-intro{font-size:1.3125rem!important;line-height:1.52!important}
+.page-hero h1,main h1{font-size:clamp(2.375rem,1.2rem + 3.6vw,4rem)!important}
+.lede{max-width:60ch}
+/* review fixes 6 Nov 2026 */
+.mv-hero h1,.contact h1.display,.cp-hero h1,main .page-hero h1{font-size:clamp(2.375rem,1.2rem + 3.6vw,4rem)!important}
+.lede{max-width:28em!important}
+@media (min-width:1024px){
+ .site-header:not(.is-compact) .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}
+ .ws-nav .mv-tabs{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}
+}
+@media (max-width:959px){.ws-nav .mv-sec,#faq{scroll-margin-top:128px!important}}
+@media (min-width:960px){
+ .hl-media::before{display:none}
+ .hl-copy{max-width:740px}
+ .hl-media::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(16,22,56,.62) 0,rgba(16,22,56,.42) 40%,rgba(16,22,56,.12) 75%,rgba(16,22,56,.05) 100%)}
+ .hl-copy h1,.hl-copy h1 *{color:#fff!important}
+ .hl-copy h1 .rot,.hl-copy h1 .rot *{color:#F8BE93!important}
+ .hl-copy h1,.hl-intro{text-shadow:0 1px 18px rgba(16,22,56,.35)}
+ .hl-intro{color:rgba(255,255,255,.94)!important}
+ .hl-actions .mo-link{color:#fff!important}
+}
+</style>
+<style id="tap-2026-11-06">@media (max-width:700px){.case-next,.foot-bottom a,.mv-tabs a{display:inline-flex;align-items:center;min-height:44px}}</style>
+<style id="calm-2026-11-06">
+/* 6 Nov 2026, calmer motion: header keeps its width when it shrinks; fox logo plays once per visit */
+@media (min-width:1024px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}}
+@media (min-width:901px) and (max-width:1023px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(100vw - 40px)!important}}
+.fox-seen .site-header .brand .brand-wm{display:none!important}
+.fox-seen .site-header .brand.wm-playing{background-image:url(assets/brand/fox-logo-3-222.webp)!important}
+</style>
+<script>try{if(sessionStorage.getItem("fox-seen"))document.documentElement.classList.add("fox-seen");else window.addEventListener("load",function(){setTimeout(function(){try{sessionStorage.setItem("fox-seen","1")}catch(e){}},4000)})}catch(e){}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar">
   <a class="brand" href="./" aria-label="Paidia Consulting home"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">paidia<small>Consulting</small></span></a>
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-  <nav class="nav" id="nav" aria-label="Main"><a href="index.html">Home</a><a href="work.html">Our work</a><a href="learn.html" aria-current="page">Learn</a><a href="about.html">About</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
+  <nav class="nav" id="nav" aria-label="Main"><a href="index.html">Home</a><a href="work.html">How we work</a><a href="learn.html" aria-current="page">What we offer</a><a href="about.html">Work with us</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
 </div></header>
 <main id="main">
 <div class="wrap page-hero lx-hero">
@@ -36,7 +75,7 @@
         <li><b>Fri 4 Dec</b><span>Session 2, 2 to 3.30pm UK</span></li>
         <li><b>Fri 11 Dec</b><span>Drop-in, 2 to 2.45pm UK</span></li>
       </ul>
-      <div class="lx-feat-cta"><a class="btn btn-coral" href="book.html">Book your place</a><span class="lx-feat-price">&pound;899 + VAT</span><a class="lx-feat-more" href="workshop.html">Full details <span aria-hidden="true">&rarr;</span></a></div>
+      <div class="lx-feat-cta"><a class="btn btn-coral" href="book.html">Request your place</a><span class="lx-feat-price">&pound;899 + VAT</span><a class="lx-feat-more" href="workshop.html">Full details <span aria-hidden="true">&rarr;</span></a></div>
     </div>
     <figure class="lx-feat-fig"><img src="assets/workshop-loop-1200.webp" srcset="assets/workshop-loop-640.webp 640w, assets/workshop-loop-800.webp 800w, assets/workshop-loop-960.webp 960w, assets/workshop-loop-1200.webp 1200w, assets/workshop-loop-1754.webp 1754w" sizes="(max-width:900px) 100vw, 520px" alt="" width="1754" height="897" fetchpriority="high"></figure>
   </article>
@@ -54,12 +93,21 @@
 
 <section class="section sage" id="team-sec" aria-label="For your organisation"><div class="wrap">
   <article class="lx-team" id="team">
-    <div><h3>For your organisation</h3><p class="ln-when">Private sessions for executives, leadership teams or whole departments. Online or in person.</p><p>From a briefing for your board to hands-on sessions for the people doing the work. The same method, built around your real tasks, the tools you already pay for and your organisation&rsquo;s rules.</p><a class="btn" href="contact.html">Talk to us about your organisation</a></div>
+    <div><h3>For your organisation</h3><p class="ln-when">Private sessions for executives, leadership teams or whole departments. Online or in person.</p><p>From a briefing for your board to hands-on sessions for the people doing the work. The same method, built around your real tasks, the tools you already pay for and your organisation&rsquo;s rules.</p><a class="btn" href="contact.html?topic=team">Talk to us about your organisation</a></div>
     <ol class="lx-team-steps">
       <li><b>Find the right tasks</b><span>Where AI will save real time, and where it should not be trusted</span></li>
       <li><b>Practise together</b><span>On real work, so the methods stick</span></li>
       <li><b>Agree the checks</b><span>What a person always reviews, written down once</span></li>
       <li><b>Support adoption</b><span>Follow-up sessions while the new ways of working bed in</span></li>
+    </ol>
+  </article>
+  <article class="lx-team" id="consultancy" style="margin-top:24px">
+    <div><h3>Consultancy: we build it with you</h3><p class="ln-when">For a specific problem you want AI to solve. Scoped with you, delivered with your team.</p><p>Sometimes the best way to learn is to build something real. We work out where AI will make a real difference to your business, build it alongside your people, and show you the opportunities, the risks and the challenges as we go. When we hand it over, your team knows how to run it and improve it without us.</p><a class="btn" href="contact.html?topic=consultancy">Talk to us about a project</a></div>
+    <ol class="lx-team-steps" style="align-content:start">
+      <li><b>Understand the problem</b><span>What you are trying to do, and what you have already tried</span></li>
+      <li><b>Build it together</b><span>Working software on your real data, not a slide deck</span></li>
+      <li><b>Check it works</b><span>Tested against what success looks like for you</span></li>
+      <li><b>Hand it over</b><span>Your people trained to run it, so you are not dependent on us</span></li>
     </ol>
   </article>
 </div></section>
@@ -124,5 +172,11 @@
 </div></footer>
 <script src="assets/site.min.js"></script>
 <script src="assets/learn.min.js"></script>
+<script id="open-at-top">
+/* 6 Nov 2026: a page opened from a link starts at the top, unless the link names a place on it (#...). Back and forward keep their place. */
+(function(){try{var n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="back_forward")return}catch(e){}
+function go(){var h=location.hash&&document.getElementById(location.hash.slice(1));if(!location.hash){window.scrollTo(0,0)}else if(h&&!h.classList.contains("cx-mark")){h.scrollIntoView()}}
+if(!location.hash)window.scrollTo(0,0);window.addEventListener("load",function(){setTimeout(go,60)})})();
+</script>
 </body>
 </html>
