@@ -68,13 +68,14 @@ form.is-sent .form-msg::before{content:"\2713\00a0"}
 /* 6 Nov 2026, calmer motion: header keeps its width when it shrinks; fox logo plays once per visit */
 @media (min-width:1024px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}}
 @media (min-width:901px) and (max-width:1023px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(100vw - 40px)!important}}
+@media (min-width:901px){html body .site-header.is-compact .nav a{font-size:1.0625rem!important}html body .site-header.is-compact .nav a.btn{padding-left:22px!important;padding-right:22px!important}html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{padding-right:14px!important}}
 .fox-seen .site-header .brand .brand-wm{display:none!important}
 .fox-seen .site-header .brand.wm-playing{background-image:url(assets/brand/fox-logo-3-222.webp)!important}
 </style>
 <style id="cards-2026-11-06">
 @media (min-width:901px){.home .svc-item{transform:none!important;rotate:none!important;scale:none!important;background-color:var(--lilac)!important;transition:opacity .5s ease,translate .5s ease}
-.home .svc-list.fx-wait .svc-item:not(.is-in){opacity:0!important;translate:0 16px}
-.home .svc-item.is-in{opacity:1!important}
+.home .svc-list.fx-wait .svc-item:not(.is-in){opacity:0!important;translate:0 16px!important}
+.home .svc-item.is-in{opacity:1!important;translate:0 0!important}
 .home .svc-item:nth-child(2){transition-delay:.08s}.home .svc-item:nth-child(3){transition-delay:.16s}}
 </style>
 <script>try{if(sessionStorage.getItem("fox-seen"))document.documentElement.classList.add("fox-seen");else window.addEventListener("load",function(){setTimeout(function(){try{sessionStorage.setItem("fox-seen","1")}catch(e){}},4000)})}catch(e){}</script>
@@ -277,7 +278,7 @@ if(!location.hash)window.scrollTo(0,0);window.addEventListener("load",function()
 </script>
 <script id="cards-fade">
 (function(){var l=document.querySelector(".home .svc-list");if(!l||!("IntersectionObserver"in window)||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-if(l.getBoundingClientRect().top<innerHeight*.9)return;l.classList.add("fx-wait");
+if(l.getBoundingClientRect().top<innerHeight*.9){[].forEach.call(l.children,function(c){c.classList.add("is-in")});return}l.classList.add("fx-wait");
 new IntersectionObserver(function(e,o){if(e[0].isIntersecting){[].forEach.call(l.children,function(c){c.classList.add("is-in")});o.disconnect()}},{rootMargin:"0px 0px -12% 0px"}).observe(l)})();
 </script>
 </body>

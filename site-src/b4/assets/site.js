@@ -255,6 +255,7 @@ document.querySelectorAll('[data-qm]').forEach(function(qm){
 (function(){var b=document.querySelector('.site-header .brand');if(!b)return;
   var rm=window.matchMedia('(prefers-reduced-motion: reduce)');if(rm.matches)return;
   function init(){
+  if(document.documentElement.classList.contains('fox-seen'))return;
   var v=document.createElement('video');v.className='brand-wm';v.muted=true;v.playsInline=true;v.preload='auto';
   v.setAttribute('muted','');v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');
   v.src='assets/brand/fox-logo-3.mp4';b.appendChild(v);
