@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>About | Paidia Consulting</title>
+<title>Work with us | Paidia Consulting</title>
 <meta name="description" content="We are founders, teachers, product managers, designers and engineers who build: Dr David Gérouville-Farrell and associates.">
 <meta name="theme-color" content="#fdf5f0">
 <link rel="icon" href="assets/brand/fox-logo-2.webp">
@@ -11,29 +11,84 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <link rel="preload" href="assets/brand/fox-logo-3-222.webp" as="image">
 <link rel="stylesheet" href="assets/site.min.css">
+<style id="nikki-wide-2026-11-06">
+/* 6 Nov 2026: wider page, full-bleed hero image (Nikki) */
+@media (min-width:1024px){
+ :root{--side:48px}
+ .wrap{max-width:1440px;padding-left:var(--side);padding-right:var(--side)}
+ .site-header:not(.is-compact) .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side) + 32px)!important}
+}
+/* type, after the ChatGPT width review (6 Nov 2026) */
+.hl-intro{font-size:1.3125rem!important;line-height:1.52!important}
+.page-hero h1,main h1{font-size:clamp(2.375rem,1.2rem + 3.6vw,4rem)!important}
+.lede{max-width:60ch}
+/* review fixes 6 Nov 2026 */
+.mv-hero h1,.contact h1.display,.cp-hero h1,main .page-hero h1{font-size:clamp(2.375rem,1.2rem + 3.6vw,4rem)!important}
+.lede{max-width:28em!important}
+@media (min-width:1024px){
+ .site-header:not(.is-compact) .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}
+ .ws-nav .mv-tabs{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}
+}
+@media (max-width:959px){.ws-nav .mv-sec,#faq{scroll-margin-top:128px!important}}
+@media (min-width:960px){
+ .hl-media::before{display:none}
+ .hl-copy{max-width:740px}
+ .hl-media::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(16,22,56,.62) 0,rgba(16,22,56,.42) 40%,rgba(16,22,56,.12) 75%,rgba(16,22,56,.05) 100%)}
+ .hl-copy h1,.hl-copy h1 *{color:#fff!important}
+ .hl-copy h1 .rot,.hl-copy h1 .rot *{color:#F8BE93!important}
+ .hl-copy h1,.hl-intro{text-shadow:0 1px 18px rgba(16,22,56,.35)}
+ .hl-intro{color:rgba(255,255,255,.94)!important}
+ .hl-actions .mo-link{color:#fff!important}
+}
+</style>
+<style id="ab-2026-11-06">
+.ab-strip{list-style:none;margin:0 0 48px;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.ab-strip a{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #d8cde0;border-radius:12px;background:#fff;color:var(--navy);text-decoration:none!important;background-image:none!important;height:100%}
+.ab-strip a:hover{border-color:var(--cobalt)}
+.ab-strip img{width:48px;height:48px;border-radius:50%;object-fit:cover;flex:none}
+.ab-strip span{display:grid;font-size:.8125rem;line-height:1.3;color:var(--muted,#555)}
+.ab-strip b{font-size:.9375rem;color:var(--navy)}
+@media (max-width:1100px){.ab-strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.ab-strip{grid-template-columns:1fr}}
+.ab-more summary{cursor:pointer;font-weight:700;color:var(--cobalt)}
+.ab-more[open] summary{margin-bottom:12px}
+.cta-band .actions{flex-wrap:wrap}
+#david-bio,#team{scroll-margin-top:100px}
+</style>
+<style id="tap-2026-11-06">@media (max-width:700px){.case-next,.foot-bottom a,.mv-tabs a{display:inline-flex;align-items:center;min-height:44px}}</style>
+<style id="calm-2026-11-06">
+/* 6 Nov 2026, calmer motion: header keeps its width when it shrinks; fox logo plays once per visit */
+@media (min-width:1024px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}}
+@media (min-width:901px) and (max-width:1023px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(100vw - 40px)!important}}
+@media (min-width:901px){html body .site-header.is-compact .nav a{font-size:1.0625rem!important}html body .site-header.is-compact .nav a.btn{padding-left:22px!important;padding-right:22px!important}html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{padding-right:14px!important}}
+.fox-seen .site-header .brand .brand-wm{display:none!important}
+.fox-seen .site-header .brand.wm-playing{background-image:url(assets/brand/fox-logo-3-222.webp)!important}
+</style>
+<script>try{if(sessionStorage.getItem("fox-seen"))document.documentElement.classList.add("fox-seen");else window.addEventListener("load",function(){setTimeout(function(){try{sessionStorage.setItem("fox-seen","1")}catch(e){}},4000)})}catch(e){}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar">
   <a class="brand" href="./" aria-label="Paidia Consulting home"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">paidia<small>Consulting</small></span></a>
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-  <nav class="nav" id="nav" aria-label="Main"><a href="index.html">Home</a><a href="work.html">Our work</a><a href="learn.html">Learn</a><a href="about.html" aria-current="page">About</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
+  <nav class="nav" id="nav" aria-label="Main"><a href="index.html">Home</a><a href="work.html">How we work</a><a href="learn.html">What we offer</a><a href="about.html" aria-current="page">Work with us</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
 </div></header>
 <main id="main">
-<div class="wrap page-hero"><h1 class="ab-h1"><span class="vh">We are founders, teachers, product managers, designers, engineers, researchers and humans who build.</span><span aria-hidden="true">We are </span><span class="ab-rot is-ready" data-words="Founders|Teachers|Product managers|Designers|Engineers|Researchers|Humans" aria-hidden="true"><span class="rot-w is-on">Founders</span><span class="rot-w">Teachers</span><span class="rot-w">Product managers</span><span class="rot-w">Designers</span><span class="rot-w">Engineers</span><span class="rot-w">Researchers</span><span class="rot-w">Humans</span></span><span class="ab-rest" aria-hidden="true">who build.</span></h1><p class="lede">Fifteen years of university teaching, then the UK Government's first public AI service. We build AI that goes into production, and we teach your people to run it without us.</p></div>
-<section class="sec-join section tight"><div class="wrap">
-  <div class="founder">
+<div class="wrap page-hero"><h1 class="ab-h1">We are founders who build.</h1><p class="lede">Fifteen years of university teaching, then the UK Government's first public AI service. We build AI that goes into production, and we teach your people to run it without us.</p></div>
+<section class="sec-join section tight" id="david">
+<div class="wrap">
+  <div class="founder" id="david-bio">
     <img src="assets/team/david-portrait-bw.webp" srcset="assets/team/david-portrait-bw-420.webp 420w, assets/team/david-portrait-bw-600.webp 600w, assets/team/david-portrait-bw.webp 840w" sizes="(max-width:860px) 340px, 360px" alt="Dr David Gérouville-Farrell" width="840" height="1050" fetchpriority="high">
     <div class="bio">
       <div><h2 class="display h-l">Dr David Gérouville-Farrell</h2><p class="muted" style="margin-top:6px">AI strategy, architecture and coaching. London.</p></div>
       <p>I spent fifteen years in academia as a university lecturer in computer science, with thirty published papers and a background that runs from web and game development through to service design, delivery and product management. AI was my hobby long before ChatGPT: I spent my spare time training computer vision models and fine-tuning image models. When ChatGPT arrived I could not stop thinking about the change about to hit the world, so I built Paidia to help bring AI to the public and private sector.</p>
-      <p>I had the privilege of designing and building the UK Government's first public-facing AI service, for the FCDO. Since then I have led Paidia's work with clients ranging from national institutions like the NHS and Great Ormond Street Hospital Charity to SMEs and large enterprises. I work across the whole stack, from boardroom strategy to hands-on architecture to one-to-one coaching. I spend half my week where AI is being built: the London AI practitioners meetup I co-host, production systems for government, and the rooms where ideas like the software factory are being worked out. The other half I spend making those ideas work for people who do not write code.</p>
+      <details class="ab-more"><summary>More about David</summary><p>I had the privilege of designing and building the UK Government's first public-facing AI service, for the FCDO. Since then I have led Paidia's work with clients ranging from national institutions like the NHS and Great Ormond Street Hospital Charity to SMEs and large enterprises. I work across the whole stack, from boardroom strategy to hands-on architecture to one-to-one coaching. I spend half my week where AI is being built: the London AI practitioners meetup I co-host, production systems for government, and the rooms where ideas like the software factory are being worked out. The other half I spend making those ideas work for people who do not write code.</p></details>
       <div class="row"><a class="btn" href="contact.html">Contact us</a></div>
     </div>
   </div>
   <figure class="pull"><blockquote>&ldquo;I spent fifteen years teaching computer science. I still think the job is to make people capable, not dependent.&rdquo;</blockquote><figcaption>David, on why Paidia teaches as well as builds</figcaption></figure>
 </div></section>
-<section class="section sage about-team"><div class="wrap">
+<section class="section sage about-team" id="team"><div class="wrap">
   <div class="sec-head plain"><h2 class="display h-l">Who else you will work with</h2></div>
   <div class="team">
     <div class="person"><img src="assets/team/jon-sykes.webp" srcset="assets/team/jon-sykes-160.webp 160w, assets/team/jon-sykes-320.webp 320w, assets/team/jon-sykes.webp 480w" sizes="(max-width:520px) 90vw, 300px" alt="Dr Jonathan Sykes" loading="lazy" decoding="async" width="480" height="720"><b>Dr Jonathan Sykes</b><span class="r">Delivery and transformation</span><p>Leads delivery on our public-sector engagements, most recently the AI governance frameworks for a London borough. Years across central and local government, and a research background in human behaviour, which is what turns AI policy into something teams can use.</p></div>
@@ -50,7 +105,8 @@
 
 <section class="section ink on-dark"><div class="wrap cta-band">
   <div><h2 class="display h-l">Tell us what you are trying to do.</h2><p class="muted">We will say whether we can help, and how.</p>
-  <div class="actions"><a class="btn btn-lime" href="contact.html">Contact us</a><a href="workshop.html">Or start with the workshop</a></div></div>
+  <div class="actions"><a class="btn btn-lime" href="contact.html">Start a conversation</a>
+<a href="learn.html#upcoming">Or drop in to a free office hour</a></div></div>
   <div class="mark" aria-hidden="true"></div>
 </div></section>
 </main>
@@ -59,5 +115,11 @@
 </div></footer>
 <script src="assets/site.min.js"></script>
 <script src="assets/about-words.min.js"></script>
+<script id="open-at-top">
+/* 6 Nov 2026: a page opened from a link starts at the top, unless the link names a place on it (#...). Back and forward keep their place. */
+(function(){try{var n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="back_forward")return}catch(e){}
+function go(){var h=location.hash&&document.getElementById(location.hash.slice(1));if(!location.hash){window.scrollTo(0,0)}else if(h&&!h.classList.contains("cx-mark")){h.scrollIntoView()}}
+if(!location.hash)window.scrollTo(0,0);window.addEventListener("load",function(){setTimeout(go,60)})})();
+</script>
 </body>
 </html>

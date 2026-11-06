@@ -13,13 +13,60 @@
 <link rel="preload" href="assets/brand/fox-logo-3-222.webp" as="image">
 <link rel="preload" as="image" href="assets/hero/highlands-still.webp" imagesrcset="assets/hero/highlands-still-800.webp 800w, assets/hero/highlands-still-960.webp 960w, assets/hero/highlands-still-1280.webp 1280w, assets/hero/highlands-still.webp 1672w" imagesizes="100vw" fetchpriority="high">
 <link rel="stylesheet" href="assets/site.min.css">
+<style id="nikki-wide-2026-11-06">
+/* 6 Nov 2026: wider page, full-bleed hero image (Nikki) */
+@media (min-width:1024px){
+ :root{--side:48px}
+ .wrap{max-width:1440px;padding-left:var(--side);padding-right:var(--side)}
+ .site-header:not(.is-compact) .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side) + 32px)!important}
+}
+/* type, after the ChatGPT width review (6 Nov 2026) */
+.hl-intro{font-size:1.3125rem!important;line-height:1.52!important}
+.page-hero h1,main h1{font-size:clamp(2.375rem,1.2rem + 3.6vw,4rem)!important}
+.lede{max-width:60ch}
+/* review fixes 6 Nov 2026 */
+.mv-hero h1,.contact h1.display,.cp-hero h1,main .page-hero h1{font-size:clamp(2.375rem,1.2rem + 3.6vw,4rem)!important}
+.lede{max-width:28em!important}
+@media (min-width:1024px){
+ .site-header:not(.is-compact) .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}
+ .ws-nav .mv-tabs{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}
+}
+@media (max-width:959px){.ws-nav .mv-sec,#faq{scroll-margin-top:128px!important}}
+@media (min-width:960px){
+ .hl-media::before{display:none}
+ .hl-copy{max-width:740px}
+ .hl-media::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(16,22,56,.62) 0,rgba(16,22,56,.42) 40%,rgba(16,22,56,.12) 75%,rgba(16,22,56,.05) 100%)}
+ .hl-copy h1,.hl-copy h1 *{color:#fff!important}
+ .hl-copy h1 .rot,.hl-copy h1 .rot *{color:#F8BE93!important}
+ .hl-copy h1,.hl-intro{text-shadow:0 1px 18px rgba(16,22,56,.35)}
+ .hl-intro{color:rgba(255,255,255,.94)!important}
+ .hl-actions .mo-link{color:#fff!important}
+}
+@media all{.svc-cta{margin:20px 0 0!important}.svc-cta .btn-sm{min-height:40px;padding:8px 18px;font-size:.9375rem;background:#fff!important;color:var(--navy)!important;border:1px solid var(--navy)!important;transition:background-color .2s,color .2s,border-color .2s}.svc-cta .btn-sm:hover,.svc-cta .btn-sm:focus-visible{background:var(--cobalt)!important;color:#fff!important;border-color:var(--cobalt)!important}}
+</style>
+<style id="tap-2026-11-06">@media (max-width:700px){.case-next,.foot-bottom a,.mv-tabs a{display:inline-flex;align-items:center;min-height:44px}}</style>
+<style id="calm-2026-11-06">
+/* 6 Nov 2026, calmer motion: header keeps its width when it shrinks; fox logo plays once per visit */
+@media (min-width:1024px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}}
+@media (min-width:901px) and (max-width:1023px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(100vw - 40px)!important}}
+@media (min-width:901px){html body .site-header.is-compact .nav a{font-size:1.0625rem!important}html body .site-header.is-compact .nav a.btn{padding-left:22px!important;padding-right:22px!important}html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{padding-right:14px!important}}
+.fox-seen .site-header .brand .brand-wm{display:none!important}
+.fox-seen .site-header .brand.wm-playing{background-image:url(assets/brand/fox-logo-3-222.webp)!important}
+</style>
+<style id="cards-2026-11-06">
+@media (min-width:901px){.home .svc-item{transform:none!important;rotate:none!important;scale:none!important;background-color:var(--lilac)!important;transition:opacity .5s ease,translate .5s ease}
+.home .svc-list.fx-wait .svc-item:not(.is-in){opacity:0!important;translate:0 16px!important}
+.home .svc-item.is-in{opacity:1!important;translate:0 0!important}
+.home .svc-item:nth-child(2){transition-delay:.08s}.home .svc-item:nth-child(3){transition-delay:.16s}}
+</style>
+<script>try{if(sessionStorage.getItem("fox-seen"))document.documentElement.classList.add("fox-seen");else window.addEventListener("load",function(){setTimeout(function(){try{sessionStorage.setItem("fox-seen","1")}catch(e){}},4000)})}catch(e){}</script>
 </head>
 <body class="home">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar">
   <a class="brand" href="./" aria-label="Paidia Consulting home"><span class="brand-mark" aria-hidden="true"></span><span class="brand-name">paidia<small>Consulting</small></span></a>
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
-  <nav class="nav" id="nav" aria-label="Main"><a href="index.html" aria-current="page">Home</a><a href="work.html">Our work</a><a href="learn.html">Learn</a><a href="about.html">About</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
+  <nav class="nav" id="nav" aria-label="Main"><a href="index.html" aria-current="page">Home</a><a href="work.html">How we work</a><a href="learn.html">What we offer</a><a href="about.html">Work with us</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
 </div></header>
 <main id="main">
 <section class="hl-hero" id="mo" aria-labelledby="mo-h1">
@@ -73,9 +120,9 @@
   <div class="wrap">
     <h2 class="svc-h" id="wc3-h">You are using AI like everyone else? Good, here&rsquo;s what&rsquo;s next.</h2>
     <ul class="svc-list">
-      <li class="svc-item"><img src="assets/icon-workshops.webp" alt="" width="116" height="108" loading="lazy"><div><h3>Hands-on workshops</h3><p class="svc-lead">Learn what the best AI users do differently.</p><p>Work alongside people who build AI systems for a living. See how they brief agents, check what comes back and join single prompts into workflows. Then try it on your own work, and pull ahead while everyone else is still typing prompts.</p></div></li>
-      <li class="svc-item"><img src="assets/icon-consultancy.webp" alt="" width="112" height="117" loading="lazy"><div><h3>Expert consultancy</h3><p class="svc-lead">Put ambitious ideas into practice.</p><p>We solve your business problems and show you what&rsquo;s possible. We don&rsquo;t just vibe code and do what everyone else does. We show you the opportunities, the risks and the challenges, so your business and your skills move forward.</p></div></li>
-      <li class="svc-item"><img src="assets/icon-capability.webp" alt="" width="128" height="143" loading="lazy"><div><h3>Lasting capability</h3><p class="svc-lead">Make that expertise part of your team.</p><p>We don&rsquo;t teach one-off tricks. We show you how to think with AI, how to work with it and how to build your own ideas on it, so your team keeps getting better long after we&rsquo;ve left.</p></div></li>
+      <li class="svc-item"><img src="assets/icon-workshops.webp" alt="" width="116" height="108" loading="lazy"><div><h3>Hands-on workshops</h3><p class="svc-lead">Learn what the best AI users do differently.</p><p>Work alongside people who build AI systems for a living. See how they brief agents, check what comes back and join single prompts into workflows. Then try it on your own work, and pull ahead while everyone else is still typing prompts.</p><p class="svc-cta"><a class="btn btn-ghost btn-sm" href="workshop.html">See the workshop</a></p></div></li>
+      <li class="svc-item"><img src="assets/icon-consultancy.webp" alt="" width="112" height="117" loading="lazy"><div><h3>Expert consultancy</h3><p class="svc-lead">Put ambitious ideas into practice.</p><p>We solve your business problems and show you what&rsquo;s possible. We don&rsquo;t just vibe code and do what everyone else does. We show you the opportunities, the risks and the challenges, so your business and your skills move forward.</p><p class="svc-cta"><a class="btn btn-ghost btn-sm" href="learn.html#consultancy">Find out more</a></p></div></li>
+      <li class="svc-item"><img src="assets/icon-capability.webp" alt="" width="128" height="143" loading="lazy"><div><h3>Lasting capability</h3><p class="svc-lead">Make that expertise part of your team.</p><p>We don&rsquo;t teach one-off tricks. We show you how to think with AI, how to work with it and how to build your own ideas on it, so your team keeps getting better long after we&rsquo;ve left.</p><p class="svc-cta"><a class="btn btn-ghost btn-sm" href="work.html">See our work</a></p></div></li>
     </ul>
   </div>
 </section>
@@ -181,7 +228,7 @@
       <li><img src="assets/team/ross-anderson.webp" srcset="assets/team/ross-anderson-160.webp 160w, assets/team/ross-anderson-320.webp 320w, assets/team/ross-anderson.webp 480w" sizes="56px" alt="" width="480" height="720" loading="lazy" decoding="async"><span><b>Ross Anderson</b>AI engineering</span></li>
       <li><img src="assets/team/steve-mcintyre.webp" srcset="assets/team/steve-mcintyre-160.webp 160w, assets/team/steve-mcintyre-320.webp 320w, assets/team/steve-mcintyre.webp 480w" sizes="56px" alt="" width="480" height="600" loading="lazy" decoding="async"><span><b>Steve McIntyre</b>Interaction design</span></li>
     </ul>
-    <p><a class="tlink" href="about.html">More about us</a></p>
+    <p><a class="tlink" href="about.html">Meet the team</a></p>
   </div>
 </div></section>
 
@@ -203,6 +250,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 <script src="assets/motion.min.js" defer></script>
 <script>(function(){var h=document.querySelector('.site-header');if(!h)return;function f(){h.classList.toggle('is-scrolled',window.scrollY>8)}window.addEventListener('scroll',f,{passive:true});f()})();</script>
+<script id="open-at-top">
+/* 6 Nov 2026: a page opened from a link starts at the top, unless the link names a place on it (#...). Back and forward keep their place. */
+(function(){try{var n=performance.getEntriesByType("navigation")[0];if(n&&n.type==="back_forward")return}catch(e){}
+function go(){var h=location.hash&&document.getElementById(location.hash.slice(1));if(!location.hash){window.scrollTo(0,0)}else if(h&&!h.classList.contains("cx-mark")){h.scrollIntoView()}}
+if(!location.hash)window.scrollTo(0,0);window.addEventListener("load",function(){setTimeout(go,60)})})();
+</script>
+<script id="cards-fade">
+(function(){var l=document.querySelector(".home .svc-list");if(!l||!("IntersectionObserver"in window)||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+if(l.getBoundingClientRect().top<innerHeight*.9){[].forEach.call(l.children,function(c){c.classList.add("is-in")});return}l.classList.add("fx-wait");
+new IntersectionObserver(function(e,o){if(e[0].isIntersecting){[].forEach.call(l.children,function(c){c.classList.add("is-in")});o.disconnect()}},{rootMargin:"0px 0px -12% 0px"}).observe(l)})();
+</script>
 </body>
 </html>
 </body></html>

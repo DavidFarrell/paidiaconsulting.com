@@ -24,6 +24,30 @@
     if (m && text) { m.textContent = text; m.hidden = false; }
   }
 
+  // Contact enquiries get a fuller acknowledgement: thank them by name, confirm where the reply
+  // will go, and offer one easy next step while they wait.
+  function thank(form) {
+    var first = ((form.elements.first || {}).value || '').trim();
+    var email = ((form.elements.email || {}).value || '').trim();
+    var h = form.querySelector('h2');
+    if (h) h.textContent = first ? 'Thank you, ' + first + '.' : 'Thank you.';
+    var m = form.querySelector('.form-msg');
+    if (!m) return;
+    m.textContent = '';
+    m.appendChild(document.createTextNode('Your message has reached David and Nikki, and we will be in touch shortly' + (email ? ' at ' : '.')));
+    if (email) { var b = document.createElement('b'); b.textContent = email; m.appendChild(b); m.appendChild(document.createTextNode('.')); }
+    var p = document.createElement('p'); p.className = 'note form-next';
+    p.appendChild(document.createTextNode('If our reply does not turn up, check your spam folder or email us at '));
+    var a = document.createElement('a'); a.href = 'mailto:info@paidiaconsulting.com'; a.textContent = 'info@paidiaconsulting.com';
+    p.appendChild(a); p.appendChild(document.createTextNode('. In the meantime, you are welcome to '));
+    var oh = document.createElement('a'); oh.href = CONFIG.luma_url || 'learn.html#upcoming'; oh.textContent = 'drop in to our free Monday office hours';
+    if (CONFIG.luma_url) { oh.target = '_blank'; oh.rel = 'noopener'; }
+    p.appendChild(oh); p.appendChild(document.createTextNode('.'));
+    var old = form.querySelector('.form-next'); if (old) old.remove();
+    m.insertAdjacentElement('afterend', p);
+    m.hidden = false;
+  }
+
   document.addEventListener('submit', function (e) {
     var form = e.target;
     if (!form.matches || !form.matches('form[data-mail]')) return;
@@ -58,7 +82,8 @@
         return r.json().catch(function () { return {}; }).then(function (b) { if (b.success === false) throw new Error('rejected'); });
       })
       .then(function () {
-        say(form, MSG[kind]); form.reset();
+        if (kind === 'contact') thank(form); else say(form, MSG[kind]);
+        form.reset();
         // The fields give way to the thank-you line (styled by the build), which takes focus
         // because the button it replaces had it.
         form.classList.add('is-sent');
