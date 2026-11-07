@@ -43,6 +43,10 @@
 </style>
 <style id="tap-2026-11-06">@media (max-width:700px){.case-next,.foot-bottom a,.mv-tabs a{display:inline-flex;align-items:center;min-height:44px}}</style>
 <style id="calm-2026-11-06">
+/* footer stays at the bottom on short pages */
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+body>main{flex:1 0 auto;width:100%}
+body>*{flex-shrink:0}
 /* 6 Nov 2026, calmer motion: header keeps its width when it shrinks; fox logo plays once per visit */
 @media (min-width:1024px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}}
 @media (min-width:901px) and (max-width:1023px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(100vw - 40px)!important}}
