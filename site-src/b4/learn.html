@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>What we offer | Paidia Consulting</title>
-<meta name="description" content="Learn to do real work with AI. Understand the basics in a seven-day email course, bring a problem to free office hours every Monday, or design and build your team's own AI factory in our three-week online workshop.">
+<meta name="description" content="Hands-on AI workshops, team programmes and expert consultancy from Paidia Consulting. Or start free with Monday office hours and a seven-day email course.">
 <meta name="theme-color" content="#fdf5f0">
 <link rel="icon" href="assets/brand/fox-logo-2.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +43,10 @@
 </style>
 <style id="tap-2026-11-06">@media (max-width:700px){.case-next,.foot-bottom a,.mv-tabs a{display:inline-flex;align-items:center;min-height:44px}}</style>
 <style id="calm-2026-11-06">
+/* footer stays at the bottom on short pages */
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+body>main{flex:1 0 auto;width:100%}
+body>*{flex-shrink:0}
 /* 6 Nov 2026, calmer motion: header keeps its width when it shrinks; fox logo plays once per visit */
 @media (min-width:1024px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(min(1440px,100vw) - 2 * var(--side))!important}}
 @media (min-width:901px) and (max-width:1023px){html body .site-header.is-compact .bar,html body .site-header.is-compact .wrap.bar{max-width:calc(100vw - 40px)!important}}
@@ -56,6 +60,89 @@
 .lx-wk svg{grid-row:span 6;align-self:center}
 @media (max-width:520px){.lx-wk{grid-template-columns:1fr}.lx-wk svg{grid-row:auto;width:64px;height:64px;margin-bottom:6px}}
 </style>
+<style id="offer-2026-11-07">
+/* 7 Nov 2026: What we offer page, from Nikki's design pack (no eyebrow labels) */
+.ofr{--o-ink:#101638;--o-muted:#535064;--o-lilac:#E6D6F5;--o-peach:#EFC29E;--o-blue:#2843C5;--o-line:#dcd0da}
+.ofr h1,.ofr h2,.ofr h3,.ofr p{margin:0}
+.ofr-hero{padding-top:48px;padding-bottom:8px}
+.ofr-hero h1 span{color:var(--o-blue)}
+.ofr-routes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:40px}
+.ofr-route{background:var(--o-lilac);border-radius:14px;padding:32px 28px 24px;display:flex;flex-direction:column}
+.ofr-sym{display:flex;align-items:center;justify-content:center;width:56px;height:56px;background:rgba(253,245,240,.73);border-radius:45% 55% 62% 38%;margin-bottom:24px;transform:rotate(-8deg);color:var(--o-ink)}
+.ofr-sym svg{width:28px;height:28px;transform:rotate(8deg)}
+.ofr-sym-2{border-radius:60% 40% 45% 55%;transform:rotate(9deg)}.ofr-sym-2 svg{transform:rotate(-9deg)}
+.ofr-sym-3{border-radius:42% 58% 35% 65%}
+.ofr-route h2{font-size:clamp(1.5rem,1.2rem + .8vw,1.875rem);line-height:1.2;letter-spacing:-.03em;font-weight:800;margin-bottom:14px}
+.ofr-route p{font-size:1.0625rem;line-height:1.6;color:var(--o-muted);margin-bottom:28px}
+.ofr-route a{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #cdbbe0;padding-top:16px;margin-top:auto;min-height:44px;font-weight:700;color:var(--o-ink);text-decoration:none!important;background-image:none!important}
+.ofr-route a:hover{color:var(--o-blue)}
+.ofr-shortcut{display:flex;flex-wrap:wrap;gap:8px;padding-top:24px;font-size:1rem;color:var(--o-muted)}
+.ofr-shortcut a{color:var(--o-blue);font-weight:700}
+.ofr-sec{padding-top:72px;padding-bottom:72px;scroll-margin-top:0}
+.ofr-pill{display:inline-block;background:var(--o-ink);color:#FDF5F0;padding:6px 12px;border-radius:6px;font-size:.875rem;line-height:1.4}
+.ofr-pill-soft{background:var(--o-lilac);color:var(--o-ink)}
+.ofr-ws{background:var(--o-peach);border-radius:14px;padding:48px;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:48px}
+.ofr-ws h2{font-size:clamp(2.125rem,1.6rem + 1.6vw,3rem);line-height:1.1;letter-spacing:-.04em;font-weight:800;margin:20px 0}
+.ofr-ws-copy>p{font-size:1.1875rem;line-height:1.6;color:var(--o-ink)}
+.ofr-facts{display:flex;flex-wrap:wrap;gap:12px 32px;margin:28px 0;font-size:1rem;line-height:1.6;color:var(--o-ink)}
+.ofr-facts strong{display:block}
+.ofr-act{display:flex;flex-wrap:wrap;align-items:center;gap:20px}
+.ofr-price{font-size:1.125rem;font-weight:800;color:var(--o-ink)}
+.ofr-ws-art img{display:block;width:100%;height:auto;border-radius:12px}
+.ofr-ws-art p{font-size:.9375rem;text-align:center;margin-top:14px;color:var(--o-ink)}
+.ofr-taster{display:flex;flex-wrap:wrap;gap:8px 16px;padding-top:20px;align-items:center;font-size:1rem}
+.ofr-taster a{font-weight:700;color:var(--o-blue)}
+.ofr-note{color:var(--o-muted);font-size:.9375rem}
+.ofr-band{background:var(--o-lilac)}
+.ofr-grid{display:grid;grid-template-columns:1fr 1.13fr;gap:64px;align-items:start}
+.ofr-intro h2{font-size:clamp(2rem,1.5rem + 1.4vw,2.75rem);line-height:1.12;letter-spacing:-.035em;font-weight:800;margin-bottom:20px}
+.ofr-intro p{font-size:1.1875rem;line-height:1.6;color:var(--o-muted);max-width:34em}
+.ofr-format{display:block;font-size:.9375rem;margin:20px 0 24px;color:var(--o-muted)}
+.ofr-proof{display:table;margin-top:20px;font-weight:700;color:var(--o-blue)}
+.ofr-end.ofr-end{background:#101638!important;color:#FDF5F0}.ofr-end h2{color:#FDF5F0!important}.ofr-end p{color:#e0d9ec!important}.ofr-end .btn{background:#FDF5F0!important;color:#101638!important;border-color:#FDF5F0!important}
+.ofr-parts{display:grid;gap:14px}
+.ofr-parts article{padding:24px 26px;background:#fff;border-radius:10px}
+.ofr-parts h3{font-size:1.1875rem;font-weight:800;line-height:1.4;margin-bottom:6px}
+.ofr-parts p{font-size:1.0625rem;line-height:1.6;color:var(--o-muted)}
+.ofr-parts-line article{background:transparent;border:1px solid var(--o-line)}
+.ofr-free{background:#f2e9f5}
+.ofr-free-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:28px}
+.ofr-free-head h2{font-size:clamp(2rem,1.5rem + 1.4vw,2.75rem);line-height:1.2;letter-spacing:-.04em;font-weight:800}
+.ofr-free-head p{font-size:1.0625rem;line-height:1.6;color:var(--o-muted);text-align:right}
+.ofr-free-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.ofr-free-grid article{padding:32px;background:#fff;border-radius:14px;display:flex;flex-direction:column;align-items:start}
+.ofr-free-grid h3{font-size:clamp(1.375rem,1.2rem + .5vw,1.625rem);font-weight:800;letter-spacing:-.03em;margin:18px 0 12px}
+.ofr-free-grid article>p{font-size:1.0625rem;line-height:1.6;color:var(--o-muted);margin-bottom:24px}
+.ofr-free-grid .ln-form{width:100%;margin-bottom:20px}
+.ofr-free-bottom{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;border-top:1px solid var(--o-line);padding-top:16px;margin-top:auto;width:100%;font-size:.9375rem;color:var(--o-muted)}
+.ofr-free-bottom a{font-weight:700;color:var(--o-blue)}
+.ofr .btn{display:inline-flex;align-items:center;gap:10px}
+.ofr-free-bottom{align-items:center}
+@media (max-width:360px){.ofr-ws{padding:20px}.ofr .btn{padding-left:16px;padding-right:16px}}
+.ofr-hero{padding-bottom:40px}
+.ofr-route a{color:var(--o-ink)!important}
+.ofr-taster a,.ofr-free-bottom a{display:inline-block;padding-block:10px}
+.ofr-end{padding-top:64px!important;padding-bottom:64px!important}
+.ofr-end-in{display:flex;justify-content:space-between;align-items:center;gap:32px}
+.ofr-end h2{margin-bottom:10px!important}
+@media (max-width:860px){.ofr-end-in{flex-direction:column;align-items:flex-start}.ofr-ws-art{margin-inline:auto}}
+@media (max-width:1023px){.ofr-routes{gap:16px}.ofr-route{padding:24px 20px 20px}.ofr-ws{padding:32px;gap:28px}.ofr-grid{gap:32px}}
+@media (max-width:759px){.ofr-routes{grid-template-columns:1fr}}
+@media (max-width:860px){.ofr-routes{gap:12px}.ofr-route{padding:20px 16px}.ofr-route h2{font-size:1.375rem}.ofr-ws,.ofr-grid,.ofr-free-grid{grid-template-columns:1fr}.ofr-ws-art{max-width:520px}.ofr-sec{padding-top:48px;padding-bottom:48px}.ofr-free-head{flex-direction:column;align-items:start}.ofr-free-head p{text-align:left}}
+@media (max-width:520px){.ofr-ws{padding:24px}.ofr-hero{padding-top:32px}.ofr-free-grid article{padding:24px}}
+
+/* 9 Nov 2026: David's three-week course content inside Nikki's apricot panel */
+.ofr-ws-copy>ul.ofr-ws-list{margin:14px 0;padding-left:1.2em;display:grid;gap:8px;font-size:1.0625rem;line-height:1.55;color:var(--o-ink)}
+.ofr-ws-copy>p+p{margin-top:14px}
+.ofr-start{margin-top:18px!important}
+.ofr-start span{background:var(--o-ink);color:#fff;padding:.05em .4em;border-radius:6px;white-space:nowrap}
+.ofr-ws-copy .ofr-act{margin-top:24px}
+.ofr-more{font-weight:700;color:var(--o-ink)}
+.ofr-ws-copy>p.ofr-team{margin-top:16px;font-size:1rem;color:var(--o-ink)}
+.ofr-team a{font-weight:600;color:var(--o-ink)}
+.ofr-ws{align-items:start}
+.ofr-weeks.lx-feat-dates{grid-template-columns:1fr;margin:0}
+</style>
 <script>try{if(sessionStorage.getItem("fox-seen"))document.documentElement.classList.add("fox-seen");else window.addEventListener("load",function(){setTimeout(function(){try{sessionStorage.setItem("fox-seen","1")}catch(e){}},4000)})}catch(e){}</script>
 </head>
 <body>
@@ -65,121 +152,85 @@
   <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   <nav class="nav" id="nav" aria-label="Main"><a href="index.html">Home</a><a href="work.html">How we work</a><a href="learn.html" aria-current="page">What we offer</a><a href="about.html">Work with us</a><a href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">Blog</a><a class="btn" href="contact.html">Contact us</a></nav>
 </div></header>
-<main id="main">
-<div class="wrap page-hero lx-hero">
-  <h1>Learn to do real work with AI.</h1>
-  <p class="lede">In addition to our free <a href="#upcoming" data-luma>office hours</a> (every Monday - bring any AI problem you&rsquo;ve got and we&rsquo;ll workshop it with you) and our seven-day <a href="course.html">email course</a>, we offer very practical courses that help you and your team change the way you work.</p>
-</div>
+<main id="main" class="ofr">
+<section class="wrap ofr-hero" aria-labelledby="ofr-h">
+  <h1 id="ofr-h">Your next step with AI.<br><span>Made practical.</span></h1>
+  <div class="ofr-routes">
+    <article class="ofr-route"><div class="ofr-sym ofr-sym-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg></div><h2>Hands-on<br>workshops</h2><p>Build something useful with AI, on a real task from your own work.</p><a href="#workshop">Explore workshops <span aria-hidden="true">&darr;</span></a></article>
+    <article class="ofr-route"><div class="ofr-sym ofr-sym-2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg></div><h2>Team<br>programmes</h2><p>Build the skills, confidence and habits that keep improving.</p><a href="#team">Explore team support <span aria-hidden="true">&darr;</span></a></article>
+    <article class="ofr-route"><div class="ofr-sym ofr-sym-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></svg></div><h2>Expert<br>consultancy</h2><p>Turn a business challenge into a working solution, alongside your team.</p><a href="#consultancy">Explore consultancy <span aria-hidden="true">&darr;</span></a></article>
+  </div>
+  <p class="ofr-shortcut"><span>Just exploring?</span> <a href="#upcoming">Start with free office hours or the email course <span aria-hidden="true">&darr;</span></a></p>
+</section>
 
-<section class="sec-join lx-feat-sec" aria-labelledby="fw-h"><div class="wrap">
-  <article class="lx-feat on-dark">
-    <div class="lx-feat-copy">
-      <p class="lx-feat-tag"><span>Live online workshop</span></p>
-      <h2 class="display" id="fw-h">Build your AI factory</h2>
-      <p class="lx-feat-lead">Code is the first thing AI made cheap. The other work we do hasn&rsquo;t caught up.</p>
-      <ul class="lx-feat-lead" style="padding-left:1.2em">
+<section class="wrap ofr-sec" id="workshop" aria-labelledby="ofr-ws-h">
+  <div class="ofr-ws">
+    <div class="ofr-ws-copy">
+      <span class="ofr-pill">Live online workshop</span>
+      <h2 id="ofr-ws-h">Build your<br>AI factory.</h2>
+      <p>Code is the first thing AI made cheap. The other work we do hasn&rsquo;t caught up.</p>
+      <ul class="ofr-ws-list">
         <li><b>For engineers:</b> how can we standardise the way we use AI to architect, review, test and release our work?</li>
         <li><b>For the rest of the team:</b> how can we standardise the way we use AI in product, design, user research and content?</li>
       </ul>
-      <p class="lx-feat-lead" style="margin-top:-8px">Friction now lies everywhere outside of writing code.</p>
-      <p class="lx-feat-lead">An AI factory gives you one place to bring all of your work together, powered by AI. You decide <em>once</em> how each kind of work gets done, and standardise it across your team and agents. Over three weeks, you (and your team) design and implement your own opinionated factory, moving up one loop of abstraction with each session.</p>
-      <p class="lx-feat-lead"><b>The next course starts the week of <span style="background:var(--navy);color:#fff;padding:.05em .4em;border-radius:6px;white-space:nowrap">Monday 23 November</span>.</b></p>
-      <div class="lx-feat-cta"><a class="btn btn-coral" href="book.html">Request your place</a><span class="lx-feat-price">&pound;899 + VAT</span><a class="lx-feat-more" href="workshop.html">Full details <span aria-hidden="true">&rarr;</span></a></div>
-      <p class="lx-feat-lead" style="font-style:italic;font-size:1rem">We offer discounts for teams. <a href="contact.html?topic=team" style="color:var(--navy);text-decoration:underline;font-weight:600">Contact us</a> and mention it when you get in touch.</p>
+      <p>Friction now lies everywhere outside of writing code.</p>
+      <p>An AI factory gives you one place to bring all of your work together, powered by AI. You decide <em>once</em> how each kind of work gets done, and standardise it across your team and agents. Over three weeks, you (and your team) design and implement your own opinionated factory, moving up one loop of abstraction with each session.</p>
+      <p class="ofr-start"><b>The next course starts the week of <span>Monday 23 November</span>.</b></p>
+      <div class="ofr-act"><a class="btn" href="book.html">Request your place</a><span class="ofr-price">&pound;899 + VAT</span><a class="ofr-more" href="workshop.html">Full details <span aria-hidden="true">&rarr;</span></a></div>
+      <p class="ofr-team">We offer discounts for teams. <a href="contact.html?topic=team">Contact us</a> and mention it when you get in touch.</p>
     </div>
+    <div class="ofr-ws-art">
     <!-- One wee diagram per week: the core coding loop in the middle, and each week works one ring further out -->
-    <ul class="lx-feat-dates" aria-label="Sessions" style="grid-template-columns:1fr;margin:0">
+    <ul class="lx-feat-dates ofr-weeks" aria-label="Sessions">
       <li class="lx-wk"><svg viewBox="0 0 100 100" width="84" height="84" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#101638" stroke-opacity=".2" stroke-width="1.5"/><circle cx="50" cy="50" r="30" fill="none" stroke="#101638" stroke-opacity=".2" stroke-width="1.5"/><circle cx="50" cy="50" r="17" fill="none" stroke="#2843c5" stroke-width="3"/><path d="M55 33 48 28.5 48 37.5Z" fill="#2843c5"/><circle cx="64.7" cy="58.5" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="35.3" cy="58.5" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="50" cy="50" r="6" fill="#101638"/></svg><b>Week 1</b><span style="font-weight:600">Fundamentals of a factory</span><span>&bull; A work queue</span><span>&bull; A heartbeat</span><span>&bull; Your factory running off your laptop</span><span style="margin-top:6px"><strong>Takeaway:</strong> an agent that automatically picks up tickets.</span></li>
       <li class="lx-wk"><svg viewBox="0 0 100 100" width="84" height="84" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#101638" stroke-opacity=".2" stroke-width="1.5"/><circle cx="50" cy="50" r="30" fill="none" stroke="#2843c5" stroke-width="3"/><circle cx="50" cy="50" r="17" fill="none" stroke="#101638" stroke-opacity=".2" stroke-width="1.5"/><path d="M55 20 48 15.5 48 24.5Z" fill="#2843c5"/><circle cx="80" cy="50" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="50" cy="80" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="20" cy="50" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="50" cy="50" r="6" fill="#101638"/></svg><b>Week 2</b><span style="font-weight:600">Standardise how you work</span><span>&bull; Tickets, design, review, release</span><span>&bull; When should you step in?</span><span>&bull; When is it OK for the AI to work unobserved?</span><span style="margin-top:6px"><strong>Takeaway:</strong> a factory that runs without you and captures your attention when it needs you.</span></li>
       <li class="lx-wk"><svg viewBox="0 0 100 100" width="84" height="84" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#2843c5" stroke-width="3"/><circle cx="50" cy="50" r="30" fill="none" stroke="#101638" stroke-opacity=".2" stroke-width="1.5"/><circle cx="50" cy="50" r="17" fill="none" stroke="#101638" stroke-opacity=".2" stroke-width="1.5"/><path d="M55 6 48 1.5 48 10.5Z" fill="#2843c5"/><path d="M50 92V84M45.5 87.5 50 82.5 54.5 87.5" fill="none" stroke="#2843c5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="88.1" cy="72" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="11.9" cy="72" r="3" fill="#fdf5f0" stroke="#2843c5" stroke-width="2"/><circle cx="50" cy="50" r="6" fill="#101638"/></svg><b>Week 3</b><span style="font-weight:600">Self-improving factories</span><span>&bull; Retros, checks and rules</span><span>&bull; Only ever solve a problem <em>once</em></span><span>&bull; Automatically find problems and ways to fix them</span><span style="margin-top:6px"><strong>Takeaway:</strong> a factory that gets better over time.</span></li>
     </ul>
-  </article>
-</div></section>
-
-<section class="sec-join lx-routes-sec lx-rt-band" aria-labelledby="rt-h"><div class="wrap">
-  <div class="lx-rt-head"><h2 class="display" id="rt-h">Not ready for the workshop yet?</h2><p>Start wherever suits you now. Most of these are free, and they all lead to the same place: AI doing real work for you.</p></div>
-  <div class="lx-routes lx-routes-3" role="list">
-    <a role="listitem" class="lx-route" href="course.html"><span class="lx-need">I want to understand the basics</span><b>The seven-day email course</b><span class="lx-gain">Enough understanding to use AI and question its answers.</span></a>
-    <a role="listitem" class="lx-route" href="#upcoming"><span class="lx-need">I want to solve a problem now</span><b>Office hours, free on Mondays</b><span class="lx-gain">A practical next step on your own task.</span></a>
-    <a role="listitem" class="lx-route" href="#team"><span class="lx-need">I want this for my organisation</span><b>A private programme, board to teams</b><span class="lx-gain">Shared ways of working, on your people&rsquo;s actual work.</span></a>
+    </div>
   </div>
-  <p class="lx-start" id="guide">Not sure where to start? <a class="btn btn-ghost" href="#upcoming" data-luma>Join our Monday office hours</a></p>
-</div></section>
+  <p class="ofr-taster"><span>Want a feel for the workshop first?</span><a href="mailto:info@paidiaconsulting.com?subject=Free%20taster%3A%20please%20sign%20me%20up">Ask about the free taster <span aria-hidden="true">&rarr;</span></a><span class="ofr-note">Date coming soon</span></p>
+</section>
 
-<section class="section sage" id="team-sec" aria-label="For your organisation"><div class="wrap">
-  <article class="lx-team" id="team">
-    <div><h3>For your organisation</h3><p class="ln-when">Private sessions for executives, leadership teams or whole departments. Online or in person.</p><p>From a briefing for your board to hands-on sessions for the people doing the work. The same method, built around your real tasks, the tools you already pay for and your organisation&rsquo;s rules.</p><a class="btn" href="contact.html?topic=team">Talk to us about your organisation</a></div>
-    <ol class="lx-team-steps">
-      <li><b>Find the right tasks</b><span>Where AI will save real time, and where it should not be trusted</span></li>
-      <li><b>Practise together</b><span>On real work, so the methods stick</span></li>
-      <li><b>Agree the checks</b><span>What a person always reviews, written down once</span></li>
-      <li><b>Support adoption</b><span>Follow-up sessions while the new ways of working bed in</span></li>
-    </ol>
-  </article>
-  <article class="lx-team" id="consultancy" style="margin-top:24px">
-    <div><h3>Consultancy: we build it with you</h3><p class="ln-when">For a specific problem you want AI to solve. Scoped with you, delivered with your team.</p><p>Sometimes the best way to learn is to build something real. We work out where AI will make a real difference to your business, build it alongside your people, and show you the opportunities, the risks and the challenges as we go. When we hand it over, your team knows how to run it and improve it without us.</p><a class="btn" href="contact.html?topic=consultancy">Talk to us about a project</a></div>
-    <ol class="lx-team-steps" style="align-content:start">
-      <li><b>Understand the problem</b><span>What you are trying to do, and what you have already tried</span></li>
-      <li><b>Build it together</b><span>Working software on your real data, not a slide deck</span></li>
-      <li><b>Check it works</b><span>Tested against what success looks like for you</span></li>
-      <li><b>Hand it over</b><span>Your people trained to run it, so you are not dependent on us</span></li>
-    </ol>
-  </article>
-</div></section>
-
-<section class="section" id="upcoming" aria-labelledby="up-h"><div class="wrap">
-  <div class="sec-head plain"><h2 class="display h-l" id="up-h">Coming up</h2></div>
-  <div class="lx-up">
-    <article class="lx-oh">
-      <p class="lx-date" data-oh-date>Every Monday, 5 to 6pm UK time</p>
-      <h3>AI office hours</h3>
-      <p>Whether you&rsquo;re building AI capability, leading change or embedding AI into everyday workflows, you&rsquo;ll leave with practical lessons to take back to your teams and leadership.</p>
-      <div class="ln-actions">
-        <a class="btn btn-coral" data-oh-signup href="mailto:info@paidiaconsulting.com?subject=AI%20office%20hours%3A%20please%20sign%20me%20up%20and%20send%20the%20joining%20link">Sign up for Monday</a>
-      </div>
-    </article>
-    <ul class="lx-up-list">
-      <li><span class="lx-date">Date coming soon</span><b>Free taster: Is your team ready for an AI factory?</b><span>45 minutes online, before the workshop.</span><a class="ln-link" href="mailto:info@paidiaconsulting.com?subject=Free%20taster%3A%20please%20sign%20me%20up">Sign up for the taster <span aria-hidden="true">&rarr;</span></a></li>
-    </ul>
+<section class="ofr-sec ofr-band" id="team" aria-labelledby="ofr-tm-h"><div class="wrap">
+  <div class="ofr-grid">
+    <div class="ofr-intro"><h2 id="ofr-tm-h">Make the expertise<br>part of your team.</h2><p>From your board to the people doing the work. Private sessions shaped around your tasks, your tools and your organisation&rsquo;s rules.</p><span class="ofr-format">Online or in person, tailored to your team</span><a class="btn" href="contact.html?topic=team">Discuss your team&rsquo;s needs <span aria-hidden="true">&rarr;</span></a></div>
+    <div class="ofr-parts">
+      <article><h3>Leadership briefings</h3><p>Understand where AI can help and what your organisation needs to consider.</p></article>
+      <article><h3>Practical team workshops</h3><p>Work on real tasks together and agree the checks that make the work reliable.</p></article>
+      <article><h3>Support that helps it stick</h3><p>Follow-up sessions while new ways of working become everyday habits.</p></article>
+    </div>
   </div>
 </div></section>
 
+<section class="wrap ofr-sec" id="consultancy" aria-labelledby="ofr-cs-h">
+  <div class="ofr-grid">
+    <div class="ofr-intro"><h2 id="ofr-cs-h">Let&rsquo;s build<br>something real.</h2><p>Bring the problem, even if the solution isn&rsquo;t clear yet. We scope it with you, build alongside your people and leave them able to run it.</p><span class="ofr-format">Scoped together, delivered with your team</span><a class="btn" href="contact.html?topic=consultancy">Discuss your project <span aria-hidden="true">&rarr;</span></a><a class="ofr-proof" href="work.html">See how we work <span aria-hidden="true">&rarr;</span></a></div>
+    <div class="ofr-parts ofr-parts-line">
+      <article><h3>Find the right opportunity</h3><p>Understand the problem, explore the options and agree what success looks like.</p></article>
+      <article><h3>Build and test together</h3><p>Working software on your real data, checked against the outcomes that matter.</p></article>
+      <article><h3>Hand over the capability</h3><p>Your people trained to run and improve the solution, so the expertise stays with you.</p></article>
+    </div>
+  </div>
+</section>
 
-
-<section class="sec-join section lx-quiet" id="keep-up" aria-labelledby="ku-h"><div class="wrap">
-  <div class="sec-head plain"><h2 class="display h-l" id="ku-h">Stay connected</h2></div>
-  <div class="lx-quiet-grid lx-quiet-solo">
-    <div class="lx-sign" id="course">
-      <h3>AI, from zero to &ldquo;I get it&rdquo;</h3>
-      <p>A free seven-day email course: how AI works, what it is good at and when not to trust it. The course opens soon; leave your email and day one arrives the day it does.</p>
+<section class="ofr-sec ofr-free" id="upcoming" aria-labelledby="ofr-fr-h"><div class="wrap">
+  <div class="ofr-free-head"><h2 id="ofr-fr-h">Come curious.</h2><p>Get a practical answer, or build your understanding.<br>These are free.</p></div>
+  <div class="ofr-free-grid">
+    <article id="office-hours"><span class="ofr-pill ofr-pill-soft">Free, live online</span><h3>Monday AI office hours</h3><p>Bring a question or a task you&rsquo;re stuck on. Leave with a practical next step.</p>
+      <div class="ofr-free-bottom"><span data-oh-date>Mondays, 5 to 6pm UK</span><a data-oh-signup data-luma href="https://luma.com/paidia" target="_blank" rel="noopener">See the next session <span aria-hidden="true">&rarr;</span></a></div></article>
+    <article id="course"><span class="ofr-pill ofr-pill-soft">Free, coming soon</span><h3>AI, from zero to &ldquo;I get it&rdquo;</h3><p>Seven days of email lessons on how AI works, where it helps and when to question it. Leave your email and day one arrives the day it opens.</p>
       <form class="ln-form" data-mail data-subject="Email course: please save my place" aria-label="Join the email course list">
         <label class="vh" for="lx-c-email">Email</label>
-        <div class="ln-row"><input id="lx-c-email" type="email" name="email" data-label="Email" required autocomplete="email" placeholder="you@organisation.org"><button class="btn" type="submit">Sign up</button></div>
+        <div class="ln-row"><input id="lx-c-email" type="email" name="email" data-label="Email" required autocomplete="email" placeholder="you@organisation.org"><button class="btn" type="submit">Save my place</button></div>
         <p class="note form-msg" hidden>Your email app should open with a short message to us. Send it and your place is saved.</p>
       </form>
-      <a class="ln-link" href="course.html">What the seven days cover <span aria-hidden="true">&rarr;</span></a>
-    </div>
+      <div class="ofr-free-bottom"><span>Learn at your own pace</span><a href="course.html">Explore the email course <span aria-hidden="true">&rarr;</span></a></div></article>
   </div>
-  <div class="bl" aria-labelledby="bl-h">
-    <div class="bl-head"><h3 id="bl-h">From the blog</h3><a class="ln-link" href="https://thingsithinkithink.blog/" target="_blank" rel="noopener">All posts <span aria-hidden="true">&rarr;</span></a></div>
-    <div class="bl-grid">
-      <a class="bl-feat" href="https://thingsithinkithink.blog/posts/2026/11-02-ai-engineer-london-october-26/" target="_blank" rel="noopener">
-        <span class="bl-pic bl-pic-feat"><img src="assets/blog/ai-engineer-london.webp" width="1200" height="675" alt="" loading="lazy" onerror="this.parentNode.classList.add('bl-noimg');this.remove()"></span>
-        <span class="bl-body">
-        <span class="bl-meta"><span class="bl-new">Latest</span>2 Nov 2026 <i>in</i> Conference notes</span>
-        <b class="bl-t">AI Engineer London, October 26</b>
-        <span class="bl-dek">What stood out from the talks by Peter Gostev at Arena and Danila Kozlov at ElevenLabs.</span>
-        <span class="bl-by"><img src="assets/team/david-portrait-bw-420.webp" alt="" width="40" height="40" loading="lazy" decoding="async">David G&eacute;rouville-Farrell</span>
-        </span>
-      </a>
-      <ul class="bl-list">
-        <li><a href="https://thingsithinkithink.blog/posts/2026/06-21-open-swimcast/" target="_blank" rel="noopener"><span class="bl-pic bl-thumb"><img src="assets/blog/open-swimcast.webp" width="320" height="240" alt="" loading="lazy" onerror="this.parentNode.classList.add('bl-noimg');this.remove()"></span><span class="bl-txt"><span class="bl-meta">21 Jun 2026 <i>in</i> Things I built</span><b>Open Swimcast</b><span class="bl-dek">A tiny app that sends a podcast feed to underwater swimming headphones, because it was nearly free to make.</span></span></a></li>
-        <li><a href="https://thingsithinkithink.blog/posts/2026/06-17-davids-debbie-app/" target="_blank" rel="noopener"><span class="bl-pic bl-thumb"><img src="assets/blog/debbie-app.webp" width="320" height="240" alt="" loading="lazy" onerror="this.parentNode.classList.add('bl-noimg');this.remove()"></span><span class="bl-txt"><span class="bl-meta">17 Jun 2026 <i>in</i> Things I built</span><b>David&rsquo;s Debbie App</b><span class="bl-dek">Live English to German translation, built for one family conversation.</span></span></a></li>
-        <li><a href="https://thingsithinkithink.blog/posts/2026/06-14-climbing-the-ladder-of-abstraction/" target="_blank" rel="noopener"><span class="bl-pic bl-thumb"><img src="assets/blog/ladder-of-abstraction.webp" width="320" height="240" alt="" loading="lazy" onerror="this.parentNode.classList.add('bl-noimg');this.remove()"></span><span class="bl-txt"><span class="bl-meta">15 Jun 2026 <i>in</i> Talks</span><b>Climbing the Ladder of Abstraction</b><span class="bl-dek">What &ldquo;good enough&rdquo; looks like when you can no longer review every line AI writes.</span></span></a></li>
-        <li><a href="https://thingsithinkithink.blog/posts/2026/06-15-the-embedded-ai-trio/" target="_blank" rel="noopener"><span class="bl-pic bl-thumb"><img src="assets/blog/embedded-ai-trio.svg" alt="" width="320" height="240" loading="lazy"></span><span class="bl-txt"><span class="bl-meta">14 Jun 2026 <i>in</i> Ideas</span><b>The Embedded AI Trio</b><span class="bl-dek">Mixed feelings on embedding AI builders alongside subject experts.</span></span></a></li>
-      </ul>
-    </div>
-  </div>
+</div></section>
+
+<section class="section ink on-dark ofr-end"><div class="wrap ofr-end-in">
+  <div><h2 class="display h-l">Not sure where to start?</h2><p class="muted">Tell us what you&rsquo;re trying to do. We&rsquo;ll help you find the right next step.</p></div>
+  <a class="btn" href="contact.html">Have a conversation <span aria-hidden="true">&rarr;</span></a>
 </div></section>
 </main>
 <footer class="site-footer"><div class="wrap">
