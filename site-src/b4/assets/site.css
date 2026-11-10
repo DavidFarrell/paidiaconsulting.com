@@ -3231,3 +3231,11 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
    (Nikki, site review). */
 .lx-next{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25em .5em;margin:0 0 6px;color:var(--navy);font-size:clamp(1.5rem,1.1rem + 1.4vw,2.25rem);font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .lx-next-d{padding:.02em .35em;border-radius:8px;background:var(--navy);color:#fff;white-space:nowrap}
+
+/* 10 Nov 2026 - "Course", not "workshop" (Nikki, site review). What we offer: "Our next course" and the date sit above
+   the apricot box; the three week cards in the box give way to the factory loop picture, and their ring drawings move
+   to the week headings of the syllabus on the course page (workshop.html). */
+.lx-next--out{margin:0 0 clamp(16px,2vw,24px)}
+.lx-feat-pic{margin:0;align-self:center;min-width:0}
+.lx-feat-pic img{display:block;width:100%;height:auto;border-radius:12px;background:#fdf5f0}
+.mv-week summary svg{flex:none;width:48px;height:48px}
