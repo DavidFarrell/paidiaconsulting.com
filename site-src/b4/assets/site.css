@@ -3253,3 +3253,21 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
   .lx-feat-pic{position:absolute;top:0;bottom:0;right:0;width:54%;display:flex;align-items:center;pointer-events:none}
   .lx-feat-pic img{width:100%;height:auto}
 }
+
+/* 10 Nov 2026 - What we offer: one free section in place of "Not ready", "Coming up" and the email course in "Stay
+   connected" (Nikki, site review): the free Lightning Lesson first, then "Or start even smaller" with office hours and
+   the email course side by side, each once. Cards in a row line up, their actions at the foot. */
+.lx-free .lx-rt-head{max-width:none}
+.lx-ll{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px 40px;padding:clamp(22px,2.6vw,32px);border:1px solid var(--divider);border-radius:12px;background:#fff}
+.lx-ll>div{display:grid;gap:6px;flex:1 1 420px;min-width:0}
+.lx-ll h3{margin:0;font-weight:700;font-size:clamp(1.375rem,1.1rem + .8vw,1.75rem);letter-spacing:-.015em;line-height:1.2;color:var(--navy)}
+.lx-ll p{margin:0;color:rgba(16,22,56,.82)}
+.lx-free .lx-date{margin:0;font-size:.9375rem;font-weight:600;color:var(--cobalt)}
+.lx-smaller{margin:clamp(32px,4vw,48px) 0 16px;font-weight:700;font-size:clamp(1.25rem,1rem + .6vw,1.5rem);color:var(--navy)}
+.lx-small{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch}
+.lx-small>.lx-oh,.lx-small>.lx-sign{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:clamp(22px,2.6vw,32px);border:1px solid var(--divider);border-radius:12px;background:#fff}
+.lx-small>.lx-sign h3{font-weight:700;font-size:clamp(1.375rem,1.1rem + .6vw,1.625rem);letter-spacing:-.015em;line-height:1.25}
+.lx-small .ln-form{align-self:stretch}
+.lx-small>.lx-oh>.ln-actions,.lx-small>.lx-sign>.ln-link{margin-top:auto}
+@media (max-width:760px){.lx-small{grid-template-columns:1fr}}
+.lx-small p:not(.lx-date):not(.note){font-size:1rem;line-height:1.55;color:rgba(16,22,56,.82);max-width:none}.lx-small>.lx-sign>.ln-link{align-self:flex-start}.lx-small>.lx-oh h3,.lx-small>.lx-sign h3{font-weight:700;font-size:clamp(1.375rem,1.1rem + .6vw,1.625rem);letter-spacing:-.015em;line-height:1.25}
