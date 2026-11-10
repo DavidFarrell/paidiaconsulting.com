@@ -3175,3 +3175,66 @@ main>.sec-join.sec-join.sec-join{padding-top:24px!important}
   .home .svc-item img,.home .svc-item h3{grid-column:1;grid-row:auto}
   .home .svc-item img{width:120px;height:120px;max-width:120px;object-position:left center}
 }
+
+/* 10 Nov 2026 - service card buttons line up (Nikki). The three cards were already the same height, but each
+   button sat straight under its own text, so "See our work" (shorter text) sat higher than the other two.
+   Now the words fill the card and the button is pushed to the bottom, so all three buttons share one line.
+   Desktop only (three cards side by side); on tablets and phones the cards stack and nothing needs lining up.
+   Design system rule: a row of cards with an action pins the action to the card's foot. */
+@media (min-width:901px){
+  .home .svc-item{grid-template-rows:auto 1fr;align-content:stretch}
+  .home .svc-item>div{display:flex;flex-direction:column}
+  .home .svc-item .svc-cta{margin-top:auto!important;padding-top:20px}
+}
+
+/* 10 Nov 2026 - the header is a plain full-width bar (Nikki, site review). It was a rounded floating pill with a
+   gradient and a shadow; now it is a white bar across the whole top of the page with a fine line under it, square
+   corners, no shadow. The logo and menu line up with the page content. On scroll it gets a little slimmer, as
+   before. On phones the menu drops down full width from the bar. Specificity is raised to beat the per-page
+   header rules in each page head and the pill width the scroll script sets. */
+html body .site-header,html body .site-header.is-scrolled,html body:has(.hero-wc) .site-header,html body .site-header.is-compact{background:#fff!important;border-bottom:1px solid var(--divider)!important;padding-top:env(safe-area-inset-top,0px)!important}
+html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar.bar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;max-width:1440px!important;width:100%!important;margin-inline:auto!important;padding-left:48px!important;padding-right:48px!important}
+@media (max-width:1024px){html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar.bar{padding-left:32px!important;padding-right:32px!important}}
+@media (max-width:900px){html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar.bar{padding-left:20px!important;padding-right:20px!important}
+  html body .site-header .nav{top:100%!important;left:0!important;right:0!important;border-radius:0!important;border:0!important;border-bottom:1px solid var(--divider)!important;box-shadow:0 12px 24px -20px rgba(16,22,56,.4)!important;background:#fff!important;padding:8px 20px 20px!important}}
+
+/* 10 Nov 2026 - Our work page: the headline and its intro run across the page (Nikki, site review). The headline
+   was broken onto two lines by hand and the intro kept to a narrow column; now both use the full content width.
+   The typewriter effect is unchanged. On narrow screens the headline still wraps where it must. */
+.page-hero h1.tw-h1,.page-hero h1.tw-h1+.lede{max-width:none!important}
+
+/* 10 Nov 2026 - Our work: the eight cases as one list, with the tiles locked under the menu (Nikki, site review).
+   Script: assets/work-cases.js. The row lives inside the header, so it sits flush under the bar and moves with it. */
+.wk-strip{max-height:0;overflow:hidden;opacity:0;visibility:hidden;border-top:1px solid transparent;transition:max-height .3s ease,opacity .2s ease,visibility 0s linear .3s}
+.site-header.has-wk-strip .wk-strip{max-height:120px;opacity:1;visibility:visible;border-top-color:var(--divider);transition:max-height .3s ease,opacity .2s ease}
+.wk-strip ul{list-style:none;margin:0 auto;max-width:1440px;padding:8px 48px 10px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.wk-strip a{display:flex;flex-direction:column;gap:4px;min-height:48px;padding:7px 10px;border:1px solid var(--divider);border-radius:8px;background:#fff;color:var(--navy);text-decoration:none;font-weight:700;font-size:.875rem;line-height:1.2;white-space:nowrap}
+.wk-strip img{display:block;height:20px;width:auto;max-width:100%;object-fit:contain;object-position:left center}
+.wk-strip a,.wk-strip a:hover{background-image:none!important}
+.wk-strip a:hover{border-color:var(--navy)}
+.wk-strip a[aria-current="true"]{background:var(--lilac);border-color:var(--cobalt);box-shadow:inset 0 0 0 1px var(--cobalt)}
+.wk-strip a:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+@media (max-width:1024px){.wk-strip ul{padding-left:32px;padding-right:32px}}
+@media (max-width:900px){.wk-strip ul{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:128px;overflow-x:auto;scrollbar-width:none;padding:8px 20px 10px}.wk-strip ul::-webkit-scrollbar{display:none}}
+@media (prefers-reduced-motion:reduce){.wk-strip,.site-header.has-wk-strip .wk-strip{transition:none}}
+.case-sec{scroll-margin-top:calc(var(--wk-offset,160px) - 90px)} /* the page already keeps 90px clear (scroll-padding-top) */
+.wk-strip .wk-svg{display:block;height:16px;width:auto;margin-block:2px}
+
+/* 10 Nov 2026 - What we offer: rotating word in the headline, and the headline and intro run across the page
+   (Nikki, site review). Same look and timing as the home page hero word. Script: assets/learn-words.js */
+.lx-hero h1,.lx-hero .lede{max-width:none!important}
+.lx-hero h1 .rot{display:inline-grid;vertical-align:bottom;justify-items:start;overflow:hidden;color:var(--cobalt);transition:width .35s ease}
+.lx-hero h1 .rot-w{grid-area:1/1;white-space:nowrap}
+.lx-hero h1 .rot.is-ready .rot-w{opacity:0;transform:translateY(8px);visibility:hidden;transition:opacity .15s ease,transform .2s ease,visibility 0s linear .2s}
+.lx-hero h1 .rot.is-ready .rot-w.is-on{opacity:1;transform:none;visibility:visible;transition:opacity .3s ease .15s,transform .3s ease .15s,visibility 0s}
+.lx-hero h1 .rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-8px);visibility:visible}
+@media (prefers-reduced-motion:reduce){.lx-hero h1 .rot,.lx-hero h1 .rot.is-ready .rot-w{transition:none}}
+
+/* 10 Nov 2026 - Our work: the eight case tiles get a lilac header band with the outcome (was a small cobalt pill),
+   a white body with the client's logo, and the figure large at the foot of the tile (Nikki, site review). */
+.cs-overview .cso-card{display:flex;flex-direction:column;gap:0;min-height:clamp(220px,20vw,280px);padding:0!important;overflow:hidden;border:1px solid var(--divider);border-radius:12px;background:#fff}
+.cs-overview .cso-card:hover{transform:none;border-color:var(--cobalt)}
+.cs-overview .cso-tag{display:block;align-self:stretch;margin:0;padding:18px 22px;border-radius:0;border-bottom:1px solid var(--divider);background:#ebe2f5;color:var(--navy);font-size:1rem;font-weight:600;line-height:1.3}
+.cs-overview .cso-logo{align-self:flex-start;height:40px;max-width:170px;margin:26px 22px 0}
+.cs-overview .cso-fig{margin-top:auto;padding:24px 22px 24px;font-size:clamp(1.75rem,1.1rem + 1.6vw,2.75rem);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+@media (max-width:520px){.cs-overview .cso-card{min-height:190px}.cs-overview .cso-tag{padding:12px 14px;font-size:.875rem}.cs-overview .cso-logo{height:30px;max-width:120px;margin:18px 14px 0}.cs-overview .cso-fig{padding:18px 14px;font-size:1.5rem}}
