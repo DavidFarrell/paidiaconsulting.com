@@ -3311,3 +3311,25 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 
 /* 10 Nov 2026 - Course page FAQ answers run across the page (Nikki, site review). */
 #faq details p,#faq .faq-body p,#faq .faq-body li{max-width:none}
+
+/* 10 Nov 2026 - Course page: a calendar before the syllabus (Nikki, site review, after a Maven course page). December
+   2026 from Monday 30 November, weeks starting on Monday as in the UK, the three course weeks marked in lilac with a
+   cobalt edge. Static markup; screen readers get the dates from the figure's label and the paragraph beside it. */
+.mv-cal-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:clamp(28px,5vw,72px);align-items:center}
+.mv-cal-copy{display:grid;gap:14px;min-width:0}
+.mv-cal-copy h2,.mv-cal-copy p{margin:0}
+.mv-cal-copy .mv-lead{max-width:none}
+.mv-cal{margin:0;padding:10px;border-radius:20px;background:repeating-linear-gradient(135deg,#efe6f7 0 6px,#f8f3fc 6px 12px);border:1px solid var(--divider)}
+.mv-cal-h{margin:0;padding:22px 26px 6px;border-radius:14px 14px 0 0;background:#fff;font-size:1.75rem;letter-spacing:-.02em;color:var(--navy)}
+.mv-cal-h b{font-weight:800}
+.mv-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:8px;padding:12px 18px 22px;border-radius:0 0 14px 14px;background:#fff}
+.mv-cal-dow{display:grid;place-items:center;height:36px;font-weight:700;font-size:.9375rem;color:var(--navy)}
+.mv-cal-d{display:grid;place-items:center;height:44px;font-size:1.0625rem;font-weight:500;color:#565a70;font-variant-numeric:tabular-nums}
+.mv-cal-d.is-out{color:#a6a3b4}
+.mv-cal-d.is-on{background:var(--lilac,#e6d6f5);border-block:2px solid var(--cobalt);color:var(--navy);font-weight:800}
+.mv-cal-d.is-on.is-out{color:var(--navy)}
+.mv-cal-d.is-first{border-left:2px solid var(--cobalt);border-radius:12px 0 0 12px}
+.mv-cal-d.is-last{border-right:2px solid var(--cobalt);border-radius:0 12px 12px 0}
+.mv-cal-d.is-first.is-last{border-radius:12px}
+@media (max-width:900px){.mv-cal-wrap{grid-template-columns:1fr}.mv-cal{max-width:440px;width:100%}}
+@media (max-width:420px){.mv-cal-grid{padding:10px 8px 16px}.mv-cal-h{padding:18px 16px 4px;font-size:1.5rem}.mv-cal-d{height:40px;font-size:1rem}}
