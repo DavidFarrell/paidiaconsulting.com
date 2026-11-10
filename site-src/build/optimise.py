@@ -367,7 +367,7 @@ PRIVACY_EDITS = [
     ("Last updated 4 May 2026.", f"Last updated {PRIVACY_DATE}."),
     ("<h3>2.2 Business Enquiries</h3>\n        <p>When you contact us via email, we collect:</p>",
      "<h3>2.2 Business Enquiries and Bookings</h3>\n        <p>When you contact us by email or through the forms on our website "
-     "(for example the contact form or the workshop booking form), we collect:</p>"),
+     "(for example the contact form or the course booking form), we collect:</p>"),
     ("<li>Your organisation (if provided)</li>\n          <li>The content of your message</li>",
      "<li>Your organisation and role (if provided)</li>\n          <li>Your phone number (if provided)</li>\n"
      "          <li>The content of your message or booking request</li>"),
