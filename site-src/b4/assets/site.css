@@ -3229,3 +3229,12 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .lx-hero h1 .rot.is-ready .rot-w.is-on{opacity:1;transform:none;visibility:visible;transition:opacity .3s ease .15s,transform .3s ease .15s,visibility 0s}
 .lx-hero h1 .rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-8px);visibility:visible}
 @media (prefers-reduced-motion:reduce){.lx-hero h1 .rot,.lx-hero h1 .rot.is-ready .rot-w{transition:none}}
+
+/* 10 Nov 2026 - Our work: the eight case tiles get a lilac header band with the outcome (was a small cobalt pill),
+   a white body with the client's logo, and the figure large at the foot of the tile (Nikki, site review). */
+.cs-overview .cso-card{display:flex;flex-direction:column;gap:0;min-height:clamp(220px,20vw,280px);padding:0!important;overflow:hidden;border:1px solid var(--divider);border-radius:12px;background:#fff}
+.cs-overview .cso-card:hover{transform:none;border-color:var(--cobalt)}
+.cs-overview .cso-tag{display:block;align-self:stretch;margin:0;padding:18px 22px;border-radius:0;border-bottom:1px solid var(--divider);background:#ebe2f5;color:var(--navy);font-size:1rem;font-weight:600;line-height:1.3}
+.cs-overview .cso-logo{align-self:flex-start;height:40px;max-width:170px;margin:26px 22px 0}
+.cs-overview .cso-fig{margin-top:auto;padding:24px 22px 24px;font-size:clamp(1.75rem,1.1rem + 1.6vw,2.75rem);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+@media (max-width:520px){.cs-overview .cso-card{min-height:190px}.cs-overview .cso-tag{padding:12px 14px;font-size:.875rem}.cs-overview .cso-logo{height:30px;max-width:120px;margin:18px 14px 0}.cs-overview .cso-fig{padding:18px 14px;font-size:1.5rem}}
