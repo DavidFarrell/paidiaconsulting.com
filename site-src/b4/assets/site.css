@@ -3308,3 +3308,6 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .mv-hero-in{align-items:start}
 .mv-hero-copy{min-width:0}.mv-ov{max-width:100%}.mv-ov .w-strip{max-width:100%}
 .mv-ov{grid-template-columns:minmax(0,1fr)}
+
+/* 10 Nov 2026 - Course page FAQ answers run across the page (Nikki, site review). */
+#faq details p,#faq .faq-body p,#faq .faq-body li{max-width:none}
