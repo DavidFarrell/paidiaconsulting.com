@@ -3272,14 +3272,25 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 @media (max-width:760px){.lx-small{grid-template-columns:1fr}}
 .lx-small p:not(.lx-date):not(.note){font-size:1rem;line-height:1.55;color:rgba(16,22,56,.82);max-width:none}.lx-small>.lx-sign>.ln-link{align-self:flex-start}.lx-small>.lx-oh h3,.lx-small>.lx-sign h3{font-weight:700;font-size:clamp(1.375rem,1.1rem + .6vw,1.625rem);letter-spacing:-.015em;line-height:1.25}
 
-/* 10 Nov 2026 - Course page top (Nikki, site review): a strip of facts under David (format, start, each week, included,
-   all from this page; labels in sentence case, no capitals), the opening paragraph across the copy column, no picture,
-   and no section tab bar (its script is no longer loaded). */
-.mv-hero .mv-tag,.mv-hero .mv-facts{max-width:none}.mv-hero .mv-facts{width:100%;box-sizing:border-box}
-.mv-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:8px 0 0;border:1px solid var(--divider);border-radius:12px;background:#fff;overflow:hidden}
-.mv-facts>div{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:4px;padding:16px 18px;border-left:1px solid var(--divider);min-width:0}
-.mv-facts>div:first-child{border-left:0}
-.mv-facts dt{margin:0;font-size:.875rem;color:var(--muted)}
-.mv-facts dd{margin:0;font-size:1.0625rem;font-weight:700;line-height:1.3;color:var(--navy)}
-@media (max-width:1100px){.mv-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.mv-facts>div:nth-child(3){border-left:0}.mv-facts>div:nth-child(n+3){border-top:1px solid var(--divider)}}
-@media (max-width:420px){.mv-facts{grid-template-columns:1fr}.mv-facts>div{border-left:0}.mv-facts>div+div{border-top:1px solid var(--divider)}}
+/* 10 Nov 2026 - Course page top (Nikki, site review): the opening paragraph runs across the copy column. */
+.mv-hero .mv-tag{max-width:none}
+
+/* 10 Nov 2026 - Course page booking card, after Matt Pocock's Maven course card (Nikki, site review): the factory loop
+   picture across the top of the card, then the date, price, who it is for and the button centred, and an "Includes"
+   list with cobalt ticks and fine rules. Our own words throughout. */
+.mv-hero .mv-card--pic{display:block;padding:0;overflow:hidden;border-radius:12px;box-shadow:0 24px 50px -34px rgba(16,22,56,.45)}
+.mv-card-pic{margin:0;border-bottom:1px solid var(--divider)}
+.mv-card-pic img{display:block;width:100%;height:auto}
+.mv-card-body{display:grid;gap:12px;padding:22px 26px 26px;text-align:center;justify-items:center}
+.mv-card-body .mv-cohort-l{font-size:1rem;font-weight:600;color:var(--navy);letter-spacing:0}
+.mv-card-body .mv-price{font-size:2.5rem}
+.mv-card-for{margin:0;max-width:34ch;font-size:.9375rem;line-height:1.5;color:var(--muted)}
+.mv-card-for b{color:var(--navy);margin-right:4px}
+.mv-card-body .w-cta{width:100%;margin-top:4px}
+.mv-card-note{margin:0;font-size:.875rem;font-style:italic;color:var(--muted)}
+.mv-incl-h{justify-self:stretch;margin:10px 0 0;padding-top:16px;border-top:1px solid var(--divider);text-align:left;font-size:.9375rem;font-weight:600;color:var(--muted)}
+.mv-ticks{justify-self:stretch;list-style:none;margin:0;padding:0;text-align:left}
+.mv-ticks li{position:relative;padding:10px 0 10px 30px;border-bottom:1px solid var(--divider);font-size:.9688rem;line-height:1.45;color:var(--navy)}
+.mv-ticks li:last-child{border-bottom:0}
+.mv-ticks li::before{content:"";position:absolute;left:4px;top:14px;width:6px;height:11px;border:solid var(--cobalt);border-width:0 2px 2px 0;transform:rotate(40deg)}
+.mv-ticks b{margin-right:4px}
