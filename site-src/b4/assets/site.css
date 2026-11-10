@@ -3186,3 +3186,19 @@ main>.sec-join.sec-join.sec-join{padding-top:24px!important}
   .home .svc-item>div{display:flex;flex-direction:column}
   .home .svc-item .svc-cta{margin-top:auto!important;padding-top:20px}
 }
+
+/* 10 Nov 2026 - the header is a plain full-width bar (Nikki, site review). It was a rounded floating pill with a
+   gradient and a shadow; now it is a white bar across the whole top of the page with a fine line under it, square
+   corners, no shadow. The logo and menu line up with the page content. On scroll it gets a little slimmer, as
+   before. On phones the menu drops down full width from the bar. Specificity is raised to beat the per-page
+   header rules in each page head and the pill width the scroll script sets. */
+html body .site-header,html body .site-header.is-scrolled,html body:has(.hero-wc) .site-header,html body .site-header.is-compact{background:#fff!important;border-bottom:1px solid var(--divider)!important;padding-top:env(safe-area-inset-top,0px)!important}
+html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar.bar{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;max-width:1440px!important;width:100%!important;margin-inline:auto!important;padding-left:48px!important;padding-right:48px!important}
+@media (max-width:1024px){html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar.bar{padding-left:32px!important;padding-right:32px!important}}
+@media (max-width:900px){html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar.bar{padding-left:20px!important;padding-right:20px!important}
+  html body .site-header .nav{top:100%!important;left:0!important;right:0!important;border-radius:0!important;border:0!important;border-bottom:1px solid var(--divider)!important;box-shadow:0 12px 24px -20px rgba(16,22,56,.4)!important;background:#fff!important;padding:8px 20px 20px!important}}
+
+/* 10 Nov 2026 - Our work page: the headline and its intro run across the page (Nikki, site review). The headline
+   was broken onto two lines by hand and the intro kept to a narrow column; now both use the full content width.
+   The typewriter effect is unchanged. On narrow screens the headline still wraps where it must. */
+.page-hero h1.tw-h1,.page-hero h1.tw-h1+.lede{max-width:none!important}
