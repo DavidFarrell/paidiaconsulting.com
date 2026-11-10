@@ -3175,3 +3175,14 @@ main>.sec-join.sec-join.sec-join{padding-top:24px!important}
   .home .svc-item img,.home .svc-item h3{grid-column:1;grid-row:auto}
   .home .svc-item img{width:120px;height:120px;max-width:120px;object-position:left center}
 }
+
+/* 10 Nov 2026 - service card buttons line up (Nikki). The three cards were already the same height, but each
+   button sat straight under its own text, so "See our work" (shorter text) sat higher than the other two.
+   Now the words fill the card and the button is pushed to the bottom, so all three buttons share one line.
+   Desktop only (three cards side by side); on tablets and phones the cards stack and nothing needs lining up.
+   Design system rule: a row of cards with an action pins the action to the card's foot. */
+@media (min-width:901px){
+  .home .svc-item{grid-template-rows:auto 1fr;align-content:stretch}
+  .home .svc-item>div{display:flex;flex-direction:column}
+  .home .svc-item .svc-cta{margin-top:auto!important;padding-top:20px}
+}
