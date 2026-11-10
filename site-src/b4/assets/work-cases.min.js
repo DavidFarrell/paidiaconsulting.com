@@ -1,5 +1,5 @@
 /* 10 Nov 2026 - Our work (work.html): the eight cases as one list, with the tiles locked under the menu (Nikki, site review).
-   Replaces the pinned one-case-at-a-time panel of 2 Nov (assets/case-stage.js, kept but no longer loaded), which left
+   Replaces the pinned one-case-at-a-time panel of 2 Nov (the case-stage script, kept in this folder but no longer loaded), which left
    wide empty bands above and below each case. Now the cases run one after another, so the start of the next case is
    always in view at the bottom of the screen. Once you scroll past the eight tiles at the top, a slim row of the same
    eight tiles appears under the menu and stays there until the last case ends: the current case is highlighted and

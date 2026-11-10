@@ -3219,3 +3219,13 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 @media (prefers-reduced-motion:reduce){.wk-strip,.site-header.has-wk-strip .wk-strip{transition:none}}
 .case-sec{scroll-margin-top:calc(var(--wk-offset,160px) - 90px)} /* the page already keeps 90px clear (scroll-padding-top) */
 .wk-strip .wk-svg{display:block;height:16px;width:auto;margin-block:2px}
+
+/* 10 Nov 2026 - What we offer: rotating word in the headline, and the headline and intro run across the page
+   (Nikki, site review). Same look and timing as the home page hero word. Script: assets/learn-words.js */
+.lx-hero h1,.lx-hero .lede{max-width:none!important}
+.lx-hero h1 .rot{display:inline-grid;vertical-align:bottom;justify-items:start;overflow:hidden;color:var(--cobalt);transition:width .35s ease}
+.lx-hero h1 .rot-w{grid-area:1/1;white-space:nowrap}
+.lx-hero h1 .rot.is-ready .rot-w{opacity:0;transform:translateY(8px);visibility:hidden;transition:opacity .15s ease,transform .2s ease,visibility 0s linear .2s}
+.lx-hero h1 .rot.is-ready .rot-w.is-on{opacity:1;transform:none;visibility:visible;transition:opacity .3s ease .15s,transform .3s ease .15s,visibility 0s}
+.lx-hero h1 .rot.is-ready .rot-w.is-out{opacity:0;transform:translateY(-8px);visibility:visible}
+@media (prefers-reduced-motion:reduce){.lx-hero h1 .rot,.lx-hero h1 .rot.is-ready .rot-w{transition:none}}
