@@ -2216,7 +2216,7 @@ a.ct-oh:hover{transform:translateY(-1px)}
 /* 2 Nov 2026, 3.40pm - "From the blog" pictures are now copies inside the site (assets/blog/), taken from the blog's
    own source on GitHub (DavidFarrell/thingsithinkithink.blog). Images linked from the blog's website were blocked by
    the artifact preview, so they showed as empty placeholders. The Embedded AI Trio's blog image is a photo of real
-   people, so it has a simple three-circle drawing instead (assets/blog/embedded-ai-trio.svg). */
+   people, so it has a simple three-circle drawing instead (assets/blog/embedded-ai-trio.webp). */
 .bl-pic img{background:#f0f0ec}
 
 /* 2 Nov 2026: Stay connected with only the course sign-up */
@@ -3165,3 +3165,13 @@ main>.sec-join.sec-join.sec-join{padding-top:24px!important}
 /* section links land just under the bar (the page already keeps 90px clear at the top) */
 .ws-nav .mv-sec{scroll-margin-top:0}
 @media (prefers-reduced-motion:reduce){.ws-nav .site-header,.ws-nav .mv-tabs{transition:none}}
+
+/* 10 Nov 2026 - new service illustrations (Paidia design system v1.4). They are small scenes with people, so they
+   need more room than the old watercolour marks: 160px, 120px on tablets and phones, always above the title. */
+.home .svc-item img{width:160px;height:160px;max-width:160px;object-fit:contain;object-position:left bottom}
+@media (max-width:900px){.home .svc-item img{width:120px;height:120px;max-width:120px}}
+@media (max-width:600px){
+  .home .svc-item{grid-template-columns:1fr!important}
+  .home .svc-item img,.home .svc-item h3{grid-column:1;grid-row:auto}
+  .home .svc-item img{width:120px;height:120px;max-width:120px;object-position:left center}
+}
