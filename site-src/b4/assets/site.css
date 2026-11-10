@@ -3225,3 +3225,9 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .cs-overview .cso-logo{align-self:flex-start;height:40px;max-width:170px;margin:26px 22px 0}
 .cs-overview .cso-fig{margin-top:auto;padding:24px 22px 24px;font-size:clamp(1.75rem,1.1rem + 1.6vw,2.75rem);font-weight:800;letter-spacing:-.03em;line-height:1.05}
 @media (max-width:520px){.cs-overview .cso-card{min-height:190px}.cs-overview .cso-tag{padding:12px 14px;font-size:.875rem}.cs-overview .cso-logo{height:30px;max-width:120px;margin:18px 14px 0}.cs-overview .cso-fig{padding:18px 14px;font-size:1.5rem}}
+
+/* 10 Nov 2026 - What we offer, workshop block: "Our next workshop" and the date, large, in place of the small chip; the
+   price, Full details and the team discount line are gone, and the one button, Go to course, opens the workshop page
+   (Nikki, site review). */
+.lx-next{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25em .5em;margin:0 0 6px;color:var(--navy);font-size:clamp(1.5rem,1.1rem + 1.4vw,2.25rem);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.lx-next-d{padding:.02em .35em;border-radius:8px;background:var(--navy);color:#fff;white-space:nowrap}
