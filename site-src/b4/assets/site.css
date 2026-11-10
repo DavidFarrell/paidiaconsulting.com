@@ -3333,3 +3333,10 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .mv-cal-d.is-first.is-last{border-radius:12px}
 @media (max-width:900px){.mv-cal-wrap{grid-template-columns:1fr}.mv-cal{max-width:440px;width:100%}}
 @media (max-width:420px){.mv-cal-grid{padding:10px 8px 16px}.mv-cal-h{padding:18px 16px 4px;font-size:1.5rem}.mv-cal-d{height:40px;font-size:1rem}}
+
+/* 10 Nov 2026 - Course page factory line (Nikki, site review): the five pictures give way to one looping video of the line
+   (inbox, three agents, your review, the way back), full width above the five step cards, which keep their words.
+   Muted, no sound track, plays inline; with reduced motion it stays on its first frame. */
+.w-line-video{margin:0 0 14px;border:1px solid var(--divider);border-radius:12px;overflow:hidden;background:#f6eee5}
+.w-line-video video{display:block;width:100%;height:auto}
+.w-line-video video{aspect-ratio:2.4/1;object-fit:cover;object-position:50% 52%}
