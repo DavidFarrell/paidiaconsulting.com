@@ -3202,3 +3202,20 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
    was broken onto two lines by hand and the intro kept to a narrow column; now both use the full content width.
    The typewriter effect is unchanged. On narrow screens the headline still wraps where it must. */
 .page-hero h1.tw-h1,.page-hero h1.tw-h1+.lede{max-width:none!important}
+
+/* 10 Nov 2026 - Our work: the eight cases as one list, with the tiles locked under the menu (Nikki, site review).
+   Script: assets/work-cases.js. The row lives inside the header, so it sits flush under the bar and moves with it. */
+.wk-strip{max-height:0;overflow:hidden;opacity:0;visibility:hidden;border-top:1px solid transparent;transition:max-height .3s ease,opacity .2s ease,visibility 0s linear .3s}
+.site-header.has-wk-strip .wk-strip{max-height:120px;opacity:1;visibility:visible;border-top-color:var(--divider);transition:max-height .3s ease,opacity .2s ease}
+.wk-strip ul{list-style:none;margin:0 auto;max-width:1440px;padding:8px 48px 10px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.wk-strip a{display:flex;flex-direction:column;gap:4px;min-height:48px;padding:7px 10px;border:1px solid var(--divider);border-radius:8px;background:#fff;color:var(--navy);text-decoration:none;font-weight:700;font-size:.875rem;line-height:1.2;white-space:nowrap}
+.wk-strip img{display:block;height:20px;width:auto;max-width:100%;object-fit:contain;object-position:left center}
+.wk-strip a,.wk-strip a:hover{background-image:none!important}
+.wk-strip a:hover{border-color:var(--navy)}
+.wk-strip a[aria-current="true"]{background:var(--lilac);border-color:var(--cobalt);box-shadow:inset 0 0 0 1px var(--cobalt)}
+.wk-strip a:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+@media (max-width:1024px){.wk-strip ul{padding-left:32px;padding-right:32px}}
+@media (max-width:900px){.wk-strip ul{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:128px;overflow-x:auto;scrollbar-width:none;padding:8px 20px 10px}.wk-strip ul::-webkit-scrollbar{display:none}}
+@media (prefers-reduced-motion:reduce){.wk-strip,.site-header.has-wk-strip .wk-strip{transition:none}}
+.case-sec{scroll-margin-top:calc(var(--wk-offset,160px) - 90px)} /* the page already keeps 90px clear (scroll-padding-top) */
+.wk-strip .wk-svg{display:block;height:16px;width:auto;margin-block:2px}
