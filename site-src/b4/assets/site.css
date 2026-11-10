@@ -3294,3 +3294,17 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .mv-ticks li:last-child{border-bottom:0}
 .mv-ticks li::before{content:"";position:absolute;left:4px;top:14px;width:6px;height:11px;border:solid var(--cobalt);border-width:0 2px 2px 0;transform:rotate(40deg)}
 .mv-ticks b{margin-right:4px}
+
+/* 10 Nov 2026 - Course page, round 2 (Nikki): the picture sits inset in the card with its own paper and rounded corners;
+   the date is a short range; Includes lists what the course gives you; the "Code got cheap" overview moves up into the
+   column beside the card, so there is no empty block; the lone guarantee tile is gone and the refund line sits in the
+   card under the button, with the price and date. */
+.mv-card-pic{padding:14px 14px 0;border-bottom:0}
+.mv-card-pic img{border-radius:8px;border:1px solid var(--divider)}
+.mv-card-body .mv-cohort-l{font-size:1.0625rem}
+.mv-ov{display:grid;gap:18px;margin-top:clamp(28px,4vw,48px);padding-top:clamp(28px,4vw,48px);border-top:1px solid var(--divider);min-width:0}
+.mv-ov>*{margin:0}
+.mv-ov .mv-lead,.mv-ov .mv-perks{max-width:none}
+.mv-hero-in{align-items:start}
+.mv-hero-copy{min-width:0}.mv-ov{max-width:100%}.mv-ov .w-strip{max-width:100%}
+.mv-ov{grid-template-columns:minmax(0,1fr)}
