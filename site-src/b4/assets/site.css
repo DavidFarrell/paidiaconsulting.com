@@ -3239,3 +3239,17 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .lx-feat-pic{margin:0;align-self:center;min-width:0}
 .lx-feat-pic img{display:block;width:100%;height:auto;border-radius:12px;background:#fdf5f0}
 .mv-week summary svg{flex:none;width:48px;height:48px}
+
+
+/* 10 Nov 2026 - What we offer: the factory loop is printed into the apricot box rather than pasted on (Nikki: "be more
+   ambitious"). The picture's paper was evened to pure white (course-factory-loop-2.webp) so that multiply leaves only
+   the drawing on the apricot: no rectangle, no frame. On wide screens it takes the right half of the box at full
+   size and runs to the box's right edge, clear of the words; on narrow screens it sits under the button, full width. */
+.lx-feat-pic{mix-blend-mode:multiply}
+.lx-feat-pic img{border-radius:0;background:none}
+@media (min-width:901px){
+  .lx-feat{position:relative;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)}
+  .lx-feat-copy{position:relative;z-index:1}
+  .lx-feat-pic{position:absolute;top:0;bottom:0;right:0;width:54%;display:flex;align-items:center;pointer-events:none}
+  .lx-feat-pic img{width:100%;height:auto}
+}
