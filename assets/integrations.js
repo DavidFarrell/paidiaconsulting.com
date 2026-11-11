@@ -3,11 +3,9 @@
    - Forms: Nikki's pages build an email draft (mailto:) when a form is sent. If a form endpoint is set,
      the form is posted to it instead and her existing message line shows a thank-you. If no endpoint is
      set, or the post fails, nothing here interferes and her email draft still works.
-   - Office hours (replaced by free Maven Lightning Lessons on 11 Nov 2026): if a Luma link is set, any
-     [data-luma] or [data-oh-signup] link goes there. No page has one now.
    - Booking: if a booking link is set (Maven), every [data-book] link goes there. */
 (function () {
-  var CONFIG = {"form_endpoint": "https://submit-form.com/ivIHXUlW3", "course_endpoint": "https://assets.mailerlite.com/jsonp/2772038/forms/203317767813727334/subscribe", "luma_url": "https://luma.com/paidia", "booking_url": "", "course_field_names": {"email": "fields[email]"}, "course_extra_fields": {"ml-submit": "1", "anticsrf": "true"}, "course_no_cors": false, "messages": {"contact": "Thank you. Your message has reached us and we will reply by email.", "booking": "Thank you. We have your booking request and will email you to confirm your place.", "course": "Thank you, you are on the list. Day one arrives when the course opens.", "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."}};
+  var CONFIG = {"form_endpoint": "https://submit-form.com/ivIHXUlW3", "course_endpoint": "https://assets.mailerlite.com/jsonp/2772038/forms/203317767813727334/subscribe", "luma_url": "", "booking_url": "", "course_field_names": {"email": "fields[email]"}, "course_extra_fields": {"ml-submit": "1", "anticsrf": "true"}, "course_no_cors": false, "messages": {"contact": "Thank you. Your message has reached us and we will reply by email.", "booking": "Thank you. We have your booking request and will email you to confirm your place.", "course": "Thank you, you are on the list. Day one arrives when the course opens.", "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."}};
   var MSG = CONFIG.messages || {};
 
   function endpointFor(form) {
@@ -100,7 +98,6 @@
     });
   }
   function links() {
-    retarget('[data-luma], [data-oh-signup]', CONFIG.luma_url);
     retarget('[data-book]', CONFIG.booking_url);
   }
   // Screen readers announce the thank-you or failure line when it appears.

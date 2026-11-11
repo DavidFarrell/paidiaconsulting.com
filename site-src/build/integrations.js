@@ -3,8 +3,6 @@
    - Forms: Nikki's pages build an email draft (mailto:) when a form is sent. If a form endpoint is set,
      the form is posted to it instead and her existing message line shows a thank-you. If no endpoint is
      set, or the post fails, nothing here interferes and her email draft still works.
-   - Office hours (replaced by free Maven Lightning Lessons on 11 Nov 2026): if a Luma link is set, any
-     [data-luma] or [data-oh-signup] link goes there. No page has one now.
    - Booking: if a booking link is set (Maven), every [data-book] link goes there. */
 (function () {
   var CONFIG = /*CONFIG*/{};
@@ -100,7 +98,6 @@
     });
   }
   function links() {
-    retarget('[data-luma], [data-oh-signup]', CONFIG.luma_url);
     retarget('[data-book]', CONFIG.booking_url);
   }
   // Screen readers announce the thank-you or failure line when it appears.
