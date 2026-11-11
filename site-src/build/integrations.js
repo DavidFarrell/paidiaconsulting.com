@@ -3,8 +3,6 @@
    - Forms: Nikki's pages build an email draft (mailto:) when a form is sent. If a form endpoint is set,
      the form is posted to it instead and her existing message line shows a thank-you. If no endpoint is
      set, or the post fails, nothing here interferes and her email draft still works.
-   - Office hours: if a Luma link is set, the "Join our Monday office hours" and "Sign up for Monday"
-     buttons go there instead of the email sign-up.
    - Booking: if a booking link is set (Maven), every [data-book] link goes there. */
 (function () {
   var CONFIG = /*CONFIG*/{};
@@ -40,8 +38,7 @@
     p.appendChild(document.createTextNode('If our reply does not turn up, check your spam folder or email us at '));
     var a = document.createElement('a'); a.href = 'mailto:info@paidiaconsulting.com'; a.textContent = 'info@paidiaconsulting.com';
     p.appendChild(a); p.appendChild(document.createTextNode('. In the meantime, you are welcome to '));
-    var oh = document.createElement('a'); oh.href = CONFIG.luma_url || 'learn.html#upcoming'; oh.textContent = 'drop in to our free Monday office hours';
-    if (CONFIG.luma_url) { oh.target = '_blank'; oh.rel = 'noopener'; }
+    var oh = document.createElement('a'); oh.href = 'learn.html#upcoming'; oh.textContent = 'join one of our free Lightning Lessons';
     p.appendChild(oh); p.appendChild(document.createTextNode('.'));
     var old = form.querySelector('.form-next'); if (old) old.remove();
     m.insertAdjacentElement('afterend', p);
@@ -101,7 +98,6 @@
     });
   }
   function links() {
-    retarget('[data-luma], [data-oh-signup]', CONFIG.luma_url);
     retarget('[data-book]', CONFIG.booking_url);
   }
   // Screen readers announce the thank-you or failure line when it appears.
