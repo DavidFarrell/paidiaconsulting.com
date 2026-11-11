@@ -3338,4 +3338,4 @@ html body .site-header .wrap.bar.bar,html body .site-header.is-compact .wrap.bar
 .ll-card:hover .ll-go{text-decoration:underline;text-underline-offset:3px}
 .ll-card:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px}
 .lx-small:has(>:only-child){grid-template-columns:minmax(0,760px)}
-@media (max-width:760px){.ll-grid{grid-template-columns:1fr;gap:16px}.ll-foot{padding:12px 16px 14px}}
+@media (max-width:760px){.ll-grid{grid-template-columns:1fr;gap:16px}.ll-foot{padding:12px 16px 14px}}@media (min-width:1280px){.ll-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.ll-foot{flex-direction:column;gap:2px;padding:12px 16px 14px}}
