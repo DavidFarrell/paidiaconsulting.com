@@ -3,8 +3,8 @@
    - Forms: Nikki's pages build an email draft (mailto:) when a form is sent. If a form endpoint is set,
      the form is posted to it instead and her existing message line shows a thank-you. If no endpoint is
      set, or the post fails, nothing here interferes and her email draft still works.
-   - Office hours: if a Luma link is set, the "Join our Monday office hours" and "Sign up for Monday"
-     buttons go there instead of the email sign-up.
+   - Office hours (replaced by free Maven Lightning Lessons on 11 Nov 2026): if a Luma link is set, any
+     [data-luma] or [data-oh-signup] link goes there. No page has one now.
    - Booking: if a booking link is set (Maven), every [data-book] link goes there. */
 (function () {
   var CONFIG = {"form_endpoint": "https://submit-form.com/ivIHXUlW3", "course_endpoint": "https://assets.mailerlite.com/jsonp/2772038/forms/203317767813727334/subscribe", "luma_url": "https://luma.com/paidia", "booking_url": "", "course_field_names": {"email": "fields[email]"}, "course_extra_fields": {"ml-submit": "1", "anticsrf": "true"}, "course_no_cors": false, "messages": {"contact": "Thank you. Your message has reached us and we will reply by email.", "booking": "Thank you. We have your booking request and will email you to confirm your place.", "course": "Thank you, you are on the list. Day one arrives when the course opens.", "failed": "Sorry, that did not send. Please email us at info@paidiaconsulting.com."}};
@@ -40,8 +40,7 @@
     p.appendChild(document.createTextNode('If our reply does not turn up, check your spam folder or email us at '));
     var a = document.createElement('a'); a.href = 'mailto:info@paidiaconsulting.com'; a.textContent = 'info@paidiaconsulting.com';
     p.appendChild(a); p.appendChild(document.createTextNode('. In the meantime, you are welcome to '));
-    var oh = document.createElement('a'); oh.href = CONFIG.luma_url || 'learn.html#upcoming'; oh.textContent = 'drop in to our free Monday office hours';
-    if (CONFIG.luma_url) { oh.target = '_blank'; oh.rel = 'noopener'; }
+    var oh = document.createElement('a'); oh.href = 'learn.html#upcoming'; oh.textContent = 'join one of our free Lightning Lessons';
     p.appendChild(oh); p.appendChild(document.createTextNode('.'));
     var old = form.querySelector('.form-next'); if (old) old.remove();
     m.insertAdjacentElement('afterend', p);
