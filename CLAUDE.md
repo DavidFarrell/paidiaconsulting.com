@@ -16,21 +16,26 @@ Owners: David and Nikki Gérouville-Farrell (Paidia Consulting Ltd). Design: Nik
    They are overwritten by every build. Edit the source in `site-src/b4/` (or the build in
    `site-src/build/`) and run `site-src/publish.sh`.
 
-## STOP before replacing images: check the spelling inside them
+## STOP before replacing images: check the spelling and the photo
 
-**Before you replace any image that has words in it, or copy a new export over `site-src/b4/`, open each
-incoming image and read it.** This applies whoever asks, including Nikki. The design files the images are
-exported from may still have the old mistakes, so a fresh export can bring them back.
+**Before you replace any image that has words in it or any lesson card, or copy a new export over
+`site-src/b4/`, open each incoming image and look at it.** This applies whoever asks, including Nikki. The
+design files the images are exported from may still have the old mistakes and the old photo, so a fresh
+export can bring them back.
 
 On 22 Nov 2026 the four Lightning Lesson cards (`site-src/b4/assets/lessons/ll-2026-*.webp`, each in a
 1320 and a 660 size) were corrected in the exported images themselves. Any replacement must have:
 
 - **Gérouville**, with the accent on the first e (never "Gerouville")
 - **Lightning** (never "Lightening")
+- **The newer photo of David**: navy open-neck shirt on a plain lilac background (never the older one in a
+  suit jacket and pale blue shirt, outdoors). The cards now in the repo show the right one, so compare with
+  them. The photo check is only for the cards. The black and white portrait elsewhere on the site is a
+  different image, and the jacket in that one is fine.
 
-Check both sizes of every card. The text is inside the picture, so searching the code won't find a mistake.
-If a new image has either mistake, don't copy it in, commit it or push it: tell whoever asked what is wrong,
-keep the current image, and ask for a corrected export.
+Check both sizes of every card. These are all inside the picture, so searching the code won't find a mistake.
+If a new image has any of these wrong, don't copy it in, commit it or push it: tell whoever asked what is
+wrong, keep the current image, and ask for a corrected export.
 
 ## How the site is put together
 
@@ -48,7 +53,7 @@ Caddyfile, start.sh, railpack.json   how the server runs (see Operations)
 ### Editing workflow
 
 1. Change `site-src/b4/` (copy, layout, CSS, images), or drop in Nikki's next exported version over it.
-   Before any image is replaced, do the spelling check above ("STOP before replacing images").
+   Before any image is replaced, do the spelling and photo check above ("STOP before replacing images").
 2. Run `site-src/publish.sh`. It needs macOS `/usr/bin/python3`, `npx` (Node, for PurgeCSS 6.0.0)
    and the `trash` command (built into recent macOS).
 3. Check it locally (see Testing), review `git status` / `git diff`, commit, push.
